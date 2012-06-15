@@ -10,6 +10,8 @@ description := "scala github api client"
 
 homepage := Some(url("https://github.com/xuwei-k/ghscala"))
 
+licenses := Seq("MIT License" -> url("http://www.opensource.org/licenses/mit-license.php"))
+
 scalacOptions := Seq("-deprecation", "-unchecked")
 
 externalResolvers ~= { _.filterNot{_.name.contains("Scala-Tools")} }
