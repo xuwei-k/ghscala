@@ -74,13 +74,16 @@ case class Repo(
   html_url      :String,
   updated_at    :DateTime,
   watchers      :Int,
+  master_branch :Option[String],
   owner         :Owner
 //  full_name     :String,
 //  mirror_url    :String,
 //  svn_url       :String,
 //  clone_url     :String,
 //  ssh_url       :String
-)
+){
+  def master:String = master_branch.getOrElse("master")
+}
 
 case class Owner(
   login        :String,
