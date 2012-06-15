@@ -1,6 +1,20 @@
 resolvers += "xuwei-k" at "http://xuwei-k.github.com/mvn"
 
-scalaVersion := "2.9.1"
+name := "ghscala"
+
+version := "0.1-SNAPSHOT"
+
+organization := "com.github.xuwei-k"
+
+description := "scala github api client"
+
+homepage := Some(url("https://github.com/xuwei-k/ghscala"))
+
+scalacOptions := Seq("-deprecation", "-unchecked")
+
+externalResolvers ~= { _.filterNot{_.name.contains("Scala-Tools")} }
+
+scalaVersion:= "2.9.2"
 
 libraryDependencies ++= {
 val liftV = "2.4"
