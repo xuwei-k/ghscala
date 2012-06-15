@@ -7,14 +7,14 @@ import net.liftweb.json._
 trait GhScala{
   val BASE = "https://api.github.com/"
 
-  def getJson(path:String):JValue =
-    ScalajHttp(BASE + path){ in =>
+  def getJson(url:String*):JValue =
+    ScalajHttp(BASE + url.mkString("/")){ in =>
       JsonParser.parse(new BufferedReader(new InputStreamReader(in)))
     }
 
-  def getFromArray[A](url:String)(implicit j:FromJValue[A]):List[A] =
+  def getFromArray[A](url:String*)(implicit j:FromJValue[A]):List[A] =
     for{
-      JArray(list) <- getJson(url)
+      JArray(list) <- getJson(url:_*)
       obj          <- list
     } yield j.pure(obj)
 
@@ -32,14 +32,19 @@ trait GhScala{
     def pure(j:JValue) = j.extract[User]
   }
 
-  def repo(user:String,repo:String):Repo = reposJson pure getJson("repos/" + user + "/" + repo)
+  implicit val searchRepoJson = new FromJValue[SearchRepo]{
+    def pure(j:JValue) = j.extract[SearchRepo]
+  }
 
-  def repos(user:String):List[Repo] = getFromArray[Repo]("users/" + user + "/repos")
+  def repo(user:String,repo:String):Repo = reposJson pure getJson("repos",user,repo)
 
-  def refs(user:String,repo:String):List[Ref] = getFromArray[Ref]("repos/" + user + "/" + repo + "/git/refs")
+  def repos(user:String):List[Repo] = getFromArray[Repo]("users",user,"repos")
 
-  def followers(user:String):List[User] = getFromArray[User]("users/" + user + "/followers" )
+  def refs(user:String,repo:String):List[Ref] = getFromArray[Ref]("repos",user,repo,"git/refs")
 
+  def followers(user:String):List[User] = getFromArray[User]("users",user,"followers")
+
+  def searchRepo(query:String):List[SearchRepo] = getFromArray[SearchRepo]("legacy/repos/search",query)
 }
 
 trait FromJValue[A]{
@@ -49,14 +54,38 @@ trait FromJValue[A]{
 case class Ref(
   ref      :String,
   url      :String,
-  `object` :Obj
+  `object` :GitObj
 ){
   lazy val name:String = ref.split('/').last
   lazy val isTag:Boolean = ref.split('/')(1) == "tags"
   lazy val isBranch:Boolean = ! isTag
 }
 
-case class Obj(`type`:String,sha:String,url:String)
+case class GitObj(`type`:String,sha:String,url:String)
+
+case class SearchRepo(
+  has_downloads :Boolean,
+  name          :String,
+  has_issues    :Boolean,
+  forks         :Int,
+  `private`     :Boolean,
+  size          :Int,
+  open_issues   :Int,
+  url           :String,
+  description   :Option[String],
+  pushed_at     :DateTime,
+  has_wiki      :Boolean,
+  fork          :Boolean,
+  language      :String,
+  homepage      :Option[String],
+  created_at    :DateTime,
+  updated_at    :DateTime,
+  watchers      :Int,
+  master_branch :Option[String],
+  owner         :String
+//  username      :String
+//  organization  :Option[String]
+)
 
 case class Repo(
   has_downloads :Boolean,
@@ -67,14 +96,14 @@ case class Repo(
   size          :Int,
   open_issues   :Int,
   url           :String,
-  description   :String,
+  description   :String, // TODO possibly optional ?
   pushed_at     :DateTime,
   git_url       :String,
   has_wiki      :Boolean,
   fork          :Boolean,
   id            :Int,
   language      :String,
-  homepage      :String,
+  homepage      :String, // TODO possibly optional ?
   created_at    :DateTime,
   html_url      :String,
   updated_at    :DateTime,

@@ -4,20 +4,32 @@ import org.specs2.Specification
 
 class Spec extends Specification{ def is =
   "repos" ! {
-    forall(GhScala.repos(testUser)){
-      _ must not beNull
+    forall(GhScala.repos(testUser)){ r =>
+      println(r)
+      (
+        r must not beNull
+      )and(
+        forall(r.owner.productIterator){_ must not beNull}
+      )
     }
     success
   } ^ "repo" ! {
     println(GhScala.repo(testUser,testRepo))
     success
   } ^ "refs" ! {
-    forall(GhScala.refs(testUser,testRepo)){
-      _ must not beNull
+    forall(GhScala.refs(testUser,testRepo)){ r =>
+      println(r)
+      r must not beNull
     }
   } ^ "followers" ! {
-    forall(GhScala.followers(testUser)){
-      _.productIterator.forall(null !=) must beTrue
+    forall(GhScala.followers(testUser)){ u =>
+      println(u)
+      u.productIterator.forall(null !=) must beTrue
+    }
+  } ^ "searchRepo" ! {
+    forall(GhScala.searchRepo(".g8")){ r =>
+      println(r)
+      r.productIterator.forall(null !=) must beTrue
     }
   } ^ end
 
