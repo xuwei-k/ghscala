@@ -12,26 +12,38 @@ trait GhScala{
       JsonParser.parse(new BufferedReader(new InputStreamReader(in)))
     }
 
-  def repos(user:String):List[Repo] =
+  def getFromArray[A](url:String)(implicit j:FromJValue[A]):List[A] =
     for{
-      JArray(list) <- getJson("users/" + user + "/repos")
-      repo         <- list
-    } yield Repo(repo)
+      JArray(list) <- getJson(url)
+      obj          <- list
+    } yield j.pure(obj)
 
-  def repo(user:String,repo:String):Repo = Repo( getJson("repos/" + user + "/" + repo) )
+  private implicit val formats = DefaultFormats
 
-  def refs(user:String,repo:String):List[Ref] =
-    for{
-      JArray(list) <- getJson("repos/" + user + "/" + repo + "/git/refs" )
-      repo         <- list
-    } yield Ref(repo)
+  implicit val reposJson = new FromJValue[Repo]{
+    def pure(j:JValue) = j.extract[Repo]
+  }
+
+  implicit val refJson = new FromJValue[Ref]{
+    def pure(j:JValue) = j.extract[Ref]
+  }
+
+  implicit val userJson = new FromJValue[User]{
+    def pure(j:JValue) = j.extract[User]
+  }
+
+  def repo(user:String,repo:String):Repo = reposJson pure getJson("repos/" + user + "/" + repo)
+
+  def repos(user:String):List[Repo] = getFromArray[Repo]("users/" + user + "/repos")
+
+  def refs(user:String,repo:String):List[Ref] = getFromArray[Ref]("repos/" + user + "/" + repo + "/git/refs")
+
+  def followers(user:String):List[User] = getFromArray[User]("users/" + user + "/followers" )
+
 }
 
-object Ref{
-  def apply(q:JValue):Ref = {
-    implicit val formats = DefaultFormats
-    q.extract[Ref]
-  }
+trait FromJValue[A]{
+  def pure(j:JValue):A
 }
 
 case class Ref(
@@ -45,13 +57,6 @@ case class Ref(
 }
 
 case class Obj(`type`:String,sha:String,url:String)
-
-object Repo{
-  def apply(q:JValue):Repo = {
-    implicit val formats = DefaultFormats
-    q.extract[Repo]
-  }
-}
 
 case class Repo(
   has_downloads :Boolean,
@@ -75,7 +80,7 @@ case class Repo(
   updated_at    :DateTime,
   watchers      :Int,
   master_branch :Option[String],
-  owner         :Owner
+  owner         :User
 //  full_name     :String,
 //  mirror_url    :String,
 //  svn_url       :String,
@@ -85,7 +90,7 @@ case class Repo(
   def master:String = master_branch.getOrElse("master")
 }
 
-case class Owner(
+case class User(
   login        :String,
   id           :Int,
   avatar_url   :String,

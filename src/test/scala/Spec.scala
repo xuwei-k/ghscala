@@ -4,15 +4,25 @@ import org.specs2.Specification
 
 class Spec extends Specification{ def is =
   "repos" ! {
-    println(GhScala.repos("xuwei-k"))
+    forall(GhScala.repos(testUser)){
+      _ must not beNull
+    }
     success
   } ^ "repo" ! {
-    println(GhScala.repo("xuwei-k","sbtend"))
+    println(GhScala.repo(testUser,testRepo))
     success
   } ^ "refs" ! {
-    println(GhScala.refs("xuwei-k","sbtend"))
-    success
+    forall(GhScala.refs(testUser,testRepo)){
+      _ must not beNull
+    }
+  } ^ "followers" ! {
+    forall(GhScala.followers(testUser)){
+      _.productIterator.forall(null !=) must beTrue
+    }
   } ^ end
+
+  val testUser = "xuwei-k"
+  val testRepo = "sbtend"
 }
 
 
