@@ -12,7 +12,6 @@ class Spec extends Specification{ def is =
         forall(r.owner.productIterator){_ must not beNull}
       )
     }
-    success
   } ^ "repo" ! {
     println(GhScala.repo(testUser,testRepo))
     success
