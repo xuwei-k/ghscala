@@ -9,6 +9,9 @@ class Spec extends Specification{ def is =
   } ^ "repo" ! {
     println(GhScala.repo("xuwei-k","sbtend"))
     success
+  } ^ "refs" ! {
+    println(GhScala.refs("xuwei-k","sbtend"))
+    success
   } ^ end
 }
 

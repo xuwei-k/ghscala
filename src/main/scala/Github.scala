@@ -19,7 +19,32 @@ trait GhScala{
     } yield Repo(repo)
 
   def repo(user:String,repo:String):Repo = Repo( getJson("repos/" + user + "/" + repo) )
+
+  def refs(user:String,repo:String):List[Ref] =
+    for{
+      JArray(list) <- getJson("repos/" + user + "/" + repo + "/git/refs" )
+      repo         <- list
+    } yield Ref(repo)
 }
+
+object Ref{
+  def apply(q:JValue):Ref = {
+    implicit val formats = DefaultFormats
+    q.extract[Ref]
+  }
+}
+
+case class Ref(
+  ref      :String,
+  url      :String,
+  `object` :Obj
+){
+  lazy val name:String = ref.split('/').last
+  lazy val isTag:Boolean = ref.split('/')(1) == "tags"
+  lazy val isBranch:Boolean = ! isTag
+}
+
+case class Obj(`type`:String,sha:String,url:String)
 
 object Repo{
   def apply(q:JValue):Repo = {
