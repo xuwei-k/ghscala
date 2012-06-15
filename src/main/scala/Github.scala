@@ -7,18 +7,18 @@ import net.liftweb.json._
 trait GhScala{
   val BASE = "https://api.github.com/"
 
-  type USER_ID = String
-
-  def repos(user:USER_ID):List[Repo] = {
-    val json = ScalajHttp(BASE + "users/" + user + "/repos"){ in =>
+  def getJson(path:String):JValue =
+    ScalajHttp(BASE + path){ in =>
       JsonParser.parse(new BufferedReader(new InputStreamReader(in)))
     }
 
+  def repos(user:String):List[Repo] =
     for{
-      JArray(list) <- json
+      JArray(list) <- getJson("users/" + user + "/repos")
       repo         <- list
     } yield Repo(repo)
-  }
+
+  def repo(user:String,repo:String):Repo = Repo( getJson("repos/" + user + "/" + repo) )
 }
 
 object Repo{
