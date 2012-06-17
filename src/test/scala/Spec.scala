@@ -28,16 +28,21 @@ class Spec extends Specification{ def is =
     nullCheck(GhScala.trees(testUser,"ghscala",testSHA))
   } ^ "issue" ! {
     // TODO unfiltered fail :-(
-    val repos = List(("etorreborre","specs2"),("dispatch","dispatch"),("scalaz","scalaz"))
     forall(repos){case (user,repo) =>
       forall(List(Closed,Open)){ state =>
         nullCheck(GhScala.issues(user,repo,state))
       }
     }
-  } ^ "issue events" ! {
+  } ^ "an issue events" ! {
     val issues = List(("lift","framework",1254),("unfiltered","unfiltered",29))
     forall(issues){case (user,repo,num) =>
       forall(GhScala.issueEvents(user,repo,num)){ event =>
+        nullCheck(event)
+      }
+    }
+  } ^ "repository issue events" ! {
+    forall(repos){case (user,repo) =>
+      forall(GhScala.issueEvents(user,repo)){ event =>
         nullCheck(event)
       }
     }
@@ -53,6 +58,8 @@ class Spec extends Specification{ def is =
     }
   }
 
+
+  val repos = List(("etorreborre","specs2"),("dispatch","dispatch"),("scalaz","scalaz"))
   val testUser = "xuwei-k"
   val testRepo = "sbtend"
   val testSHA = "9cc84362e2487c4bb18e254445cf60a3fb7c5881"

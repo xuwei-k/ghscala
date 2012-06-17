@@ -70,3 +70,13 @@ case class IssueEvent(
   commit_id  :Option[String],
   url        :String
 )
+
+case class IssueEvent2(
+  event      :String, // TODO ADT ?
+  actor      :User,
+  issue      :Issue,
+  id         :Long,
+  commit_id  :Option[String],
+  created_at :DateTime,
+  url        :String
+)
