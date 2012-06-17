@@ -62,3 +62,11 @@ case class Issue(
   lazy val getState:IssueState = IssueState(state)
 }
 
+case class IssueEvent(
+  event      :String,
+  actor      :User,
+  id         :Long,
+  created_at :DateTime,
+  commit_id  :Option[String],
+  url        :String
+)

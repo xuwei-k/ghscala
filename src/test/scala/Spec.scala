@@ -34,6 +34,13 @@ class Spec extends Specification{ def is =
         nullCheck(GhScala.issues(user,repo,state))
       }
     }
+  } ^ "issue events" ! {
+    val issues = List(("lift","framework",1254),("unfiltered","unfiltered",29))
+    forall(issues){case (user,repo,num) =>
+      forall(GhScala.issueEvents(user,repo,num)){ event =>
+        nullCheck(event)
+      }
+    }
   } ^ end
 
   def nullCheck[A](obj:Any):MatchResult[Any] = {

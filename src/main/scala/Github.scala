@@ -48,6 +48,10 @@ trait GhScala{
     def pure(j:JValue) = j.extract[Issue]
   }
 
+  implicit val issueEventJson = new FromJValue[IssueEvent]{
+    def pure(j:JValue) = j.extract[IssueEvent]
+  }
+
   def repo(user:String,repo:String):Repo = reposJson pure getJson("repos",user,repo)()
 
   def repos(user:String):List[Repo] = getFromArray[Repo]("users",user,"repos")()
@@ -65,6 +69,9 @@ trait GhScala{
   // TODO parameters http://developer.github.com/v3/issues/
   def issues(user:String,repo:String,state:IssueState = Open):List[Issue] =
     getFromArray[Issue]("repos",user,repo,"issues")("state" -> state.name)
+
+  def issueEvents(user:String,repo:String,number:Long):List[IssueEvent] =
+    getFromArray[IssueEvent]("repos",user,repo,"issues",number.toString,"events")()
 }
 
 trait FromJValue[A]{
