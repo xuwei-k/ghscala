@@ -31,6 +31,7 @@ Seq(
 
 initialCommands in console := {
   Iterator(
-    "com.github.xuwei_k.ghscala"
+    "com.github.xuwei_k.ghscala",
+    "net.liftweb.json"
   ).map{"import " + _ + "._"}.mkString(";")
 }
