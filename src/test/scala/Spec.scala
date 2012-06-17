@@ -23,7 +23,9 @@ class Spec extends Specification{ def is =
   } ^ "searchRepo" ! {
     nullCheck(GhScala.searchRepo(".g8"))
   } ^ "commits" ! {
-    nullCheck(GhScala.commits(testUser,"ghscala","9cc84362e2487c4bb18e254445cf60a3fb7c5881"))
+    nullCheck(GhScala.commits(testUser,"ghscala",testSHA))
+  } ^ "tree" ! {
+    nullCheck(GhScala.trees(testUser,"ghscala",testSHA))
   } ^ end
 
   def nullCheck[A](obj:Any):MatchResult[Any] = {
@@ -38,6 +40,7 @@ class Spec extends Specification{ def is =
 
   val testUser = "xuwei-k"
   val testRepo = "sbtend"
+  val testSHA = "9cc84362e2487c4bb18e254445cf60a3fb7c5881"
 }
 
 

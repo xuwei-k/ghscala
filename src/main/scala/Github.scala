@@ -40,6 +40,10 @@ trait GhScala{
     def pure(j:JValue) = j.extract[CommitResponse]
   }
 
+  implicit val treeResJson = new FromJValue[TreeResponse]{
+    def pure(j:JValue) = j.extract[TreeResponse]
+  }
+
   def repo(user:String,repo:String):Repo = reposJson pure getJson("repos",user,repo)
 
   def repos(user:String):List[Repo] = getFromArray[Repo]("users",user,"repos")
@@ -50,7 +54,9 @@ trait GhScala{
 
   def searchRepo(query:String):List[SearchRepo] = getFromArray[SearchRepo]("legacy/repos/search",query)
 
-  def commits(user:String,repo:String,sha:String):CommitResponse =  commitResJson pure getJson("repos",user,repo,"commits",sha)
+  def commits(user:String,repo:String,sha:String):CommitResponse = commitResJson pure getJson("repos",user,repo,"commits",sha)
+
+  def trees(user:String,repo:String,sha:String):TreeResponse = treeResJson pure getJson("repos",user,repo,"git/trees",sha)
 }
 
 trait FromJValue[A]{

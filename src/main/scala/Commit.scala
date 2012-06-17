@@ -1,11 +1,11 @@
 package com.github.xuwei_k.ghscala
 
 case class Commit(
-  tree      :Tree,
+  tree      :Commit.Tree,
   message   :String,
   url       :String,
-  author    :User2,
-  committer :User2
+  author    :Commit.User,
+  committer :Commit.User
 )
 
 case class CommitResponse(
@@ -19,11 +19,7 @@ case class CommitResponse(
   parents   :List[Parent]
 )
 
-case class User2(
-  email :String,
-  date  :String,
-  name  :String
-)
+
 
 case class Parent(
   sha :String,
@@ -42,10 +38,19 @@ case class File(
   sha       :String
 )
 
-case class Tree(
-  sha :String,
-  url :String
-)
+object Commit{
+
+  case class Tree(
+    sha :String,
+    url :String
+  )
+
+  case class User(
+    email :String,
+    date  :String,
+    name  :String
+  )
+}
 
 case class Stats(
   total     :Long,
