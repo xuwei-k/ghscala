@@ -36,6 +36,10 @@ trait GhScala{
     def pure(j:JValue) = j.extract[SearchRepo]
   }
 
+  implicit val commitResJson = new FromJValue[CommitResponse]{
+    def pure(j:JValue) = j.extract[CommitResponse]
+  }
+
   def repo(user:String,repo:String):Repo = reposJson pure getJson("repos",user,repo)
 
   def repos(user:String):List[Repo] = getFromArray[Repo]("users",user,"repos")
@@ -45,6 +49,8 @@ trait GhScala{
   def followers(user:String):List[User] = getFromArray[User]("users",user,"followers")
 
   def searchRepo(query:String):List[SearchRepo] = getFromArray[SearchRepo]("legacy/repos/search",query)
+
+  def commits(user:String,repo:String,sha:String):CommitResponse =  commitResJson pure getJson("repos",user,repo,"commits",sha)
 }
 
 trait FromJValue[A]{
@@ -121,7 +127,7 @@ case class Repo(
 
 case class User(
   login        :String,
-  id           :Int,
+  id           :Long,
   avatar_url   :String,
   gravatar_id  :String,
   url          :String

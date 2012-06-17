@@ -1,6 +1,7 @@
 package com.github.xuwei_k.ghscala
 
 import org.specs2.Specification
+import org.specs2.matcher.MatchResult
 
 class Spec extends Specification{ def is =
   "repos" ! {
@@ -16,21 +17,24 @@ class Spec extends Specification{ def is =
     println(GhScala.repo(testUser,testRepo))
     success
   } ^ "refs" ! {
-    forall(GhScala.refs(testUser,testRepo)){ r =>
-      println(r)
-      r must not beNull
-    }
+    nullCheck(GhScala.refs(testUser,testRepo))
   } ^ "followers" ! {
-    forall(GhScala.followers(testUser)){ u =>
-      println(u)
-      u.productIterator.forall(null !=) must beTrue
-    }
+    nullCheck(GhScala.followers(testUser))
   } ^ "searchRepo" ! {
-    forall(GhScala.searchRepo(".g8")){ r =>
-      println(r)
-      r.productIterator.forall(null !=) must beTrue
-    }
+    nullCheck(GhScala.searchRepo(".g8"))
+  } ^ "commits" ! {
+    nullCheck(GhScala.commits(testUser,"ghscala","9cc84362e2487c4bb18e254445cf60a3fb7c5881"))
   } ^ end
+
+  def nullCheck[A](obj:Any):MatchResult[Any] = {
+    obj match{
+      case p:Product =>
+        (obj must not beNull) and forall(p.productIterator){nullCheck}
+      case _ =>
+        println(obj)
+        obj must not beNull
+    }
+  }
 
   val testUser = "xuwei-k"
   val testRepo = "sbtend"
