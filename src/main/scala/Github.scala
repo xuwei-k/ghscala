@@ -7,14 +7,14 @@ import net.liftweb.json._
 trait GhScala{
   val BASE = "https://api.github.com/"
 
-  def getJson(url:String*):JValue =
-    ScalajHttp(BASE + url.mkString("/")){ in =>
+  def getJson(url:String*)(params:(String,String)*):JValue =
+    ScalajHttp(BASE + url.mkString("/")).params(params.toList){ in =>
       JsonParser.parse(new BufferedReader(new InputStreamReader(in)))
     }
 
-  def getFromArray[A](url:String*)(implicit j:FromJValue[A]):List[A] =
+  def getFromArray[A](url:String*)(params:(String,String)*)(implicit j:FromJValue[A]):List[A] =
     for{
-      JArray(list) <- getJson(url:_*)
+      JArray(list) <- getJson(url:_*)(params:_*)
       obj          <- list
     } yield j.pure(obj)
 
@@ -44,19 +44,27 @@ trait GhScala{
     def pure(j:JValue) = j.extract[TreeResponse]
   }
 
-  def repo(user:String,repo:String):Repo = reposJson pure getJson("repos",user,repo)
+  implicit val issueJson = new FromJValue[Issue]{
+    def pure(j:JValue) = j.extract[Issue]
+  }
 
-  def repos(user:String):List[Repo] = getFromArray[Repo]("users",user,"repos")
+  def repo(user:String,repo:String):Repo = reposJson pure getJson("repos",user,repo)()
 
-  def refs(user:String,repo:String):List[Ref] = getFromArray[Ref]("repos",user,repo,"git/refs")
+  def repos(user:String):List[Repo] = getFromArray[Repo]("users",user,"repos")()
 
-  def followers(user:String):List[User] = getFromArray[User]("users",user,"followers")
+  def refs(user:String,repo:String):List[Ref] = getFromArray[Ref]("repos",user,repo,"git/refs")()
 
-  def searchRepo(query:String):List[SearchRepo] = getFromArray[SearchRepo]("legacy/repos/search",query)
+  def followers(user:String):List[User] = getFromArray[User]("users",user,"followers")()
 
-  def commits(user:String,repo:String,sha:String):CommitResponse = commitResJson pure getJson("repos",user,repo,"commits",sha)
+  def searchRepo(query:String):List[SearchRepo] = getFromArray[SearchRepo]("legacy/repos/search",query)()
 
-  def trees(user:String,repo:String,sha:String):TreeResponse = treeResJson pure getJson("repos",user,repo,"git/trees",sha)
+  def commits(user:String,repo:String,sha:String):CommitResponse = commitResJson pure getJson("repos",user,repo,"commits",sha)()
+
+  def trees(user:String,repo:String,sha:String):TreeResponse = treeResJson pure getJson("repos",user,repo,"git/trees",sha)()
+
+  // TODO parameters http://developer.github.com/v3/issues/
+  def issues(user:String,repo:String,state:IssueState = Open):List[Issue] =
+    getFromArray[Issue]("repos",user,repo,"issues")("state" -> state.name)
 }
 
 trait FromJValue[A]{

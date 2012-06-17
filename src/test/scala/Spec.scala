@@ -26,12 +26,20 @@ class Spec extends Specification{ def is =
     nullCheck(GhScala.commits(testUser,"ghscala",testSHA))
   } ^ "tree" ! {
     nullCheck(GhScala.trees(testUser,"ghscala",testSHA))
+  } ^ "issue" ! {
+    // TODO unfiltered fail :-(
+    val repos = List(("etorreborre","specs2"),("dispatch","dispatch"),("scalaz","scalaz"))
+    forall(repos){case (user,repo) =>
+      forall(List(Closed,Open)){ state =>
+        nullCheck(GhScala.issues(user,repo,state))
+      }
+    }
   } ^ end
 
   def nullCheck[A](obj:Any):MatchResult[Any] = {
     obj match{
       case p:Product =>
-        (obj must not beNull) and forall(p.productIterator){nullCheck}
+        (obj must not beNull) and forall(p.productIterator.toBuffer){nullCheck}
       case _ =>
         println(obj)
         obj must not beNull
@@ -42,5 +50,4 @@ class Spec extends Specification{ def is =
   val testRepo = "sbtend"
   val testSHA = "9cc84362e2487c4bb18e254445cf60a3fb7c5881"
 }
-
 
