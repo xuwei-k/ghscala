@@ -16,14 +16,7 @@ case class CommitResponse(
   author    :User,
   committer :User,
   files     :List[File],
-  parents   :List[Parent]
-)
-
-
-
-case class Parent(
-  sha :String,
-  url :String
+  parents   :List[Commit.Tree]
 )
 
 case class File(
