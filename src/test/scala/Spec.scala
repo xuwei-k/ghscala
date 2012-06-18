@@ -46,10 +46,12 @@ class Spec extends Specification{ def is =
         nullCheck(event)
       }
     }
-  } ^ "search open issues" ! {
-    forall(repos){case (user,repo) =>
-      forall(GhScala.searchOpenIssues(user,repo,"scala")){ issue =>
-        nullCheck(issue)
+  } ^ "search issues" ! {
+    forall(repos){case (user,r) =>
+      forall(List(Open,Closed)){ state =>
+        forall(GhScala.searchIssues(user,r,"scala",state)){ issue =>
+          nullCheck(issue)
+        }
       }
     }
   } ^ end

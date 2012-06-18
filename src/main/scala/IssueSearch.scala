@@ -1,6 +1,6 @@
 package com.github.xuwei_k.ghscala
 
-case class IssueSearchOpen(
+case class IssueSearch(
   pull_request_url :Option[String],
   state            :String,
   user             :String,
