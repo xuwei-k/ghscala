@@ -1,7 +1,6 @@
 package com.github.xuwei_k.ghscala
 
 import java.io._
-import org.scala_tools.time.Imports._
 import net.liftweb.json._
 
 trait GhScala{
@@ -56,6 +55,10 @@ trait GhScala{
     def pure(j:JValue) = j.extract[IssueEvent2]
   }
 
+  implicit val issueSearchOpenJson = new FromJValue[IssueSearchOpen]{
+    def pure(j:JValue) = j.extract[IssueSearchOpen]
+  }
+
   def repo(user:String,repo:String):Repo = reposJson pure getJson("repos",user,repo)()
 
   def repos(user:String):List[Repo] = getFromArray[Repo]("users",user,"repos")()
@@ -65,6 +68,9 @@ trait GhScala{
   def followers(user:String):List[User] = getFromArray[User]("users",user,"followers")()
 
   def searchRepo(query:String):List[SearchRepo] = getFromArray[SearchRepo]("legacy/repos/search",query)()
+
+  def searchOpenIssues(user:String,repo:String,query:String):List[IssueSearchOpen]
+    = getFromArray[IssueSearchOpen]("legacy/issues/search",user,repo,Open.name,query)()
 
   def commits(user:String,repo:String,sha:String):CommitResponse = commitResJson pure getJson("repos",user,repo,"commits",sha)()
 

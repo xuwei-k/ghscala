@@ -46,6 +46,12 @@ class Spec extends Specification{ def is =
         nullCheck(event)
       }
     }
+  } ^ "search open issues" ! {
+    forall(repos){case (user,repo) =>
+      forall(GhScala.searchOpenIssues(user,repo,"scala")){ issue =>
+        nullCheck(issue)
+      }
+    }
   } ^ end
 
   def nullCheck[A](obj:Any):MatchResult[Any] = {

@@ -1,7 +1,5 @@
 package com.github.xuwei_k.ghscala
 
-import org.scala_tools.time.Imports._
-
 sealed abstract class IssueState(private[ghscala] val name:String)
 case object Open   extends IssueState("open")
 case object Closed extends IssueState("closed")
