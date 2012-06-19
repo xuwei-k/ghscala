@@ -19,9 +19,7 @@ class Spec extends Specification{ def is =
     println(GhScala.repo(testUser,testRepo))
     success
   } ^ "refs" ! {
-    forall(repos){case (user,repo) =>
-      nullCheck(GhScala.refs(user,repo))
-    }
+    check(GhScala.refs)
   } ^ "followers" ! {
     forall(repos){case (user,_) =>
       nullCheck(GhScala.followers(user))
@@ -46,11 +44,7 @@ class Spec extends Specification{ def is =
       }
     }
   } ^ "repository issue events" ! {
-    forall(repos){case (user,repo) =>
-      forall(GhScala.issueEvents(user,repo)){ event =>
-        nullCheck(event)
-      }
-    }
+    check(GhScala.issueEvents)
   } ^ "search issues" ! {
     forall(repos){case (user,r) =>
       forall(List(Open,Closed)){ state =>
@@ -69,7 +63,14 @@ class Spec extends Specification{ def is =
       }
 
     forall(list){nullCheck} and checkSingleDownloads()
+  } ^ "forks" ! {
+    check(GhScala.forks)
   } ^ end
+
+  def check[A](func:(String,String) => List[A]) =
+    forall(repos){case (user,repo) =>
+      forall(func(user,repo)){nullCheck}
+    }
 
   def nullCheck[A](obj:Any):MatchResult[Any] = {
     obj match{

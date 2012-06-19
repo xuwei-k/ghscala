@@ -101,6 +101,8 @@ trait GhScala{
     getFromArray[Download]("repos",user,repo,"downloads")()
 
   def download(user:String,repo:String,id:Long):Download = downloadJson pure getJson("repos",user,repo,"downloads",id.toString)()
+
+  def forks(user:String,repo:String):List[Repo] = getFromArray[Repo]("repos",user,repo,"forks")()
 }
 
 trait FromJValue[A]{
