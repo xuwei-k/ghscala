@@ -27,7 +27,6 @@ class Spec extends Specification{ def is =
   } ^ "tree" ! {
     nullCheck(GhScala.trees(testUser,"ghscala",testSHA))
   } ^ "issue" ! {
-    // TODO unfiltered fail :-(
     forall(repos){case (user,repo) =>
       forall(List(Closed,Open)){ state =>
         nullCheck(GhScala.issues(user,repo,state))
@@ -67,7 +66,7 @@ class Spec extends Specification{ def is =
   }
 
 
-  val repos = List(("etorreborre","specs2"),("dispatch","dispatch"),("scalaz","scalaz"))
+  val repos = List(("etorreborre","specs2"),("dispatch","dispatch"),("scalaz","scalaz"),("unfiltered","unfiltered"))
   val testUser = "xuwei-k"
   val testRepo = "sbtend"
   val testSHA = "9cc84362e2487c4bb18e254445cf60a3fb7c5881"

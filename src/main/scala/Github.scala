@@ -11,11 +11,13 @@ trait GhScala{
       JsonParser.parse(new BufferedReader(new InputStreamReader(in)))
     }
 
+  def json2list[A](json:JValue)(implicit j:FromJValue[A]):List[A] = {
+    val JArray(list) = json
+    list.map(j.pure)
+  }
+
   def getFromArray[A](url:String*)(params:(String,String)*)(implicit j:FromJValue[A]):List[A] =
-    for{
-      JArray(list) <- getJson(url:_*)(params:_*)
-      obj          <- list
-    } yield j.pure(obj)
+    json2list[A](getJson(url:_*)(params:_*))
 
   private implicit val formats = DefaultFormats
 
@@ -55,6 +57,10 @@ trait GhScala{
     def pure(j:JValue) = j.extract[IssueEvent2]
   }
 
+  implicit val issueSearch2Json = new FromJValue[IssueSearch]{
+    def pure(j:JValue) = j.extract[IssueSearch]
+  }
+
   def repo(user:String,repo:String):Repo = reposJson pure getJson("repos",user,repo)()
 
   def repos(user:String):List[Repo] = getFromArray[Repo]("users",user,"repos")()
@@ -63,12 +69,14 @@ trait GhScala{
 
   def followers(user:String):List[User] = getFromArray[User]("users",user,"followers")()
 
-  def searchRepo(query:String):List[SearchRepo] = getFromArray[SearchRepo]("legacy/repos/search",query)()
+  def searchRepo(query:String):List[SearchRepo] = {
+    val json = getJson("legacy/repos/search",query)()
+    json2list[SearchRepo](json \ "repositories")
+  }
 
   def searchIssues(user:String,repo:String,query:String,state:IssueState = Open):List[IssueSearch] = {
     val json = getJson("legacy/issues/search",user,repo,state.name,query)()
-    val JArray(list) = json \ "issues"
-    list.map{_.extract[IssueSearch]}
+    json2list[IssueSearch](json \ "issues")
   }
 
   def commits(user:String,repo:String,sha:String):CommitResponse = commitResJson pure getJson("repos",user,repo,"commits",sha)()
