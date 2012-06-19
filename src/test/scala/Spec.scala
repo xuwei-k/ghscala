@@ -75,6 +75,10 @@ class Spec extends Specification{ def is =
     check(GhScala.comments)
   } ^ "comments for single commit" ! {
     forall(GhScala.comments("scala","scala","989c0d0693e27d06d1f70524b66527d1ef12f5a2")){nullCheck}
+  } ^ "readme" ! {
+    forall(repos){case (user,repo) =>
+      nullCheck(GhScala.readme(user,repo))
+    }
   } ^ end
 
   def check[A](func:(String,String) => List[A]) =

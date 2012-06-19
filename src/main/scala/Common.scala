@@ -23,10 +23,12 @@ trait Common{
     list.map(j.pure)
   }
 
-  def getFromArrayWithParams[A](url:String*)(params:(String,String)*)(implicit j:FromJValue[A]):List[A] =
+  def listWithParams[A](url:String*)(params:(String,String)*)(implicit j:FromJValue[A]):List[A] =
     json2list[A](getJsonWithParams(url:_*)(params:_*))
 
-  def getFromArray[A](url:String*)(implicit j:FromJValue[A]):List[A] = json2list[A](getJson(url:_*))
+  def list[A](url:String*)(implicit j:FromJValue[A]):List[A] = json2list[A](getJson(url:_*))
+
+  def single[A](url:String*)(implicit j:FromJValue[A]):A = j pure getJson(url:_*)
 
   private implicit val formats = DefaultFormats
 
@@ -78,6 +80,9 @@ trait Common{
     def pure(j:JValue) = j.extract[Comment]
   }
 
+  implicit val contentsJson = new FromJValue[Contents]{
+    def pure(j:JValue) = j.extract[Contents]
+  }
 }
 
 object Common extends Common
