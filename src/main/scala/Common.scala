@@ -25,10 +25,10 @@ trait Common{
     list.map(j.pure)
   }
 
-  def listWithParams[A](url:String*)(params:PARAM*)(implicit j:FromJValue[A]):List[A] =
+  def listWithParams[A:FromJValue](url:String*)(params:PARAM*):List[A] =
     json2list[A](getJsonWithParams(url:_*)(params:_*))
 
-  def list[A](url:String*)(implicit j:FromJValue[A]):List[A] = json2list[A](getJson(url:_*))
+  def list[A:FromJValue](url:String*):List[A] = json2list[A](getJson(url:_*))
 
   def single[A](url:String*)(implicit j:FromJValue[A]):A = j pure getJson(url:_*)
 
