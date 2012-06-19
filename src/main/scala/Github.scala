@@ -103,6 +103,9 @@ trait GhScala{
   def download(user:String,repo:String,id:Long):Download = downloadJson pure getJson("repos",user,repo,"downloads",id.toString)()
 
   def forks(user:String,repo:String):List[Repo] = getFromArray[Repo]("repos",user,repo,"forks")()
+
+  // TODO error if contains organization
+  def watchers(user:String,repo:String):List[User] = getFromArray[User]("repos",user,repo,"watchers")()
 }
 
 trait FromJValue[A]{

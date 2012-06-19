@@ -65,6 +65,8 @@ class Spec extends Specification{ def is =
     forall(list){nullCheck} and checkSingleDownloads()
   } ^ "forks" ! {
     check(GhScala.forks)
+  } ^ "watchers" ! {
+    check(GhScala.watchers)
   } ^ end
 
   def check[A](func:(String,String) => List[A]) =
