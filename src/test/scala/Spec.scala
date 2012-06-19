@@ -5,21 +5,27 @@ import org.specs2.matcher.MatchResult
 
 class Spec extends Specification{ def is =
   "repos" ! {
-    forall(GhScala.repos(testUser)){ r =>
-      println(r)
-      (
-        r must not beNull
-      )and(
-        forall(r.owner.productIterator){_ must not beNull}
-      )
+    forall(repos){case (user,_) =>
+      forall(GhScala.repos(user)){ r =>
+        println(r)
+        (
+          r must not beNull
+        )and(
+          forall(r.owner.productIterator){_ must not beNull}
+        )
+      }
     }
   } ^ "repo" ! {
     println(GhScala.repo(testUser,testRepo))
     success
   } ^ "refs" ! {
-    nullCheck(GhScala.refs(testUser,testRepo))
+    forall(repos){case (user,repo) =>
+      nullCheck(GhScala.refs(user,repo))
+    }
   } ^ "followers" ! {
-    nullCheck(GhScala.followers(testUser))
+    forall(repos){case (user,_) =>
+      nullCheck(GhScala.followers(user))
+    }
   } ^ "searchRepo" ! {
     nullCheck(GhScala.searchRepo(".g8"))
   } ^ "commits" ! {
