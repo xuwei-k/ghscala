@@ -11,9 +11,11 @@ trait Common{
 
   val BASE = "https://api.github.com/"
 
+  type PARAM = (String,String)
+
   def getJson(url:String*):JValue = getJsonWithParams(url:_*)()
 
-  def getJsonWithParams(url:String*)(params:(String,String)*):JValue =
+  def getJsonWithParams(url:String*)(params:PARAM*):JValue =
     ScalajHttp(BASE + url.mkString("/")).params(params.toList){ in =>
       JsonParser.parse(new BufferedReader(new InputStreamReader(in)))
     }
@@ -23,12 +25,15 @@ trait Common{
     list.map(j.pure)
   }
 
-  def listWithParams[A](url:String*)(params:(String,String)*)(implicit j:FromJValue[A]):List[A] =
+  def listWithParams[A](url:String*)(params:PARAM*)(implicit j:FromJValue[A]):List[A] =
     json2list[A](getJsonWithParams(url:_*)(params:_*))
 
   def list[A](url:String*)(implicit j:FromJValue[A]):List[A] = json2list[A](getJson(url:_*))
 
   def single[A](url:String*)(implicit j:FromJValue[A]):A = j pure getJson(url:_*)
+
+  def singleWithParams[A](url:String*)(params:PARAM*)(implicit j:FromJValue[A]):A =
+    j pure getJsonWithParams(url:_*)(params:_*)
 
   private implicit val formats = DefaultFormats
 

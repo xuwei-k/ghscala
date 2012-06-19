@@ -54,7 +54,12 @@ trait GhScala{
 
   def comments(user:String,repo:String,sha:String):List[Comment] = list[Comment]("repos",user,repo,"commits",sha,"comments")
 
-  def readme(user:String,repo:String):Contents = single[Contents]("repos",user,repo,"readme")
+  def readme(user:String,repo:String,ref:String = null):Contents =
+    Option(ref).collect{ case r if ! r.isEmpty =>
+      singleWithParams[Contents]("repos",user,repo,"readme")("ref"-> r)
+    }.getOrElse{
+      single[Contents]("repos",user,repo,"readme")
+    }
 
 }
 

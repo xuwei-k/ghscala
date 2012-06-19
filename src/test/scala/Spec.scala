@@ -79,6 +79,11 @@ class Spec extends Specification{ def is =
     forall(repos){case (user,repo) =>
       nullCheck(GhScala.readme(user,repo))
     }
+  } ^ "readme ref param" ! {
+    val `0.11.3` = GhScala.readme("harrah","xsbt","v0.11.3")
+    val `0.11.2` = GhScala.readme("harrah","xsbt","v0.11.2")
+
+    nullCheck(`0.11.2`) and nullCheck(`0.11.3`) and { `0.11.2` !== `0.11.3` }
   } ^ end
 
   def check[A](func:(String,String) => List[A]) =
