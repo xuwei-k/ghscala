@@ -49,6 +49,10 @@ trait GhScala{
   def watched(user:String):List[Repo] = getFromArray[Repo]("users",user,"watched")
 
   def collaborators(user:String,repo:String):List[User] = getFromArray[User]("repos",user,repo,"collaborators")
+
+  def comments(user:String,repo:String):List[Comment] = getFromArray[Comment]("repos",user,repo,"comments")
+
+  def comments(user:String,repo:String,sha:String):List[Comment] = getFromArray[Comment]("repos",user,repo,"commits",sha,"comments")
 }
 
 case class User(

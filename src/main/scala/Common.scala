@@ -74,6 +74,10 @@ trait Common{
     def pure(j:JValue) = j.extract[Download]
   }
 
+  implicit val commentJson = new FromJValue[Comment]{
+    def pure(j:JValue) = j.extract[Comment]
+  }
+
 }
 
 object Common extends Common
