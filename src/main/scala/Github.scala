@@ -112,6 +112,8 @@ trait GhScala{
   def watchers(user:String,repo:String):List[User] = getFromArray[User]("repos",user,repo,"watchers")
 
   def watched(user:String):List[Repo] = getFromArray[Repo]("users",user,"watched")
+
+  def collaborators(user:String,repo:String):List[User] = getFromArray[User]("repos",user,repo,"collaborators")
 }
 
 trait FromJValue[A]{

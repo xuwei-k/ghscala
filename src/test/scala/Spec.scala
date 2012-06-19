@@ -69,6 +69,8 @@ class Spec extends Specification{ def is =
     check(GhScala.watchers)
   } ^ "watched" ! {
     forall(GhScala.watched(testUser)){nullCheck}
+  } ^ "collaborators" ! {
+    check(GhScala.collaborators)
   } ^ end
 
   def check[A](func:(String,String) => List[A]) =
