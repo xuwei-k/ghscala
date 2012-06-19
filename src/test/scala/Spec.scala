@@ -60,7 +60,15 @@ class Spec extends Specification{ def is =
       }
     }
   } ^ "downloads" ! {
-    forall(GhScala.downloads("eed3si9n","scalaxb")){nullCheck}
+    val (repo,user) = ("eed3si9n","scalaxb")
+    val list = GhScala.downloads(repo,user)
+
+    def checkSingleDownloads() =
+      forall(util.Random.shuffle(list.map{_.id}).take(list.size / 4)){
+        id => nullCheck(GhScala.download(repo,user,id))
+      }
+
+    forall(list){nullCheck} and checkSingleDownloads()
   } ^ end
 
   def nullCheck[A](obj:Any):MatchResult[Any] = {
