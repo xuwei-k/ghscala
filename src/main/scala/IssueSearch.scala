@@ -4,7 +4,7 @@ case class IssueSearch(
   pull_request_url :Option[String],
   state            :String,
   user             :String, // TODO optional ? https://api.github.com/legacy/issues/search/harrah/xsbt/closed/scala
-  updated_at       :String,
+  updated_at       :DateTime,
   labels           :List[String],
   position         :Double,
   closed_at        :DateTime,

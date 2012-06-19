@@ -27,7 +27,7 @@ case class Milestone(
   closed_issues :Long,
 //  due_on        :Unknown, TODO ?
   number        :Long,
-  created_at    :String,
+  created_at    :DateTime,
   description   :Option[String],
   creator       :User,
   state         :String,

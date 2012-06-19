@@ -59,6 +59,8 @@ class Spec extends Specification{ def is =
         }
       }
     }
+  } ^ "downloads" ! {
+    forall(GhScala.downloads("eed3si9n","scalaxb")){nullCheck}
   } ^ end
 
   def nullCheck[A](obj:Any):MatchResult[Any] = {
