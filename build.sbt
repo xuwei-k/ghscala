@@ -26,6 +26,8 @@ Seq(
   ,"org.scalaj"  %% "scalaj-http" % "0.3.1"
   ,"org.scala-tools.time" % "time_2.9.1" % "0.5"
   ,"org.specs2" %% "specs2" % "1.11" % "test"
+  ,"commons-codec" % "commons-codec" % "1.6"
+  ,"net.databinder" % "pamflet-knockoff_2.9.1" % "0.4.0"
 )
 }
 
