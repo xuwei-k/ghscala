@@ -39,7 +39,7 @@ case class Repo(
   has_wiki      :Boolean,
   fork          :Boolean,
   id            :Int,
-  language      :String,
+  language      :Option[String],
   homepage      :String, // TODO possibly optional ?
   created_at    :DateTime,
   html_url      :String,

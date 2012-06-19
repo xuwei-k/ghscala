@@ -67,6 +67,8 @@ class Spec extends Specification{ def is =
     check(GhScala.forks)
   } ^ "watchers" ! {
     check(GhScala.watchers)
+  } ^ "watched" ! {
+    forall(GhScala.watched(testUser)){nullCheck}
   } ^ end
 
   def check[A](func:(String,String) => List[A]) =
@@ -74,16 +76,17 @@ class Spec extends Specification{ def is =
       forall(func(user,repo)){nullCheck}
     }
 
-  def nullCheck[A](obj:Any):MatchResult[Any] = {
+  def nullCheck(obj:Any):MatchResult[Any] = {
     obj match{
+      case coll:collection.GenTraversableOnce[_] =>
+        (coll must not beNull) and forall(coll.toBuffer){nullCheck}
       case p:Product =>
-        (obj must not beNull) and forall(p.productIterator.toBuffer){nullCheck}
+        (p must not beNull) and forall(p.productIterator.toBuffer){nullCheck}
       case _ =>
         println(obj)
         obj must not beNull
     }
   }
-
 
   val repos = List(("etorreborre","specs2"),("dispatch","dispatch"),("scalaz","scalaz"),("unfiltered","unfiltered"))
   val testUser = "xuwei-k"
