@@ -1,10 +1,10 @@
 package com.github.xuwei_k.ghscala
 
-sealed abstract class IssueState(private[ghscala] val name:String)
-case object Open   extends IssueState("open")
-case object Closed extends IssueState("closed")
-object IssueState{
-  def apply(name:String):IssueState = name match {
+sealed abstract class State(private[ghscala] val name:String)
+case object Open   extends State("open")
+case object Closed extends State("closed")
+object State{
+  def apply(name:String):State = name match {
     case Open.name   => Open
     case Closed.name => Closed
   }
@@ -35,7 +35,7 @@ case class Milestone(
   open_issues   :Long,
   url           :String
 ){
-  lazy val getState:IssueState = IssueState(state)
+  lazy val getState:State = State(state)
 }
 
 case class Issue(
@@ -57,7 +57,7 @@ case class Issue(
 ){
 
   override def toString = title
-  lazy val getState:IssueState = IssueState(state)
+  lazy val getState:State = State(state)
 }
 
 case class IssueEvent(

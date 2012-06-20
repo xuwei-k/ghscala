@@ -88,6 +88,18 @@ trait Common{
   implicit val contentsJson = new FromJValue[Contents]{
     def pure(j:JValue) = j.extract[Contents]
   }
+
+  implicit val pullJson = new FromJValue[Pull]{
+    def pure(j:JValue) = j.extract[Pull]
+  }
+
+  implicit val orgJson = new FromJValue[Org]{
+    def pure(j:JValue) = j.extract[Org]
+  }
+
+  implicit val organizationJson = new FromJValue[Organization]{
+    def pure(j:JValue) = j.extract[Organization]
+  }
 }
 
 object Common extends Common

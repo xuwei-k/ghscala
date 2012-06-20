@@ -17,7 +17,7 @@ trait GhScala{
     json2list[SearchRepo](json \ "repositories")
   }
 
-  def searchIssues(user:String,repo:String,query:String,state:IssueState = Open):List[IssueSearch] = {
+  def searchIssues(user:String,repo:String,query:String,state:State = Open):List[IssueSearch] = {
     val json = getJson("legacy/issues/search",user,repo,state.name,query)
     json2list[IssueSearch](json \ "issues")
   }
@@ -27,7 +27,7 @@ trait GhScala{
   def trees(user:String,repo:String,sha:String):TreeResponse = single[TreeResponse]("repos",user,repo,"git/trees",sha)
 
   // TODO parameters http://developer.github.com/v3/issues/
-  def issues(user:String,repo:String,state:IssueState = Open):List[Issue] =
+  def issues(user:String,repo:String,state:State = Open):List[Issue] =
     listWithParams[Issue]("repos",user,repo,"issues")("state" -> state.name)
 
   def issueEvents(user:String,repo:String,number:Long):List[IssueEvent] =
@@ -61,15 +61,12 @@ trait GhScala{
       single[Contents]("repos",user,repo,"readme")
     }
 
-}
+  def pulls(user:String,repo:String,state:State = Open):List[Pull] = listWithParams[Pull]("repos",user,repo,"pulls")("state" -> state.name )
 
-case class User(
-  login        :String,
-  id           :Long,
-  avatar_url   :String,
-  gravatar_id  :String,
-  url          :String
-)
+  def orgs(user:String):List[Org] = list[Org]("users",user,"orgs")
+
+  def org(orgName:String):Organization = single[Organization]("orgs",orgName)
+}
 
 object GhScala extends GhScala
 

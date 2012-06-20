@@ -31,11 +31,7 @@ class Spec extends Specification{ def is =
   } ^ "tree" ! {
     nullCheck(GhScala.trees(testUser,"ghscala",testSHA))
   } ^ "issue" ! {
-    forall(repos){case (user,repo) =>
-      forall(List(Closed,Open)){ state =>
-        nullCheck(GhScala.issues(user,repo,state))
-      }
-    }
+    forallWithState(GhScala.issues)
   } ^ "an issue events" ! {
     val issues = List(("lift","framework",1254),("unfiltered","unfiltered",29))
     forall(issues){case (user,repo,num) =>
@@ -46,13 +42,7 @@ class Spec extends Specification{ def is =
   } ^ "repository issue events" ! {
     check(GhScala.issueEvents)
   } ^ "search issues" ! {
-    forall(repos){case (user,r) =>
-      forall(List(Open,Closed)){ state =>
-        forall(GhScala.searchIssues(user,r,"scala",state)){ issue =>
-          nullCheck(issue)
-        }
-      }
-    }
+    forallWithState(GhScala.searchIssues(_,_,"scala",_))
   } ^ "downloads" ! {
     val (repo,user) = ("eed3si9n","scalaxb")
     val list = GhScala.downloads(repo,user)
@@ -84,7 +74,25 @@ class Spec extends Specification{ def is =
     val `0.11.2` = GhScala.readme("harrah","xsbt","v0.11.2")
 
     nullCheck(`0.11.2`) and nullCheck(`0.11.3`) and { `0.11.2` !== `0.11.3` }
+  } ^ "pulls" ! {
+    forallWithState(GhScala.pulls)
+  } ^ "orgs" ! {
+    forall(repos.map(_._1)){ user =>
+      nullCheck(GhScala.orgs(user))
+    }
+  } ^ "org" ! {
+    forall(testOrgs){ o =>
+      nullCheck(GhScala.org(o))
+    }
   } ^ end
+
+  def forallWithState[A](f: (String,String,State) => List[A]) = {
+    forall(repos){case (user,repo) =>
+      val open   = f(user,repo,Open)
+      val closed = f(user,repo,Closed)
+      nullCheck(open) and nullCheck(closed) and {forall(open){closed must not contain(_)}}
+    }
+  }
 
   def check[A](func:(String,String) => List[A]) =
     forall(repos){case (user,repo) =>
@@ -103,6 +111,7 @@ class Spec extends Specification{ def is =
     }
   }
 
+  val testOrgs = List("scalajp","unfiltered","sbt","lift","dispatch")
   val repos = List(("etorreborre","specs2"),("dispatch","dispatch"),("scalaz","scalaz"),("unfiltered","unfiltered"))
   val testUser = "xuwei-k"
   val testRepo = "sbtend"
