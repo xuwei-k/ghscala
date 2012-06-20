@@ -6,18 +6,20 @@ trait GhScala{
 
   def repo(user:String,repo:String):Repo = single[Repo]("repos",user,repo)
 
-  def repos(user:String):List[Repo] = list[Repo]("users",user,"repos")
+  val repos = (page:Int) => (user:String) => listRequest[Repo]("users",user,"repos")()(page)
 
-  def refs(user:String,repo:String):List[Ref] = list[Ref]("repos",user,repo,"git/refs")
+  val refs = (page:Int) => {
+    listRequest[Ref]("repos",_:String,_:String,"git/refs")()(page)
+  }.tupled
 
-  def followers(user:String):List[User] = list[User]("users",user,"followers")
+  val followers = (user:String) => listRequest[User]("users",user,"followers")()(_)
 
-  def searchRepo(query:String):List[SearchRepo] = {
+  val searchRepo = (query:String) => {
     val json = getJson("legacy/repos/search",query)
     json2list[SearchRepo](json \ "repositories")
   }
 
-  def searchIssues(user:String,repo:String,query:String,state:State = Open):List[IssueSearch] = {
+  def searchIssues(user:String,repo:String,query:String,state:State = Open) = {
     val json = getJson("legacy/issues/search",user,repo,state.name,query)
     json2list[IssueSearch](json \ "issues")
   }
@@ -36,19 +38,26 @@ trait GhScala{
   def issueEvents(user:String,repo:String):List[IssueEvent2] =
     list[IssueEvent2]("repos",user,repo,"issues/events")
 
-  def downloads(user:String,repo:String):List[Download] =
-    list[Download]("repos",user,repo,"downloads")
+  val downloads = (page:Int) => {
+    listRequest[Download]("repos",_:String,_:String,"downloads")()(page)
+  }.tupled
 
   def download(user:String,repo:String,id:Long):Download = single[Download]("repos",user,repo,"downloads",id.toString)
 
-  def forks(user:String,repo:String):List[Repo] = list[Repo]("repos",user,repo,"forks")
+  val forks = (page:Int) => {
+    listRequest[Repo]("repos",_:String,_:String,"forks")()(page)
+  }.tupled
 
   // TODO error if contains organization
-  def watchers(user:String,repo:String):List[User] = list[User]("repos",user,repo,"watchers")
+  val watchers = (page:Int) => {
+    listRequest[User]("repos",_:String,_:String,"watchers")()(page)
+  }.tupled
 
-  def watched(user:String):List[Repo] = list[Repo]("users",user,"watched")
+  val watched = (user:String) => list[Repo]("users",user,"watched")
 
-  def collaborators(user:String,repo:String):List[User] = list[User]("repos",user,repo,"collaborators")
+  val collaborators = (page:Int) => {
+    listRequest[User]("repos",_:String,_:String,"collaborators")()(page)
+  }.tupled
 
   def comments(user:String,repo:String):List[Comment] = list[Comment]("repos",user,repo,"comments")
 
@@ -63,7 +72,9 @@ trait GhScala{
 
   def pulls(user:String,repo:String,state:State = Open):List[Pull] = listWithParams[Pull]("repos",user,repo,"pulls")("state" -> state.name )
 
-  def orgs(user:String):List[Org] = list[Org]("users",user,"orgs")
+  val orgs = (page:Int) => {
+    listRequest[Org]("users",_:String,"orgs")()(page)
+  }
 
   def org(orgName:String):Organization = single[Organization]("orgs",orgName)
 }

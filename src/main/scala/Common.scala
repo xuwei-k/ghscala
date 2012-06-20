@@ -9,6 +9,10 @@ trait FromJValue[A]{
 
 trait Common{
 
+  def all[A,B](f : Int => A => List[B] ) = { param: A =>
+    Iterator.from(1).map(f(_)(param)).takeWhile(! _.isEmpty).toList.flatten
+  }
+
   val BASE = "https://api.github.com/"
 
   type PARAM = (String,String)
@@ -27,6 +31,9 @@ trait Common{
 
   def listWithParams[A:FromJValue](url:String*)(params:PARAM*):List[A] =
     json2list[A](getJsonWithParams(url:_*)(params:_*))
+
+  def listRequest[A:FromJValue](url:String*)(params:PARAM*)(page:Int):List[A] =
+    json2list[A](getJsonWithParams(url:_*)({Seq("page" -> page.toString,"per_page" -> "100") ++ params} :_*))
 
   def list[A:FromJValue](url:String*):List[A] = json2list[A](getJson(url:_*))
 
