@@ -64,6 +64,14 @@ trait GhScala{
 
   def blob(user:String,repo:String,sha:String):Blob = single[Blob]("repos",user,repo,"git/blobs",sha)
 
+  def contents(user:String,repo:String,path:String,ref:String = null):Contents =
+    Option(ref).collect{ case r if ! r.isEmpty =>
+      singleWithParams[Contents]("repos",user,repo,"contents",path)("ref"-> r)
+    }.getOrElse{
+      single[Contents]("repos",user,repo,"contents",path)
+    }
+
+
 }
 
 object GhScala extends GhScala with All
