@@ -2,7 +2,7 @@ resolvers += "xuwei-k" at "http://xuwei-k.github.com/mvn"
 
 watchSources ++= { file("project") ** "*.scala" get }
 
-sourceGenerators in Compile <+= (sourceManaged in Compile).map{GenerateAllApi.task}
+sourceGenerators in Compile <+= (sourceManaged in Compile).map{Generater.task}
 
 name := "ghscala"
 

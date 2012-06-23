@@ -133,6 +133,10 @@ class Spec extends Specification{ def is =
       nullCheck(GhScala.org(o))
     }
     }
+  } ^ "blob" ! {
+    p("blob"){
+      nullCheck(GhScala.blob("xuwei-k","sbtend","f4ff7a5afa754e5d2c3ffd60900e2e0d2e744590"))
+    }
   } ^ end
 
   def forallWithState[A](f: (String,String,State) => List[A]) = {

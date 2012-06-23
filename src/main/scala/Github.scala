@@ -61,6 +61,9 @@ trait GhScala{
       val list = Iterator.from(1).map(Core._watchers(_)(params)).takeWhile{case (a,b) => a.size + b.size == DEFAULT_PER_PAGE }.toList
       list.flatMap{_._1} -> list.flatMap{_._2}
     }
+
+  def blob(user:String,repo:String,sha:String):Blob = single[Blob]("repos",user,repo,"git/blobs",sha)
+
 }
 
 object GhScala extends GhScala with All
