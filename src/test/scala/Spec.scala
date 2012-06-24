@@ -43,7 +43,9 @@ class Spec extends Specification{ def is =
     }
   } ^ "tree" ! {
     p("tree"){
-    nullCheck(GhScala.trees(testUser,"ghscala",testSHA))
+      val notRecursive = GhScala.trees(testUser,"ghscala",testSHA)
+      val recursive = GhScala.trees(testUser,"ghscala",testSHA,100)
+      nullCheck(notRecursive) and nullCheck(recursive) and (recursive.tree.size must be_> (notRecursive.tree.size) )
     }
   } ^ "issue" ! {
     p("issue"){

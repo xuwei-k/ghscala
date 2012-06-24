@@ -19,7 +19,10 @@ trait GhScala{
 
   def commits(user:String,repo:String,sha:String):CommitResponse = single[CommitResponse]("repos",user,repo,"commits",sha)
 
-  def trees(user:String,repo:String,sha:String):TreeResponse = single[TreeResponse]("repos",user,repo,"git/trees",sha)
+  def trees(user:String,repo:String,sha:String,recursive:java.lang.Integer = null):TreeResponse = {
+    val request = singleWithParams[TreeResponse]("repos",user,repo,"git/trees",sha) _
+    Option(recursive).map{ r => request("recursive" -> r.toString) }.getOrElse(request())
+  }
 
   // TODO parameters http://developer.github.com/v3/issues/
   def issues(user:String,repo:String,state:State = Open):List[Issue] =
