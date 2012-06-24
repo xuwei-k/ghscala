@@ -104,7 +104,7 @@ class Spec extends Specification{ def is =
     check(Function.untupled(GhScala.collaborators(_)))
     }
   } ^ "comments" ! {
-//    check(GhScala.comments)
+    check(GhScala.comments)
     success
   } ^ "comments for single commit" ! {
     p("comments for single commits"){
