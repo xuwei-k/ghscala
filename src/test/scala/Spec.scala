@@ -56,13 +56,17 @@ class Spec extends Specification{ def is =
     val issues = List(("lift","framework",1254),("unfiltered","unfiltered",29))
     forall(issues){case (user,repo,num) =>
       forall(GhScala.issueEvents(user,repo,num)){ event =>
-        nullCheck(event)
+        nullCheck(event) and (event.eventType must not be EventType.Unknown)
       }
     }
     }
   } ^ "repository issue events" ! {
     p("repository issue events"){
-    check(GhScala.issueEvents)
+    forall(repos){case (user,repo) =>
+      forall(GhScala.issueEvents(user,repo)){e =>
+        nullCheck(e) and (e.eventType must not be EventType.Unknown)
+      }
+    }
     }
   } ^ "search issues" ! {
     p("search issues"){

@@ -67,7 +67,9 @@ case class IssueEvent(
   created_at :DateTime,
   commit_id  :Option[String],
   url        :String
-)
+){
+  val eventType:EventType = EventType(event)
+}
 
 case class IssueEvent2(
   event      :String, // TODO ADT ?
@@ -77,4 +79,29 @@ case class IssueEvent2(
   commit_id  :Option[String],
   created_at :DateTime,
   url        :String
-)
+){
+  val eventType:EventType = EventType(event)
+}
+
+sealed abstract class EventType(private[ghscala] val name:String)
+object EventType{
+  case object Closed     extends EventType("closed")
+  case object Reopened   extends EventType("reopened")
+  case object Subscribed extends EventType("subscribed")
+  case object Merged     extends EventType("merged")
+  case object Referenced extends EventType("referenced")
+  case object Mentioned  extends EventType("mentioned")
+  case object Assigned   extends EventType("assigned")
+  case object Unknown    extends EventType("unknown")
+
+  def apply(name:String):EventType = name match{
+    case Closed.name     => Closed
+    case Reopened.name   => Reopened
+    case Subscribed.name => Subscribed
+    case Merged.name     => Merged
+    case Referenced.name => Referenced
+    case Mentioned.name  => Mentioned
+    case Assigned.name   => Assigned
+    case _               => Unknown
+  }
+}
