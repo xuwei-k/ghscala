@@ -12,7 +12,7 @@ object Generater{
   private def instances(dir:File):File = {
     val types = Seq(
       "Repo","Ref","User","SearchRepo","CommitResponse","TreeResponse","IssueEvent","Issue","Blob",
-      "IssueEvent2","IssueSearch","Download","Comment","Contents","Pull","Org","Organization"
+      "IssueEvent2","IssueSearch","Download","Comment","Contents","Pull","Org","Organization","Label"
     )
     val header = packageStatement +
       """import net.liftweb.json._
