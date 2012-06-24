@@ -43,11 +43,7 @@ trait GhScala{
   def comments(user:String,repo:String,sha:String):List[Comment] = list[Comment]("repos",user,repo,"commits",sha,"comments")
 
   def readme(user:String,repo:String,ref:String = null):Contents =
-    Option(ref).collect{ case r if ! r.isEmpty =>
-      singleWithParams[Contents]("repos",user,repo,"readme")("ref"-> r)
-    }.getOrElse{
-      single[Contents]("repos",user,repo,"readme")
-    }
+    refParamOpt[Contents]("repos",user,repo,"readme")(ref)
 
   def pulls(user:String,repo:String,state:State = Open):List[Pull] = listWithParams[Pull]("repos",user,repo,"pulls")("state" -> state.name )
 
@@ -68,12 +64,15 @@ trait GhScala{
   def blob(user:String,repo:String,sha:String):Blob = single[Blob]("repos",user,repo,"git/blobs",sha)
 
   def contents(user:String,repo:String,path:String,ref:String = null):Contents =
-    Option(ref).collect{ case r if ! r.isEmpty =>
-      singleWithParams[Contents]("repos",user,repo,"contents",path)("ref"-> r)
-    }.getOrElse{
-      single[Contents]("repos",user,repo,"contents",path)
-    }
+    refParamOpt[Contents]("repos",user,repo,"contents",path)(ref)
 
+  private def refParamOpt[A:FromJValue](path:String*)(ref:String):A = {
+    Option(ref).collect{ case r if ! r.isEmpty =>
+      singleWithParams[A](path:_*)("ref"-> r)
+    }.getOrElse{
+      single[A](path:_*)
+    }
+  }
 
 }
 
