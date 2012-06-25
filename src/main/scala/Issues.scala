@@ -25,7 +25,7 @@ case class Label(
 case class Milestone(
   title         :String,
   closed_issues :Long,
-//  due_on        :Unknown, TODO ?
+  due_on        :Option[DateTime],
   number        :Long,
   created_at    :DateTime,
   description   :Option[String],

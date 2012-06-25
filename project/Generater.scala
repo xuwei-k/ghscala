@@ -12,7 +12,8 @@ object Generater{
   private def instances(dir:File):File = {
     val types = Seq(
       "Repo","Ref","User","SearchRepo","CommitResponse","TreeResponse","IssueEvent","Issue","Blob",
-      "IssueEvent2","IssueSearch","Download","Comment","Contents","Pull","Org","Organization","Label"
+      "IssueEvent2","IssueSearch","Download","Comment","Contents","Pull","Org","Organization","Label",
+      "Milestone"
     )
     val header = packageStatement +
       """import net.liftweb.json._
@@ -20,6 +21,7 @@ object Generater{
         |trait Instances{
         |
         |  protected implicit val formats = DefaultFormats
+        |
         |""".stripMargin
 
     val str = types.map{ n =>

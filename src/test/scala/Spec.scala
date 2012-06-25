@@ -151,6 +151,10 @@ class Spec extends Specification{ def is =
     p("labels"){
       check(GhScala.labels)
     }
+  } ^ "milestones" ! {
+    p("milestones"){
+      check(GhScala.milestones)
+    }
   } ^ end
 
   def forallWithState[A](f: (String,String,State) => List[A]) = {

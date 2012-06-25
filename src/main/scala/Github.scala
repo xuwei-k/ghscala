@@ -68,6 +68,8 @@ trait GhScala{
 
   def labels(user:String,repo:String):List[Label] = list[Label]("repos",user,repo,"labels")
 
+  def milestones(user:String,repo:String):List[Milestone] = list[Milestone]("repos",user,repo,"milestones")
+
   private def refParamOpt[A:FromJValue](path:String*)(ref:String):A = {
     Option(ref).collect{ case r if ! r.isEmpty =>
       singleWithParams[A](path:_*)("ref"-> r)
