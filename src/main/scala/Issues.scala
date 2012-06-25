@@ -70,7 +70,7 @@ case class IssueEvent(
 )
 
 case class IssueEvent2(
-  event      :String, // TODO ADT ?
+  event      :String,
   actor      :User,
   issue      :Issue,
   id         :Long,
