@@ -41,3 +41,7 @@ initialCommands in console := {
     "net.liftweb.json"
   ).map{"import " + _ + "._"}.mkString(";")
 }
+
+publishTo := sys.env.get("MAVEN_DIRECTORY").map{ dir =>
+  Resolver.file("gh-pages",file(dir))(Patterns(true, Resolver.mavenStyleBasePattern))
+}
