@@ -1,8 +1,6 @@
 package com.github.xuwei_k.ghscala
 
-import Common._
-
-private object Core{
+trait Core extends Common{
 
   val _followers = (page:Int) => (user:String) => listRequest[User]("users",user,"followers")()(page)
 

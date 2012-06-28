@@ -43,9 +43,9 @@ object Generater{
     val str =
     Iterator(
       packageStatement,
-      "trait All{\n",
+      "trait All extends Core{\n",
       methods.map{m =>
-        "  val " + m + " = Common.all(Core._" + m + ")"
+        "  val " + m + " = all(_" + m + ")"
       }.mkString("\n\n"),
       "}"
     ).mkString("\n")

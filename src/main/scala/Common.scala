@@ -89,5 +89,3 @@ trait Common extends Instances{
     j pure getJsonWithParams(url:_*)(params:_*)
 
 }
-
-object Common extends Common{val isDebug = true}

@@ -1,9 +1,8 @@
 package com.github.xuwei_k.ghscala
 
-import Common._
 import net.liftweb.json._
 
-trait GhScala{
+class GhScala(override val isDebug:Boolean) extends Common with All{
 
   /**
    * @see [[http://developer.github.com/v3/repos]]
@@ -99,7 +98,7 @@ trait GhScala{
 
   val watchers: PARAM => (List[User],List[Org]) =
     (params:PARAM ) => {
-      val list = Iterator.from(1).map(Core._watchers(_)(params)).takeWhile{case (a,b) => a.size + b.size == DEFAULT_PER_PAGE }.toList
+      val list = Iterator.from(1).map(_watchers(_)(params)).takeWhile{case (a,b) => a.size + b.size == DEFAULT_PER_PAGE }.toList
       list.flatMap{_._1} -> list.flatMap{_._2}
     }
 
@@ -134,5 +133,4 @@ trait GhScala{
 
 }
 
-object GhScala extends GhScala with All
-
+object GhScala extends GhScala(true)
