@@ -9,16 +9,18 @@ case class Tree(
   path   :String
 ){
   lazy val getType:TreeType = `type` match {
-    case "blob" => Blob
-    case "tree" => Directory
-    case _      => Unknown(`type`)
+    case "blob" => TreeType.Blob
+    case "tree" => TreeType.Directory
+    case _      => TreeType.Unknown(`type`)
   }
 }
 
 sealed abstract class TreeType
-case object Blob                 extends TreeType
-case object Directory            extends TreeType
-case class  Unknown(name:String) extends TreeType
+object TreeType{
+  case object Blob                 extends TreeType
+  case object Directory            extends TreeType
+  case class  Unknown(name:String) extends TreeType
+}
 
 case class TreeResponse(
   sha  :String,
