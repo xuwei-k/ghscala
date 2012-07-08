@@ -26,7 +26,7 @@ object Generater{
 
     val str = types.map{ n =>
       Iterator(
-        "  implicit val " + n.toLowerCase + "Json = new FromJValue[" + n + "]{",
+        "  protected[ghscala] implicit val " + n.toLowerCase + "Json = new FromJValue[" + n + "]{",
         "    def pure(j:JValue) = j.extract[" + n + "]",
         "  }"
       ).mkString("\n")
