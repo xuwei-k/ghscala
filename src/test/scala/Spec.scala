@@ -4,7 +4,6 @@ import org.specs2.Specification
 import org.specs2.matcher.MatchResult
 
 class Spec extends Specification{ def is =
-//  sequential ^
   "repos" ! {
     p("repos"){
     forall(repos){case (user,_) =>
