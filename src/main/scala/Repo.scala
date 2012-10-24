@@ -1,7 +1,7 @@
 package com.github.xuwei_k.ghscala
 
 case class SearchRepo(
-  has_downloads :Boolean,
+  has_downloads :Option[Boolean],
   name          :String,
   has_issues    :Boolean,
   forks         :Int,
@@ -25,7 +25,7 @@ case class SearchRepo(
 )
 
 case class Repo(
-  has_downloads :Boolean,
+  has_downloads :Option[Boolean],
   name          :String,
   has_issues    :Boolean,
   forks         :Int,
