@@ -1,1 +1,2 @@
-alias sxr=; set Seq(addCompilerPlugin("org.scala-tools.sxr" % "sxr_2.9.0" % "0.2.7" ),scalacOptions <+= scalaSource in Compile map { "-P:sxr:base-directory:" + _.getAbsolutePath }) ; test:compile
+# https://github.com/harrah/xsbt/issues/572
+#alias sxr=; set Seq(addCompilerPlugin("org.scala-tools.sxr" % "sxr_2.9.0" % "0.2.7" ),scalacOptions <+= scalaSource in Compile map { "-P:sxr:base-directory:" + _.getAbsolutePath }) ; test:compile
