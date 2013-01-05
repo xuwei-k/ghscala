@@ -18,7 +18,7 @@ licenses := Seq("MIT License" -> url("http://www.opensource.org/licenses/mit-lic
 
 scalacOptions := Seq("-deprecation", "-unchecked")
 
-externalResolvers ~= { _.filterNot{_.name.contains("Scala-Tools")} }
+resolvers += Opts.resolver.sonatypeReleases
 
 scalaVersion:= "2.9.2"
 
@@ -27,9 +27,8 @@ val liftV = "2.4"
 Seq(
    "net.liftweb" %% "lift-json-scalaz" % liftV
   ,"net.liftweb" %% "lift-json-ext" % liftV
-  ,"org.scalaj"  %% "scalaj-http" % "0.3.1"
-  ,"org.specs2" %% "specs2" % "1.11" % "test"
-  ,"commons-codec" % "commons-codec" % "1.6"
+  ,"org.scalaj"  %% "scalaj-http" % "0.3.6"
+  ,"org.specs2" %% "specs2" % "1.12.3" % "test"
   ,"net.databinder" % "pamflet-knockoff_2.9.1" % "0.4.0"
 )
 }
