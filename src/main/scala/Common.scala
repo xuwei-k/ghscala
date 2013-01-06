@@ -1,7 +1,8 @@
 package com.github.xuwei_k.ghscala
 
 import java.io._
-import net.liftweb.json._
+import org.json4s._
+import org.json4s.native._
 
 trait FromJValue[A]{
   def pure(j:JValue):A
@@ -85,7 +86,7 @@ trait Common extends Instances{
 
   def single[A](url:String*)(implicit j:FromJValue[A]):A = j pure getJson(url:_*)
 
-  def singleWithParams[A](url:String*)(params:PARAM*)(implicit j:FromJValue[A]):A =
+  def singleWithParams[A](url:String*)(params:Seq[PARAM])(implicit j:FromJValue[A]):A =
     j pure getJsonWithParams(url:_*)(params:_*)
 
 }

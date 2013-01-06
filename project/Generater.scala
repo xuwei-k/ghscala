@@ -16,7 +16,7 @@ object Generater{
       "Milestone"
     )
     val header = packageStatement +
-      """import net.liftweb.json._
+      """import org.json4s._
         |
         |trait Instances{
         |

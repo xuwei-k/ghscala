@@ -1,6 +1,6 @@
 package com.github.xuwei_k.ghscala
 
-import net.liftweb.json._
+import org.json4s._
 
 class GhScala(override val isDebug:Boolean) extends Common with All{
 
@@ -32,7 +32,7 @@ class GhScala(override val isDebug:Boolean) extends Common with All{
    */
   def trees(user:String,repo:String,sha:String,recursive:java.lang.Integer = null):TreeResponse = {
     val request = singleWithParams[TreeResponse]("repos",user,repo,"git/trees",sha) _
-    Option(recursive).map{ r => request("recursive" -> r.toString) }.getOrElse(request())
+    Option(recursive).map{ r => request(Seq("recursive" -> r.toString)) }.getOrElse(request(Nil))
   }
 
   /**
@@ -125,7 +125,7 @@ class GhScala(override val isDebug:Boolean) extends Common with All{
 
   private def refParamOpt[A:FromJValue](path:String*)(ref:String):A = {
     Option(ref).collect{ case r if ! r.isEmpty =>
-      singleWithParams[A](path:_*)("ref"-> r)
+      singleWithParams[A](path:_*)(Seq("ref"-> r))
     }.getOrElse{
       single[A](path:_*)
     }

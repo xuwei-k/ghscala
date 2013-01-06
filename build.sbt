@@ -1,12 +1,10 @@
-resolvers += "xuwei-k" at "http://xuwei-k.github.com/mvn"
-
 watchSources ++= { file("project") ** "*.scala" get }
 
 sourceGenerators in Compile <+= (sourceManaged in Compile).map{Generater.task}
 
 name := "ghscala"
 
-version := "0.1.1"
+version := "0.1.2"
 
 organization := "com.github.xuwei-k"
 
@@ -20,18 +18,24 @@ scalacOptions := Seq("-deprecation", "-unchecked")
 
 resolvers += Opts.resolver.sonatypeReleases
 
-scalaVersion:= "2.9.2"
+crossScalaVersions := Seq("2.9.2","2.10.0")
 
-libraryDependencies ++= {
-val liftV = "2.4"
-Seq(
-   "net.liftweb" %% "lift-json-scalaz" % liftV
-  ,"net.liftweb" %% "lift-json-ext" % liftV
-  ,"org.scalaj"  %% "scalaj-http" % "0.3.6"
-  ,"org.specs2" %% "specs2" % "1.12.3" % "test"
-  ,"net.databinder" % "pamflet-knockoff_2.9.1" % "0.4.0"
-)
+libraryDependencies ++= Seq("scalaz","ext","native").map{ m =>
+  "org.json4s" %% ( "json4s-" + m ) % "3.1.0"
 }
+
+libraryDependencies <+= scalaVersion{ v =>
+  if(v.startsWith("2.9"))
+    "org.specs2" %% "specs2" % "1.12.3" % "test"
+  else
+    "org.specs2" %% "specs2" % "1.13" % "test"
+}
+
+libraryDependencies ++= Seq(
+   "org.scalaj"  %% "scalaj-http" % "0.3.6"
+  ,"commons-codec" % "commons-codec" % "1.7"
+  //,"net.databinder" % "pamflet-knockoff_2.9.1" % "0.4.0"
+)
 
 initialCommands in console := {
   Iterator(
