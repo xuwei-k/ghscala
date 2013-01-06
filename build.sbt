@@ -4,7 +4,7 @@ sourceGenerators in Compile <+= (sourceManaged in Compile).map{Generater.task}
 
 name := "ghscala"
 
-version := "0.1.2"
+version := "0.1.3-SNAPSHOT"
 
 organization := "com.github.xuwei-k"
 
