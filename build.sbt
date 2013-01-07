@@ -40,7 +40,7 @@ libraryDependencies ++= Seq(
 initialCommands in console := {
   Iterator(
     "com.github.xuwei_k.ghscala",
-    "net.liftweb.json"
+    "org.json4s"
   ).map{"import " + _ + "._"}.mkString(";")
 }
 
