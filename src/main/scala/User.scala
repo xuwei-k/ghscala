@@ -24,7 +24,7 @@ case class Org(
   url          :String
 )
 
-case class Organization(
+final case class Organization(
   `type`       :String,
   avatar_url   :String,
   blog         :Option[String],
@@ -42,3 +42,13 @@ case class Organization(
   public_repos :Long,
   url          :String
 )
+
+object Organization {
+
+  implicit val organizationDecodeJson: DecodeJson[Organization] =
+    DecodeJson.jdecode16L(Organization.apply)(
+      "type", "avatar_url", "blog", "company", "created_at", "email", "followers",
+      "following", "html_url", "id", "location", "login", "name", "public_gists",
+      "public_repos", "url"
+    )
+}

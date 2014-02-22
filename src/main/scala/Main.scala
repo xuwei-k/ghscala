@@ -10,8 +10,9 @@ object Main {
 //    e <- API.comments("scalaz", "scalaz")
 //    f <- API.issueEvents("scalaz", "scalaz", 650)
 //    f <- API.issueEvents("scalaz", "scalaz")
-    g <- API.readme("scalaz", "scalaz")
-  } yield g
+//    g <- API.readme("scalaz", "scalaz")
+    h <- API.org("scalaz")
+  } yield h
 
   def main(args: Array[String]){
     val result = args match {
