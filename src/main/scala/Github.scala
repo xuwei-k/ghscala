@@ -31,6 +31,9 @@ object API {
 
   def repo(user: String, repo: String): Result[DecodeResult[Repo]] =
     getAndMap(s"repos/$user/$repo")
+
+  def commits(user: String, repo: String, sha: String): Result[DecodeResult[CommitResponse]] =
+    getAndMap[CommitResponse](s"repos/$user/$repo/commits/$sha")
 }
 
 object Github {
@@ -74,8 +77,9 @@ object Github {
 
   val program = for{
 //    a <- API.trees("scalaz", "scalaz", "master")
-    b <- API.repo("scalaz", "scalaz")
-  } yield b
+//    a <- API.repo("scalaz", "scalaz")
+    a <- API.commits("scalaz", "scalaz", "master")
+  } yield a
 
   def main(args: Array[String]){
     val result = run(program, Config(BasicAuth(args(0), args(1))))
