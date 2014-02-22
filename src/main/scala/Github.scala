@@ -77,7 +77,7 @@ object Github {
       def apply[A](a: GhRequest[A]) = {
         import conf.auth
         val x = try {
-          \/-(a.req.auth(auth.user, auth.pass).asString)
+          \/-(auth.fold(a.req)(x => a.req.auth(x.user, x.pass)).asString)
         } catch {
           case e: scalaj.http.HttpException => -\/(Error.Http(e))
         }
@@ -95,8 +95,15 @@ object Github {
     e <- API.comments("scalaz", "scalaz")
   } yield e
 
+  def runMain(conf: Config = Config(None)) = run(program, conf)
+
   def main(args: Array[String]){
-    val result = run(program, Config(BasicAuth(args(0), args(1))))
+    val result = args match {
+      case Array(user, pass) =>
+        runMain(Config(Some(BasicAuth(user, pass))))
+      case Array() =>
+        runMain()
+    }
     println(result)
   }
 
