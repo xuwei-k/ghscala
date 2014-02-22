@@ -115,7 +115,7 @@ object Issue {
 
 }
 
-case class IssueEvent(
+final case class IssueEvent(
   event      :String,
   actor      :User,
   id         :Long,
@@ -124,6 +124,14 @@ case class IssueEvent(
   url        :String
 ){
   val eventType:EventType = EventType(event)
+}
+
+object IssueEvent {
+
+  implicit val issueEventDecodeJson: DecodeJson[IssueEvent] =
+    DecodeJson.jdecode6L(IssueEvent.apply)(
+      "event", "actor", "id", "created_at", "commit_id", "url"
+    )
 }
 
 case class IssueEvent2(

@@ -37,9 +37,16 @@ object API {
       ScalajHttp.param("state", state.toString)
     )
 
+  /** [[http://developer.github.com/v3/issues/events/]] */
+  def issueEvents(user: String, repo: String, number: Long): Result[List[IssueEvent]] =
+    get(s"repos/$user/$repo/issues/$number/events")
+
   /** [[http://developer.github.com/v3/repos/comments]] */
   def comments(user: String, repo: String): Result[List[Comment]] =
     get(s"repos/$user/$repo/comments")
+
+
+
 }
 
 object Github {
@@ -92,8 +99,9 @@ object Github {
 //    b <- API.repo("scalaz", "scalaz")
 //    c <- API.commits("scalaz", "scalaz", "master")
 //    d <- API.issues("scalaz", "scalaz")
-    e <- API.comments("scalaz", "scalaz")
-  } yield e
+//    e <- API.comments("scalaz", "scalaz")
+    f <- API.issueEvents("scalaz", "scalaz", 650)
+  } yield f
 
   def runMain(conf: Config = Config(None)) = run(program, conf)
 
