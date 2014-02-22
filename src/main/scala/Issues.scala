@@ -1,4 +1,4 @@
-package com.github.xuwei_k.ghscala
+package ghscala
 
 sealed abstract class State(private[ghscala] val name:String)
 case object Open   extends State("open")
@@ -10,19 +10,33 @@ object State{
   }
 }
 
-case class PullRequest(
+final case class PullRequest(
   patch_url   :Option[String],
   diff_url    :Option[String],
   html_url    :Option[String]
 )
 
-case class Label(
+object PullRequest {
+
+  implicit val pullRequestDecodeJson: DecodeJson[PullRequest] =
+    DecodeJson.jdecode3L(PullRequest.apply)("patch_url", "diff_url", "html_url")
+
+}
+
+final case class Label(
   color        :String,
   url          :String,
   name         :String
 )
 
-case class Milestone(
+object Label {
+
+  implicit val labelDecodeJson: DecodeJson[Label] =
+    DecodeJson.jdecode3L(Label.apply)("color", "url", "name")
+
+}
+
+final case class Milestone(
   title         :String,
   closed_issues :Long,
   due_on        :Option[DateTime],
@@ -38,7 +52,25 @@ case class Milestone(
   lazy val getState:State = State(state)
 }
 
-case class Issue(
+object Milestone {
+
+  implicit val issueDecodejson: DecodeJson[Milestone] =
+    DecodeJson.jdecode11L(Milestone.apply)(
+      "title",
+      "closed_issues",
+      "due_on",
+      "number",
+      "created_at",
+      "description",
+      "creator",
+      "state",
+      "id",
+      "open_issues",
+      "url"
+    )
+}
+
+final case class Issue(
   comments     :Long,
   user         :User,
   labels       :List[Label],
@@ -57,10 +89,33 @@ case class Issue(
 ){
 
   override def toString = title
-  lazy val getState:State = State(state)
+  lazy val getState: State = State(state)
 }
 
-case class IssueEvent(
+object Issue {
+
+  implicit val issueDecodejson: DecodeJson[Issue] =
+    DecodeJson.jdecode15L(Issue.apply)(
+      "comments",
+      "user",
+      "labels",
+      "state",
+      "number",
+      "pull_request",
+      "milestone",
+      "assignee",
+      "html_url",
+      "url",
+      "body",
+      "closed_at",
+      "title",
+      "updated_at",
+      "created_at"
+    )
+
+}
+
+final case class IssueEvent(
   event      :String,
   actor      :User,
   id         :Long,
@@ -71,7 +126,15 @@ case class IssueEvent(
   val eventType:EventType = EventType(event)
 }
 
-case class IssueEvent2(
+object IssueEvent {
+
+  implicit val issueEventDecodeJson: DecodeJson[IssueEvent] =
+    DecodeJson.jdecode6L(IssueEvent.apply)(
+      "event", "actor", "id", "created_at", "commit_id", "url"
+    )
+}
+
+final case class IssueEvent2(
   event      :String,
   actor      :User,
   issue      :Issue,
@@ -81,6 +144,14 @@ case class IssueEvent2(
   url        :String
 ){
   val eventType:EventType = EventType(event)
+}
+
+object IssueEvent2 {
+
+  implicit val issueEvent2DecodeJson: DecodeJson[IssueEvent2] =
+    DecodeJson.jdecode7L(IssueEvent2.apply)(
+      "event", "actor", "issue", "id", "commit_id", "created_at", "url"
+    )
 }
 
 sealed abstract class EventType(private[ghscala] val name:String)

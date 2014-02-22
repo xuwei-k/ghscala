@@ -1,6 +1,6 @@
-package com.github.xuwei_k.ghscala
+package ghscala
 
-case class Comment(
+final case class Comment(
   updated_at :String,
   id         :Long,
   created_at :String,
@@ -13,3 +13,22 @@ case class Comment(
   position   :Option[Long],
   line       :Option[Long]
 )
+
+object Comment {
+
+  implicit val commentDecodeJson: DecodeJson[Comment] =
+    DecodeJson.jdecode11L(Comment.apply)(
+      "updated_at",
+      "id",
+      "created_at",
+      "path",
+      "body",
+      "html_url",
+      "commit_id",
+      "user",
+      "url",
+      "position",
+      "line"
+    )
+
+}

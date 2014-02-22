@@ -1,33 +1,55 @@
-package com.github.xuwei_k.ghscala
+package ghscala
 
-trait Core extends Common{
+import scalaz._, Free._
+import argonaut._
 
-  val _followers = (page:Int) => (user:String) => listRequest[User]("users",user,"followers")()(page)
+final case class RequestF[A](req: scalaj.http.Http.Request, f: (Error \/ String) => A) {
+  def mapRequest(config: Config): RequestF[A] = copy(req = config(req))
+}
 
-  val _repos = (page:Int) => (user:String) => listRequest[Repo]("users",user,"repos")()(page)
+object Core {
 
-  val _refs = (page:Int) => {
-    listRequest[Ref]("repos",_:String,_:String,"git/refs")()(page)
-  }.tupled
+  private[this] val baseURL = "https://api.github.com/"
 
-  val _downloads = (page:Int) => {
-    listRequest[Download]("repos",_:String,_:String,"downloads")()(page)
-  }.tupled
+  type Requests[A] = Z.FreeC[RequestF, A]
 
-  val _forks = (page:Int) => {
-    listRequest[Repo]("repos",_:String,_:String,"forks")()(page)
-  }.tupled
+  def get[A: DecodeJson](url: String, opt: Config = emptyConfig): Action[A] =
+    httpRequest(opt(ScalajHttp(baseURL + url)))
 
-  val _watchers = (page:Int) => {
-    usersAndOrgs("repos",_:String,_:String,"watchers")()(page)
-  }.tupled
+  def post[A: DecodeJson](url: String, opt: Config = emptyConfig): Action[A] =
+    httpRequest(opt(ScalajHttp.post(baseURL + url)))
 
-  val _collaborators = (page:Int) => {
-    listRequest[User]("repos",_:String,_:String,"collaborators")()(page)
-  }.tupled
+  private def httpRequest[A: DecodeJson](req: scalaj.http.Http.Request): Action[A] =
+    Action[A](Z.freeC(RequestF(
+      req,
+      _.flatMap{x =>
+        Parse.decodeWith[Error \/ A, A](
+          x,
+          \/.right,
+          Error.parse andThen \/.left,
+          (msg, history) => -\/(Error.decode(msg, history))
+        )
+      }
+    )))
 
-  val _orgs = (page:Int) => {
-    listRequest[Org]("users",_:String,"orgs")()(page)
-  }
+  def execute(conf: Config): RequestF ~> Id.Id =
+    new (RequestF ~> Id.Id){
+      def apply[A](a: RequestF[A]) = {
+        a.f(try {
+          \/-(conf(a.req).asString)
+        } catch {
+          case e: scalaj.http.HttpException => -\/(Error.http(e))
+        })
+      }
+    }
+
+  private[this] val emptyConfig: Config = Endo.idEndo
+
+  def run[A](actions: Action[A]): Error \/ A =
+    run(actions, emptyConfig)
+
+  def run[A](actions: Action[A], conf: Config): Error \/ A =
+    Z.interpret(actions.run)(execute(conf))
 
 }
+

@@ -1,21 +1,39 @@
-package com.github.xuwei_k.ghscala
+package ghscala
 
-case class User(
+import argonaut._
+
+final case class User(
   login        :String,
   id           :Long,
   avatar_url   :String,
-  gravatar_id  :String,
+  gravatar_id  :Option[String],
   url          :String
 )
 
-case class Org(
+object User {
+
+  implicit val userDecodeJson: DecodeJson[User] =
+    DecodeJson.jdecode5L(User.apply)("login", "id", "avatar_url", "gravatar_id", "url")
+
+}
+
+final case class Org(
   login        :String,
   id           :Long,
   avatar_url   :String,
   url          :String
 )
 
-case class Organization(
+object Org {
+
+  implicit val orgDecodeJson: DecodeJson[Org] =
+    DecodeJson.jdecode4L(Org.apply)(
+      "login", "id", "avatar_url", "url"
+    )
+
+}
+
+final case class Organization(
   `type`       :String,
   avatar_url   :String,
   blog         :Option[String],
@@ -33,3 +51,13 @@ case class Organization(
   public_repos :Long,
   url          :String
 )
+
+object Organization {
+
+  implicit val organizationDecodeJson: DecodeJson[Organization] =
+    DecodeJson.jdecode16L(Organization.apply)(
+      "type", "avatar_url", "blog", "company", "created_at", "email", "followers",
+      "following", "html_url", "id", "location", "login", "name", "public_gists",
+      "public_repos", "url"
+    )
+}

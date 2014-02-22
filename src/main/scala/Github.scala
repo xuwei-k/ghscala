@@ -1,136 +1,75 @@
-package com.github.xuwei_k.ghscala
+package ghscala
 
-import org.json4s._
+import scalaz.Endo
 
-class GhScala(override val isDebug:Boolean) extends Common with All{
+object Github {
+  import Core._
 
-  /**
-   * @see [[http://developer.github.com/v3/repos]]
-   */
-  def repo(user:String,repo:String):Repo = single[Repo]("repos",user,repo)
+  /** [[http://developer.github.com/v3/git/blobs]] */
+  def blob(user: String, repo: String, sha: String): Action[Blob] =
+    get(s"repos/$user/$repo/git/blobs/$sha")
 
-  val searchRepo = (query:String) => {
-    val json = getJson("legacy/repos/search",query)
-    json2list[SearchRepo](json \ "repositories")
-  }
+  /** [[http://developer.github.com/v3/git/trees]] */
+  def trees(user: String, repo: String, sha: String): Action[Trees] =
+    get(s"repos/$user/$repo/git/trees/$sha")
 
-  /**
-   * @see [[http://developer.github.com/v3/search/#search-issues]]
-   */
-  def searchIssues(user:String,repo:String,query:String,state:State = Open) = {
-    val json = getJson("legacy/issues/search",user,repo,state.name,query)
-    json2list[IssueSearch](json \ "issues")
-  }
+  /** [[http://developer.github.com/v3/repos]] */
+  def repo(user: String, repo: String): Action[Repo] =
+    get(s"repos/$user/$repo")
 
-  /**
-   * @see [[http://developer.github.com/v3/git/commits]]
-   */
-  def commits(user:String,repo:String,sha:String):CommitResponse = single[CommitResponse]("repos",user,repo,"commits",sha)
+  /** [[http://developer.github.com/v3/git/commits]] */
+  def commits(user: String, repo: String, sha: String): Action[CommitResponse] =
+    get(s"repos/$user/$repo/commits/$sha")
 
-  /**
-   * @see [[http://developer.github.com/v3/git/trees]]
-   */
-  def trees(user:String,repo:String,sha:String,recursive:java.lang.Integer = null):TreeResponse = {
-    val request = singleWithParams[TreeResponse]("repos",user,repo,"git/trees",sha) _
-    Option(recursive).map{ r => request(Seq("recursive" -> r.toString)) }.getOrElse(request(Nil))
-  }
+  /** [[http://developer.github.com/v3/issues]] */
+  def issues(user: String, repo: String, state: State = Open): Action[List[Issue]] =
+    get(
+      s"repos/$user/$repo/issues",
+      ScalajHttp.param("state", state.toString)
+    )
 
-  /**
-   * @see [[http://developer.github.com/v3/issues]]
-   * TODO parameters
-   */
-  def issues(user:String,repo:String,state:State = Open):List[Issue] =
-    listWithParams[Issue]("repos",user,repo,"issues")("state" -> state.name)
+  /** [[http://developer.github.com/v3/issues/events/]] */
+  def issueEvents(user: String, repo: String, number: Long): Action[List[IssueEvent]] =
+    get(s"repos/$user/$repo/issues/$number/events")
 
-  /**
-   * @see [[http://developer.github.com/v3/issues/events/]]
-   */
-  def issueEvents(user:String,repo:String,number:Long):List[IssueEvent] =
-    list[IssueEvent]("repos",user,repo,"issues",number.toString,"events")
+  /** [[http://developer.github.com/v3/issues/events/]] */
+  def issueEvents(user: String, repo: String): Action[List[IssueEvent2]] =
+    get(s"repos/$user/$repo/issues/events")
 
-  /**
-   * @see [[http://developer.github.com/v3/issues/events/]]
-   */
-  def issueEvents(user:String,repo:String):List[IssueEvent2] =
-    list[IssueEvent2]("repos",user,repo,"issues/events")
+  /** [[http://developer.github.com/v3/repos/comments]] */
+  def comments(user: String, repo: String): Action[List[Comment]] =
+    get(s"repos/$user/$repo/comments")
 
-  /**
-   * @see [[http://developer.github.com/v3/repos/downloads]]
-   */
-  def download(user:String,repo:String,id:Long):Download = single[Download]("repos",user,repo,"downloads",id.toString)
+  /** [[http://developer.github.com/v3/repos/contents]] */
+  def readme(user: String, repo: String, ref: String): Action[Contents] =
+    get(s"repos/$user/$repo/readme", ScalajHttp.param("ref", ref))
 
-  val watched = (user:String) => list[Repo]("users",user,"watched")
+  /** [[http://developer.github.com/v3/repos/contents]] */
+  def readme(user: String, repo: String): Action[Contents] =
+    get(s"repos/$user/$repo/readme")
 
-  /**
-   * @see [[http://developer.github.com/v3/repos/comments]]
-   */
-  def comments(user:String,repo:String):List[Comment] = list[Comment]("repos",user,repo,"comments")
+  /** [[http://developer.github.com/v3/repos/contents]] */
+  def contents(user: String, repo: String, path: String): Action[Contents] =
+    get(s"repos/$user/$repo/contents/$path")
 
-  /**
-   * @see [[http://developer.github.com/v3/repos/comments]]
-   */
-  def comments(user:String,repo:String,sha:String):List[Comment] = list[Comment]("repos",user,repo,"commits",sha,"comments")
+  /** [[http://developer.github.com/v3/repos/contents]] */
+  def contents(user: String, repo: String, path: String, ref: String): Action[Contents] =
+    contents(user, repo, path).mapRequest(ScalajHttp.param("ref", ref))
 
-  /**
-   * @see [[http://developer.github.com/v3/repos/contents]]
-   */
-  def readme(user:String,repo:String,ref:String = null):Contents =
-    refParamOpt[Contents]("repos",user,repo,"readme")(ref)
+  /** [[http://developer.github.com/v3/orgs]] */
+  def org(orgName: String): Action[Organization] =
+    get(s"orgs/$orgName")
 
-  /**
-   * @see [[http://developer.github.com/v3/pulls]]
-   */
-  def pulls(user:String,repo:String,state:State = Open):List[Pull] = listWithParams[Pull]("repos",user,repo,"pulls")("state" -> state.name )
+  /** [[http://developer.github.com/v3/orgs]] */
+  def orgs(user: String): Action[List[Org]] =
+    get(s"users/$user/orgs")
 
-  /**
-   * @see [[http://developer.github.com/v3/orgs]]
-   */
-  def org(orgName:String):Organization = single[Organization]("orgs",orgName)
+  /** [[http://developer.github.com/v3/orgs]] */
+  def orgs: Action[List[Org]] =
+    get(s"user/orgs")
 
-  /**
-   * @see [[http://developer.github.com/v3/#rate-limiting]]
-   */
-  def rateLimit():Option[Long] = {
-    for{
-      JInt(j) <- getJson("rate_limit") \ "rate" \ "remaining"
-    } yield j
-  }.headOption.map{_.longValue}
-
-  val watchers: PARAM => (List[User],List[Org]) =
-    (params:PARAM ) => {
-      val list = Iterator.from(1).map(_watchers(_)(params)).takeWhile{case (a,b) => a.size + b.size == DEFAULT_PER_PAGE }.toList
-      list.flatMap{_._1} -> list.flatMap{_._2}
-    }
-
-  /**
-   * @see [[http://developer.github.com/v3/git/blobs]]
-   */
-  def blob(user:String,repo:String,sha:String):Blob = single[Blob]("repos",user,repo,"git/blobs",sha)
-
-  /**
-   * @see [[http://developer.github.com/v3/repos/contents]]
-   */
-  def contents(user:String,repo:String,path:String,ref:String = null):Contents =
-    refParamOpt[Contents]("repos",user,repo,"contents",path)(ref)
-
-  /**
-   * @see [[http://developer.github.com/v3/issues/labels]]
-   */
-  def labels(user:String,repo:String):List[Label] = list[Label]("repos",user,repo,"labels")
-
-  /**
-   * @see [[http://developer.github.com/v3/issues/milestones]]
-   */
-  def milestones(user:String,repo:String):List[Milestone] = list[Milestone]("repos",user,repo,"milestones")
-
-  private def refParamOpt[A:FromJValue](path:String*)(ref:String):A = {
-    Option(ref).collect{ case r if ! r.isEmpty =>
-      singleWithParams[A](path:_*)(Seq("ref"-> r))
-    }.getOrElse{
-      single[A](path:_*)
-    }
-  }
-
+  /** [[http://developer.github.com/v3/pulls]] */
+  def pulls(user: String, repo: String, state: State = Open): Action[List[Pull]] =
+    get(s"repos/$user/$repo/pulls")
 }
 
-object GhScala extends GhScala(true)

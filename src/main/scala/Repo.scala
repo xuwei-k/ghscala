@@ -1,4 +1,6 @@
-package com.github.xuwei_k.ghscala
+package ghscala
+
+import argonaut._
 
 case class SearchRepo(
   has_downloads :Option[Boolean],
@@ -24,7 +26,7 @@ case class SearchRepo(
 //  organization  :Option[String]
 )
 
-case class Repo(
+final case class Repo(
   has_downloads :Option[Boolean],
   name          :String,
   has_issues    :Boolean,
@@ -46,7 +48,8 @@ case class Repo(
   updated_at    :DateTime,
   watchers      :Int,
   master_branch :Option[String],
-  owner         :User
+  owner         :User // TODO User or Org
+
 //  full_name     :String,
 //  mirror_url    :String,
 //  svn_url       :String,
@@ -56,3 +59,31 @@ case class Repo(
   def master:String = master_branch.getOrElse("master")
 }
 
+object Repo {
+
+  implicit val repoDecodeJson: DecodeJson[Repo] =
+    DecodeJson.jdecode22L(Repo.apply)(
+      "has_downloads",
+      "name",
+      "has_issues",
+      "forks",
+      "private",
+      "size",
+      "open_issues",
+      "url",
+      "description",
+      "pushed_at",
+      "git_url",
+      "has_wiki",
+      "fork",
+      "id",
+      "language",
+      "homepage",
+      "created_at",
+      "html_url",
+      "updated_at",
+      "watchers",
+      "master_branch",
+      "owner"
+    )
+}
