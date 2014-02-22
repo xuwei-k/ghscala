@@ -1,5 +1,7 @@
 package ghscala
 
+// TODO deprecate
+// http://developer.github.com/v3/repos/downloads/
 case class Download(
   content_type   :Option[String],
   description    :String,

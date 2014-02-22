@@ -18,15 +18,19 @@ object GhRequest {
 object API {
   import Github._
 
+  /** [[http://developer.github.com/v3/git/trees]] */
   def trees(user: String, repo: String, sha: String): Result[Trees] =
     get(s"repos/$user/$repo/git/trees/$sha")
 
+  /** [[http://developer.github.com/v3/repos]] */
   def repo(user: String, repo: String): Result[Repo] =
     get(s"repos/$user/$repo")
 
+  /** [[http://developer.github.com/v3/git/commits]] */
   def commits(user: String, repo: String, sha: String): Result[CommitResponse] =
     get(s"repos/$user/$repo/commits/$sha")
 
+  /** [[http://developer.github.com/v3/issues]] */
   def issues(user: String, repo: String, state: State = Open): Result[List[Issue]] =
     get(
       s"repos/$user/$repo/issues",
