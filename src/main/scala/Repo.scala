@@ -36,16 +36,16 @@ final case class Repo(
   open_issues   :Int,
   url           :String,
   description   :String, // TODO possibly optional ?
-  pushed_at     :String, // TODO DateTime,
+  pushed_at     :DateTime,
   git_url       :String,
   has_wiki      :Boolean,
   fork          :Boolean,
   id            :Int,
   language      :Option[String],
   homepage      :String, // TODO possibly optional ?
-  created_at    :String, // TODO DateTime,
+  created_at    :DateTime,
   html_url      :String,
-  updated_at    :String, // TODO DateTime,
+  updated_at    :DateTime,
   watchers      :Int,
   master_branch :Option[String],
   owner         :User // TODO User or Org

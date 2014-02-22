@@ -10,19 +10,33 @@ object State{
   }
 }
 
-case class PullRequest(
+final case class PullRequest(
   patch_url   :Option[String],
   diff_url    :Option[String],
   html_url    :Option[String]
 )
 
-case class Label(
+object PullRequest {
+
+  implicit val pullRequestDecodeJson: DecodeJson[PullRequest] =
+    DecodeJson.jdecode3L(PullRequest.apply)("patch_url", "diff_url", "html_url")
+
+}
+
+final case class Label(
   color        :String,
   url          :String,
   name         :String
 )
 
-case class Milestone(
+object Label {
+
+  implicit val labelDecodeJson: DecodeJson[Label] =
+    DecodeJson.jdecode3L(Label.apply)("color", "url", "name")
+
+}
+
+final case class Milestone(
   title         :String,
   closed_issues :Long,
   due_on        :Option[DateTime],
@@ -36,6 +50,24 @@ case class Milestone(
   url           :String
 ){
   lazy val getState:State = State(state)
+}
+
+object Milestone {
+
+  implicit val issueDecodejson: DecodeJson[Milestone] =
+    DecodeJson.jdecode11L(Milestone.apply)(
+      "title",
+      "closed_issues",
+      "due_on",
+      "number",
+      "created_at",
+      "description",
+      "creator",
+      "state",
+      "id",
+      "open_issues",
+      "url"
+    )
 }
 
 final case class Issue(
@@ -62,7 +94,24 @@ final case class Issue(
 
 object Issue {
 
-  implicit val issueDecodejson: DecodeJson[Issue] = ???
+  implicit val issueDecodejson: DecodeJson[Issue] =
+    DecodeJson.jdecode15L(Issue.apply)(
+      "comments",
+      "user",
+      "labels",
+      "state",
+      "number",
+      "pull_request",
+      "milestone",
+      "assignee",
+      "html_url",
+      "url",
+      "body",
+      "closed_at",
+      "title",
+      "updated_at",
+      "created_at"
+    )
 
 }
 

@@ -82,9 +82,10 @@ object Github {
 
   val program = for{
 //    a <- API.trees("scalaz", "scalaz", "master")
-//    a <- API.repo("scalaz", "scalaz")
-    a <- API.commits("scalaz", "scalaz", "master")
-  } yield a
+//    b <- API.repo("scalaz", "scalaz")
+//    c <- API.commits("scalaz", "scalaz", "master")
+    d <- API.issues("scalaz", "scalaz")
+  } yield d
 
   def main(args: Array[String]){
     val result = run(program, Config(BasicAuth(args(0), args(1))))
