@@ -37,6 +37,9 @@ object API {
       ScalajHttp.param("state", state.toString)
     )
 
+  /** [[http://developer.github.com/v3/repos/comments]] */
+  def comments(user: String, repo: String): Result[List[Comment]] =
+    get(s"repos/$user/$repo/comments")
 }
 
 object Github {
@@ -88,8 +91,9 @@ object Github {
 //    a <- API.trees("scalaz", "scalaz", "master")
 //    b <- API.repo("scalaz", "scalaz")
 //    c <- API.commits("scalaz", "scalaz", "master")
-    d <- API.issues("scalaz", "scalaz")
-  } yield d
+//    d <- API.issues("scalaz", "scalaz")
+    e <- API.comments("scalaz", "scalaz")
+  } yield e
 
   def main(args: Array[String]){
     val result = run(program, Config(BasicAuth(args(0), args(1))))
