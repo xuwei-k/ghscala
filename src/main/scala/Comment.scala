@@ -1,4 +1,4 @@
-package com.github.xuwei_k.ghscala
+package ghscala
 
 case class Comment(
   updated_at :String,

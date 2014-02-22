@@ -1,4 +1,4 @@
-package com.github.xuwei_k.ghscala
+package ghscala
 
 import org.apache.commons.codec.binary.Base64
 

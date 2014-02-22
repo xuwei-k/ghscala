@@ -1,4 +1,4 @@
-package com.github.xuwei_k.ghscala
+package ghscala
 
 case class SearchRepo(
   has_downloads :Option[Boolean],

@@ -1,4 +1,4 @@
-package com.github.xuwei_k.ghscala
+package ghscala
 
 sealed abstract class State(private[ghscala] val name:String)
 case object Open   extends State("open")
