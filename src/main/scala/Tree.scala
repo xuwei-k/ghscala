@@ -1,6 +1,15 @@
 package ghscala
 
-case class Tree(
+import argonaut._
+
+object Tree {
+
+  implicit val treeDecodeJson: DecodeJson[Tree] =
+    DecodeJson.jdecode6L(Tree.apply)("url", "sha", "type", "mode", "size", "path")
+
+}
+
+final case class Tree(
   url    :String,
   sha    :String,
   `type` :String,

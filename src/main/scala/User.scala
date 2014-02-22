@@ -1,12 +1,21 @@
 package ghscala
 
-case class User(
+import argonaut._
+
+final case class User(
   login        :String,
   id           :Long,
   avatar_url   :String,
-  gravatar_id  :String,
+  gravatar_id  :Option[String],
   url          :String
 )
+
+object User {
+
+  implicit val userDecodeJson: DecodeJson[User] =
+    DecodeJson.jdecode5L(User.apply)("login", "id", "avatar_url", "gravatar_id", "url")
+
+}
 
 case class Org(
   login        :String,

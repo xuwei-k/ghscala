@@ -3,15 +3,13 @@ package ghscala
 import scalaz._, Free._
 import argonaut._
 
-final case class BasicAuth(user: String, pass: String)
-final case class Config(auth: BasicAuth)
-
 sealed abstract class GhRequest[A]
 
 object GhRequest {
 
   final case class Get[A] (url: String, f: (String \/ Json) => A) extends GhRequest[A]
   final case class Post[A](url: String, f: (String \/ Json) => A) extends GhRequest[A]
+  final case class Const[A](value: A) extends GhRequest[A]
 
   implicit def GhRequestFunctor: Functor[GhRequest] =
     new Functor[GhRequest] {
@@ -19,22 +17,41 @@ object GhRequest {
         fa match {
           case Get(url, g)  => Get(url, g andThen f)
           case Post(url, g) => Post(url, g andThen f)
+          case Const(value) => Const(f(value))
         }
     }
 
 }
 
+object API {
+  import Github._
+
+  def trees(user: String, repo: String, sha: String): Result[DecodeResult[Trees]] =
+    getAndMap(s"repos/$user/$repo/git/trees/$sha")
+
+  def repo(user: String, repo: String): Result[DecodeResult[Repo]] =
+    getAndMap(s"repos/$user/$repo")
+}
+
 object Github {
+
+  type Result[A] = EitherT[Requests, String, A]
+
+  private[this] val baseURL = "https://api.github.com/"
 
   type Requests[A] = Free[GhRequest, A]
 
   def liftF[S[_], A](value: => S[A])(implicit S: Functor[S]): Free[S, A] =
     Suspend(S.map(value)(Return[S, A]))
 
-  def get(url: String): Requests[String \/ Json] =
-    liftF(GhRequest.Get(url, identity))
-  def post(url: String): Requests[String \/ Json] =
-    liftF(GhRequest.Post(url, identity))
+  def get(url: String): Result[Json] =
+    EitherT[Requests, String, Json](liftF(GhRequest.Get(url, identity)))
+
+  def getAndMap[A](url: String)(implicit A: DecodeJson[A]): Result[DecodeResult[A]] =
+    Github.get(url).map(A.decodeJson)
+
+  def post(url: String): Result[Json] =
+    EitherT[Requests, String, Json](liftF(GhRequest.Post(url, identity)))
 
   def execute(conf: Config): GhRequest ~> Id.Id =
     new (GhRequest ~> Id.Id){
@@ -42,18 +59,23 @@ object Github {
         import conf.auth
         a match {
           case GhRequest.Get(url, f) =>
-            f(JsonParser.parse(ScalajHttp(url).auth(auth.user, auth.pass).asString))
+            val x = JsonParser.parse(ScalajHttp(baseURL + url).auth(auth.user, auth.pass).asString)
+            println(x.map(_.pretty(PrettyParams.spaces2)))
+            f(x)
           case GhRequest.Post(url, f) =>
-            f(JsonParser.parse(ScalajHttp.post(url).auth(auth.user, auth.pass).asString))
+            f(JsonParser.parse(ScalajHttp.post(baseURL + url).auth(auth.user, auth.pass).asString))
+          case GhRequest.Const(value) =>
+            value
         }
       }
     }
 
-  def run[A](requests: Requests[A], conf: Config): A = requests.runM(execute(conf))
+  def run[A](requests: Result[A], conf: Config): String \/ A = requests.run.runM(execute(conf))
 
   val program = for{
-    a <- get("https://api.github.com/repos/scalaz/scalaz/git/trees/master")
-  } yield a
+//    a <- API.trees("scalaz", "scalaz", "master")
+    b <- API.repo("scalaz", "scalaz")
+  } yield b
 
   def main(args: Array[String]){
     val result = run(program, Config(BasicAuth(args(0), args(1))))
