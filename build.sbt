@@ -20,6 +20,6 @@ libraryDependencies ++= Seq(
   "io.argonaut" %% "argonaut" % "6.1-M2",
   "org.scalaj"  %% "scalaj-http" % "0.3.14",
   "com.github.nscala-time" %% "nscala-time" % "0.8.0",
-  "commons-codec" % "commons-codec" % "1.7"
+  "commons-codec" % "commons-codec" % "1.9"
 )
 
