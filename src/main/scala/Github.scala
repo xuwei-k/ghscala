@@ -49,7 +49,9 @@ object API {
   def comments(user: String, repo: String): Result[List[Comment]] =
     get(s"repos/$user/$repo/comments")
 
-
+  /** [[http://developer.github.com/v3/repos/contents]] */
+  def readme(user: String, repo: String, ref: String = null): Result[Contents] =
+    get(s"repos/$user/$repo/readme", Option(ref).map(ScalajHttp.param("ref", _)).getOrElse(Endo.idEndo))
 
 }
 
@@ -96,29 +98,8 @@ object Github {
       }
     }
 
-  def run[A](requests: Result[A], conf: Config): Error \/ A = requests.run.runM(execute(conf))
-
-  val program = for{
-//    a <- API.trees("scalaz", "scalaz", "master")
-//    b <- API.repo("scalaz", "scalaz")
-//    c <- API.commits("scalaz", "scalaz", "master")
-//    d <- API.issues("scalaz", "scalaz")
-//    e <- API.comments("scalaz", "scalaz")
-//    f <- API.issueEvents("scalaz", "scalaz", 650)
-    f <- API.issueEvents("scalaz", "scalaz")
-  } yield f
-
-  def runMain(conf: Config = Config(None)) = run(program, conf)
-
-  def main(args: Array[String]){
-    val result = args match {
-      case Array(user, pass) =>
-        runMain(Config(Some(BasicAuth(user, pass))))
-      case Array() =>
-        runMain()
-    }
-    println(result)
-  }
+  def run[A](requests: Result[A], conf: Config = Config(None)): Error \/ A =
+    requests.run.runM(execute(conf))
 
 }
 
