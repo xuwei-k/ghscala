@@ -38,7 +38,7 @@ case class Milestone(
   lazy val getState:State = State(state)
 }
 
-case class Issue(
+final case class Issue(
   comments     :Long,
   user         :User,
   labels       :List[Label],
@@ -57,7 +57,13 @@ case class Issue(
 ){
 
   override def toString = title
-  lazy val getState:State = State(state)
+  lazy val getState: State = State(state)
+}
+
+object Issue {
+
+  implicit val issueDecodejson: DecodeJson[Issue] = ???
+
 }
 
 case class IssueEvent(

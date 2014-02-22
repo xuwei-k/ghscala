@@ -7,7 +7,7 @@ sealed abstract class GhRequest[A]
 
 object GhRequest {
 
-  final case class Get[A] (url: String, f: (String \/ Json) => A) extends GhRequest[A]
+  final case class Get[A] (url: String, endo: Endo[scalaj.http.Http.Request], f: (String \/ Json) => A) extends GhRequest[A]
   final case class Post[A](url: String, f: (String \/ Json) => A) extends GhRequest[A]
   final case class Const[A](value: A) extends GhRequest[A]
 
@@ -15,7 +15,7 @@ object GhRequest {
     new Functor[GhRequest] {
       def map[A, B](fa: GhRequest[A])(f: A => B) =
         fa match {
-          case Get(url, g)  => Get(url, g andThen f)
+          case Get(url, endo, g)  => Get(url, endo, g andThen f)
           case Post(url, g) => Post(url, g andThen f)
           case Const(value) => Const(f(value))
         }
@@ -33,7 +33,16 @@ object API {
     getAndMap(s"repos/$user/$repo")
 
   def commits(user: String, repo: String, sha: String): Result[DecodeResult[CommitResponse]] =
-    getAndMap[CommitResponse](s"repos/$user/$repo/commits/$sha")
+    getAndMap(s"repos/$user/$repo/commits/$sha")
+
+  def issues(user: String, repo: String, state: State = Open): Result[DecodeResult[List[Issue]]] =
+    get(
+      s"repos/$user/$repo/issues",
+      Endo(_.param("state", state.toString))
+    ).map(
+      implicitly[DecodeJson[List[Issue]]].decodeJson
+    )
+
 }
 
 object Github {
@@ -47,8 +56,8 @@ object Github {
   def liftF[S[_], A](value: => S[A])(implicit S: Functor[S]): Free[S, A] =
     Suspend(S.map(value)(Return[S, A]))
 
-  def get(url: String): Result[Json] =
-    EitherT[Requests, String, Json](liftF(GhRequest.Get(url, identity)))
+  def get(url: String, opt: Endo[scalaj.http.Http.Request] = Endo.idEndo): Result[Json] =
+    EitherT[Requests, String, Json](liftF(GhRequest.Get(url, opt, identity)))
 
   def getAndMap[A](url: String)(implicit A: DecodeJson[A]): Result[DecodeResult[A]] =
     Github.get(url).map(A.decodeJson)
@@ -61,8 +70,8 @@ object Github {
       def apply[A](a: GhRequest[A]) = {
         import conf.auth
         a match {
-          case GhRequest.Get(url, f) =>
-            val x = JsonParser.parse(ScalajHttp(baseURL + url).auth(auth.user, auth.pass).asString)
+          case GhRequest.Get(url, endo, f) =>
+            val x = JsonParser.parse(endo(ScalajHttp(baseURL + url)).auth(auth.user, auth.pass).asString)
             println(x.map(_.pretty(PrettyParams.spaces2)))
             f(x)
           case GhRequest.Post(url, f) =>
