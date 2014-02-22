@@ -41,6 +41,10 @@ object API {
   def issueEvents(user: String, repo: String, number: Long): Result[List[IssueEvent]] =
     get(s"repos/$user/$repo/issues/$number/events")
 
+  /** [[http://developer.github.com/v3/issues/events/]] */
+  def issueEvents(user: String, repo: String): Result[List[IssueEvent2]] =
+    get(s"repos/$user/$repo/issues/events")
+
   /** [[http://developer.github.com/v3/repos/comments]] */
   def comments(user: String, repo: String): Result[List[Comment]] =
     get(s"repos/$user/$repo/comments")
@@ -100,7 +104,8 @@ object Github {
 //    c <- API.commits("scalaz", "scalaz", "master")
 //    d <- API.issues("scalaz", "scalaz")
 //    e <- API.comments("scalaz", "scalaz")
-    f <- API.issueEvents("scalaz", "scalaz", 650)
+//    f <- API.issueEvents("scalaz", "scalaz", 650)
+    f <- API.issueEvents("scalaz", "scalaz")
   } yield f
 
   def runMain(conf: Config = Config(None)) = run(program, conf)

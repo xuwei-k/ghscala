@@ -134,7 +134,7 @@ object IssueEvent {
     )
 }
 
-case class IssueEvent2(
+final case class IssueEvent2(
   event      :String,
   actor      :User,
   issue      :Issue,
@@ -144,6 +144,14 @@ case class IssueEvent2(
   url        :String
 ){
   val eventType:EventType = EventType(event)
+}
+
+object IssueEvent2 {
+
+  implicit val issueEvent2DecodeJson: DecodeJson[IssueEvent2] =
+    DecodeJson.jdecode7L(IssueEvent2.apply)(
+      "event", "actor", "issue", "id", "commit_id", "created_at", "url"
+    )
 }
 
 sealed abstract class EventType(private[ghscala] val name:String)
