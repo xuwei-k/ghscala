@@ -56,7 +56,6 @@ object Github {
     EitherT[Requests, Error, A](liftF(GhRequest(
       req,
       _.flatMap{x =>
-        import std.function._, syntax.functor._
         Parse.decodeWith[Error \/ A, A](
           x,
           \/.right,
