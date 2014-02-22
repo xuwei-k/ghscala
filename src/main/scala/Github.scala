@@ -3,22 +3,14 @@ package ghscala
 import scalaz._, Free._
 import argonaut._
 
-sealed abstract class GhRequest[A]
+final case class GhRequest[A](req: scalaj.http.Http.Request, f: (String \/ Json) => A)
 
 object GhRequest {
-
-  final case class Get[A] (url: String, endo: Endo[scalaj.http.Http.Request], f: (String \/ Json) => A) extends GhRequest[A]
-  final case class Post[A](url: String, f: (String \/ Json) => A) extends GhRequest[A]
-  final case class Const[A](value: A) extends GhRequest[A]
 
   implicit def GhRequestFunctor: Functor[GhRequest] =
     new Functor[GhRequest] {
       def map[A, B](fa: GhRequest[A])(f: A => B) =
-        fa match {
-          case Get(url, endo, g)  => Get(url, endo, g andThen f)
-          case Post(url, g) => Post(url, g andThen f)
-          case Const(value) => Const(f(value))
-        }
+        fa.copy(f = fa.f andThen f)
     }
 
 }
@@ -57,28 +49,21 @@ object Github {
     Suspend(S.map(value)(Return[S, A]))
 
   def get(url: String, opt: Endo[scalaj.http.Http.Request] = Endo.idEndo): Result[Json] =
-    EitherT[Requests, String, Json](liftF(GhRequest.Get(url, opt, identity)))
+    EitherT[Requests, String, Json](liftF(GhRequest(opt(ScalajHttp(baseURL + url)), identity)))
 
   def getAndMap[A](url: String)(implicit A: DecodeJson[A]): Result[DecodeResult[A]] =
     Github.get(url).map(A.decodeJson)
 
   def post(url: String): Result[Json] =
-    EitherT[Requests, String, Json](liftF(GhRequest.Post(url, identity)))
+    EitherT[Requests, String, Json](liftF(GhRequest(ScalajHttp.post(baseURL + url), identity)))
 
   def execute(conf: Config): GhRequest ~> Id.Id =
     new (GhRequest ~> Id.Id){
       def apply[A](a: GhRequest[A]) = {
         import conf.auth
-        a match {
-          case GhRequest.Get(url, endo, f) =>
-            val x = JsonParser.parse(endo(ScalajHttp(baseURL + url)).auth(auth.user, auth.pass).asString)
-            println(x.map(_.pretty(PrettyParams.spaces2)))
-            f(x)
-          case GhRequest.Post(url, f) =>
-            f(JsonParser.parse(ScalajHttp.post(baseURL + url).auth(auth.user, auth.pass).asString))
-          case GhRequest.Const(value) =>
-            value
-        }
+        val x = JsonParser.parse(a.req.auth(auth.user, auth.pass).asString)
+        println(x.map(_.pretty(PrettyParams.spaces2)))
+        a.f(x)
       }
     }
 
