@@ -2,7 +2,16 @@ package ghscala
 
 import argonaut._
 
-sealed abstract class Error extends Product with Serializable
+sealed abstract class Error extends Product with Serializable {
+  import Error._
+
+  final def fold[A](http: scalaj.http.HttpException => A, parse: String => A, decode: (String, CursorHistory) => A): A =
+    this match {
+      case Http(e)        => http(e)
+      case Parse(e)       => parse(e)
+      case Decode(m, h)   => decode(m, h)
+    }
+}
 
 object Error {
   final case class Http private[Error] (err: scalaj.http.HttpException) extends Error {
