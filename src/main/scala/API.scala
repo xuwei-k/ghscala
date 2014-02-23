@@ -5,6 +5,10 @@ import scalaz.Endo
 object API {
   import Github._
 
+  /** [[http://developer.github.com/v3/git/blobs]] */
+  def blob(user: String, repo: String, sha: String): Result[Blob] =
+    get(s"repos/$user/$repo/git/blobs/$sha")
+
   /** [[http://developer.github.com/v3/git/trees]] */
   def trees(user: String, repo: String, sha: String): Result[Trees] =
     get(s"repos/$user/$repo/git/trees/$sha")
