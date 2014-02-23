@@ -1,6 +1,6 @@
 package ghscala
 
-case class Pull(
+final case class Pull(
   updated_at :DateTime,
   head       :Pull.Ref,
   title      :String,
@@ -21,29 +21,52 @@ case class Pull(
   closed_at  :Option[DateTime]
 )
 
-case class PullLinks(
-  self            :PullLinks.Self,
-  review_comments :PullLinks.Review_comments,
-  issue           :PullLinks.Issue,
-  html            :PullLinks.Html,
-  comments        :PullLinks.Comments
+final case class PullLinks(
+  self            :PullLinks.Link,
+  review_comments :PullLinks.Link,
+  issue           :PullLinks.Link,
+  html            :PullLinks.Link,
+  comments        :PullLinks.Link,
+  commits         :PullLinks.Link,
+  statuses        :PullLinks.Link
 )
 
 object PullLinks{
-  case class Issue(href :String)
-  case class Self( href :String)
-  case class Review_comments(href :String)
-  case class Comments(href :String)
-  case class Html(href :String)
+  object Link {
+    implicit val linkDecodeJson: DecodeJson[Link] =
+      DecodeJson.jdecode1L(apply)("href")
+  }
+
+  final case class Link(href :String)
+
+  implicit val pullLinksDecodeJson: DecodeJson[PullLinks] =
+    DecodeJson.jdecode7L(PullLinks.apply)(
+      "self", "review_comments", "issue", "html",
+      "comments", "commits", "statuses"
+    )
 }
 
 object Pull{
-  case class Ref(
+  final case class Ref(
     user  :Option[User],
     label :String,
     sha   :String,
     repo  :Option[Repo],
     ref   :String
   )
+
+  object Ref {
+    implicit val pullRefDecodeJson: DecodeJson[Ref] =
+      DecodeJson.jdecode5L(Ref.apply)(
+        "user", "label", "sha", "repo", "ref"
+      )
+  }
+
+  implicit val pullDecodeJson: DecodeJson[Pull] =
+    DecodeJson.jdecode18L(Pull.apply)(
+      "updated_at", "head", "title", "id", "created_at", "_links",
+      "merged_at", "base", "diff_url", "body", "state", "html_url",
+      "issue_url", "user", "url", "patch_url", "number", "closed_at"
+    )
 }
 

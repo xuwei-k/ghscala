@@ -37,8 +37,12 @@ object API {
     get(s"repos/$user/$repo/comments")
 
   /** [[http://developer.github.com/v3/repos/contents]] */
-  def readme(user: String, repo: String, ref: String = null): Result[Contents] =
-    get(s"repos/$user/$repo/readme", Option(ref).map(ScalajHttp.param("ref", _)).getOrElse(Endo.idEndo))
+  def readme(user: String, repo: String, ref: String): Result[Contents] =
+    get(s"repos/$user/$repo/readme", ScalajHttp.param("ref", ref))
+
+  /** [[http://developer.github.com/v3/repos/contents]] */
+  def readme(user: String, repo: String): Result[Contents] =
+    get(s"repos/$user/$repo/readme")
 
   def org(orgName: String): Result[Organization] =
     get(s"orgs/$orgName")
@@ -48,5 +52,9 @@ object API {
 
   def orgs: Result[List[Org]] =
     get(s"user/orgs")
+
+  /** [[http://developer.github.com/v3/pulls]] */
+  def pulls(user: String, repo: String, state: State = Open): Result[List[Pull]] =
+    get(s"repos/$user/$repo/pulls")
 }
 
