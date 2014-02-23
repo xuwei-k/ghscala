@@ -18,6 +18,12 @@ abstract class Coyoneda[F[_], A] { coyo =>
     val fi = coyo.fi
     def k(i: I) = f(coyo k i)
   }
+
+  def trans[G[_]](f: F ~> G): Coyoneda[G, A] = new Coyoneda[G, A] {
+    type I = coyo.I
+    val fi = f(coyo.fi)
+    def k(i: I) = coyo k i
+  }
 }
 
 object Coyoneda {
