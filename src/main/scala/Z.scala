@@ -24,7 +24,8 @@ object Z {
     go(free)
   }
 
-  implicit def freeCFunctor[S[_]]: Functor[({type λ[α] = FreeC[S, α]})#λ] =
+  implicit def freeCMonad[S[_]]: Monad[({type λ[α] = FreeC[S, α]})#λ] =
     Free.freeMonad[({type λ[α] = Coyoneda[S, α]})#λ]
+
 }
 
