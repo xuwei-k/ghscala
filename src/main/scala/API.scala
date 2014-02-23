@@ -44,12 +44,15 @@ object API {
   def readme(user: String, repo: String): Result[Contents] =
     get(s"repos/$user/$repo/readme")
 
+  /** [[http://developer.github.com/v3/orgs]] */
   def org(orgName: String): Result[Organization] =
     get(s"orgs/$orgName")
 
+  /** [[http://developer.github.com/v3/orgs]] */
   def orgs(user: String): Result[List[Org]] =
     get(s"users/$user/orgs")
 
+  /** [[http://developer.github.com/v3/orgs]] */
   def orgs: Result[List[Org]] =
     get(s"user/orgs")
 
