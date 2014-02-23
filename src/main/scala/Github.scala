@@ -26,8 +26,8 @@ object Github {
         Parse.decodeWith[Error \/ A, A](
           x,
           \/.right,
-          Error.Parse andThen \/.left,
-          (msg, history) => -\/(Error.Decode(msg, history))
+          Error.parse andThen \/.left,
+          (msg, history) => -\/(Error.decode(msg, history))
         )
       }
     )))
@@ -39,7 +39,7 @@ object Github {
         val x = try {
           \/-(auth.fold(a.req)(x => a.req.auth(x.user, x.pass)).asString)
         } catch {
-          case e: scalaj.http.HttpException => -\/(Error.Http(e))
+          case e: scalaj.http.HttpException => -\/(Error.http(e))
         }
         a.f(x)
       }
