@@ -1,5 +1,7 @@
 package ghscala
 
+import Z._
+
 object Main {
 
   val program = for{
@@ -27,4 +29,3 @@ object Main {
   }
 
 }
-

@@ -5,16 +5,6 @@ import argonaut._
 
 final case class GhRequest[A](req: scalaj.http.Http.Request, f: (Error \/ String) => A)
 
-object GhRequest {
-
-  implicit def GhRequestFunctor: Functor[GhRequest] =
-    new Functor[GhRequest] {
-      def map[A, B](fa: GhRequest[A])(f: A => B) =
-        fa.copy(f = fa.f andThen f)
-    }
-
-}
-
 object API {
   import Github._
 
@@ -69,10 +59,7 @@ object Github {
 
   private[this] val baseURL = "https://api.github.com/"
 
-  type Requests[A] = Free[GhRequest, A]
-
-  private def liftF[S[_], A](value: => S[A])(implicit S: Functor[S]): Free[S, A] =
-    Suspend(S.map(value)(Return[S, A]))
+  type Requests[A] = Z.FreeC[GhRequest, A]
 
   def get[A: DecodeJson](url: String, opt: Endo[scalaj.http.Http.Request] = Endo.idEndo): Result[A] =
     httpRequest(opt(ScalajHttp(baseURL + url)))
@@ -81,7 +68,7 @@ object Github {
     httpRequest(opt(ScalajHttp.post(baseURL + url)))
 
   private def httpRequest[A: DecodeJson](req: scalaj.http.Http.Request): Result[A] =
-    EitherT[Requests, Error, A](liftF(GhRequest(
+    EitherT[Requests, Error, A](Z.freeC(GhRequest(
       req,
       _.flatMap{x =>
         Parse.decodeWith[Error \/ A, A](
@@ -107,7 +94,7 @@ object Github {
     }
 
   def run[A](requests: Result[A], conf: Config = Config(None)): Error \/ A =
-    requests.run.runM(execute(conf))
+    Z.interpret(requests.run)(execute(conf))
 
 }
 
