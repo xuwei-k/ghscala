@@ -11,7 +11,9 @@ object ScalajHttp{
 
   def post(url:String): Http.Request = Http.post(url).options(OPTIONS)
 
-  def param(key: String, value: String): Endo[Http.Request] = Endo(_.param(key, value))
+  def param(key: String, value: String): Config = Endo(_.param(key, value))
+
+  def auth(user: String, pass: String): Config = Endo(_.auth(user, pass))
 
   // TODO https://gist.github.com/xuwei-k/5608828
 

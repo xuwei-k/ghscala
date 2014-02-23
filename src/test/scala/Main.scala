@@ -21,7 +21,7 @@ object Main {
   def main(args: Array[String]){
     val result = args match {
       case Array(user, pass) =>
-        Github.run(program, Config(Some(BasicAuth(user, pass))))
+        Github.run(program, ScalajHttp.auth(user, pass))
       case Array() =>
         Github.run(program)
     }

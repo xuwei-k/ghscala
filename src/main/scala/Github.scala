@@ -7,8 +7,6 @@ final case class RequestF[A](req: scalaj.http.Http.Request, f: (Error \/ String)
 
 object Github {
 
-  type Action[A] = EitherT[Requests, Error, A]
-
   private[this] val baseURL = "https://api.github.com/"
 
   type Requests[A] = Z.FreeC[RequestF, A]
@@ -35,17 +33,20 @@ object Github {
   def execute(conf: Config): RequestF ~> Id.Id =
     new (RequestF ~> Id.Id){
       def apply[A](a: RequestF[A]) = {
-        import conf.auth
-        val x = try {
-          \/-(auth.fold(a.req)(x => a.req.auth(x.user, x.pass)).asString)
+        a.f(try {
+          \/-(conf(a.req).asString)
         } catch {
           case e: scalaj.http.HttpException => -\/(Error.http(e))
-        }
-        a.f(x)
+        })
       }
     }
 
-  def run[A](actions: Action[A], conf: Config = Config(None)): Error \/ A =
+  private[this] val emptyConfig: Config = Endo.idEndo
+
+  def run[A](actions: Action[A]): Error \/ A =
+    run(actions, emptyConfig)
+
+  def run[A](actions: Action[A], conf: Config): Error \/ A =
     Z.interpret(actions.run)(execute(conf))
 
 }
