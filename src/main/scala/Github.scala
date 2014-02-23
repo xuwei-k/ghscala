@@ -53,8 +53,14 @@ object API {
   def readme(user: String, repo: String, ref: String = null): Result[Contents] =
     get(s"repos/$user/$repo/readme", Option(ref).map(ScalajHttp.param("ref", _)).getOrElse(Endo.idEndo))
 
-  def org(name: String): Result[Organization] =
-    get(s"orgs/$name")
+  def org(orgName: String): Result[Organization] =
+    get(s"orgs/$orgName")
+
+  def orgs(user: String): Result[List[Org]] =
+    get(s"users/$user/orgs")
+
+  def orgs: Result[List[Org]] =
+    get(s"user/orgs")
 }
 
 object Github {

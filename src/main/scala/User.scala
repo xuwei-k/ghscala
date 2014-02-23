@@ -17,12 +17,21 @@ object User {
 
 }
 
-case class Org(
+final case class Org(
   login        :String,
   id           :Long,
   avatar_url   :String,
   url          :String
 )
+
+object Org {
+
+  implicit val orgDecodeJson: DecodeJson[Org] =
+    DecodeJson.jdecode4L(Org.apply)(
+      "login", "id", "avatar_url", "url"
+    )
+
+}
 
 final case class Organization(
   `type`       :String,

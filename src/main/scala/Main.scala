@@ -11,8 +11,10 @@ object Main {
 //    f <- API.issueEvents("scalaz", "scalaz", 650)
 //    f <- API.issueEvents("scalaz", "scalaz")
 //    g <- API.readme("scalaz", "scalaz")
-    h <- API.org("scalaz")
-  } yield h
+//    h <- API.org("scalaz")
+//    i <- API.orgs
+    j <- API.orgs("xuwei-k")
+  } yield j
 
   def main(args: Array[String]){
     val result = args match {
