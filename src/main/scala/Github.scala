@@ -3,55 +3,7 @@ package ghscala
 import scalaz._, Free._
 import argonaut._
 
-final case class GhRequest[A](req: scalaj.http.Http.Request, f: (Error \/ String) => A)
-
-object API {
-  import Github._
-
-  /** [[http://developer.github.com/v3/git/trees]] */
-  def trees(user: String, repo: String, sha: String): Result[Trees] =
-    get(s"repos/$user/$repo/git/trees/$sha")
-
-  /** [[http://developer.github.com/v3/repos]] */
-  def repo(user: String, repo: String): Result[Repo] =
-    get(s"repos/$user/$repo")
-
-  /** [[http://developer.github.com/v3/git/commits]] */
-  def commits(user: String, repo: String, sha: String): Result[CommitResponse] =
-    get(s"repos/$user/$repo/commits/$sha")
-
-  /** [[http://developer.github.com/v3/issues]] */
-  def issues(user: String, repo: String, state: State = Open): Result[List[Issue]] =
-    get(
-      s"repos/$user/$repo/issues",
-      ScalajHttp.param("state", state.toString)
-    )
-
-  /** [[http://developer.github.com/v3/issues/events/]] */
-  def issueEvents(user: String, repo: String, number: Long): Result[List[IssueEvent]] =
-    get(s"repos/$user/$repo/issues/$number/events")
-
-  /** [[http://developer.github.com/v3/issues/events/]] */
-  def issueEvents(user: String, repo: String): Result[List[IssueEvent2]] =
-    get(s"repos/$user/$repo/issues/events")
-
-  /** [[http://developer.github.com/v3/repos/comments]] */
-  def comments(user: String, repo: String): Result[List[Comment]] =
-    get(s"repos/$user/$repo/comments")
-
-  /** [[http://developer.github.com/v3/repos/contents]] */
-  def readme(user: String, repo: String, ref: String = null): Result[Contents] =
-    get(s"repos/$user/$repo/readme", Option(ref).map(ScalajHttp.param("ref", _)).getOrElse(Endo.idEndo))
-
-  def org(orgName: String): Result[Organization] =
-    get(s"orgs/$orgName")
-
-  def orgs(user: String): Result[List[Org]] =
-    get(s"users/$user/orgs")
-
-  def orgs: Result[List[Org]] =
-    get(s"user/orgs")
-}
+final case class RequestF[A](req: scalaj.http.Http.Request, f: (Error \/ String) => A)
 
 object Github {
 
@@ -59,7 +11,7 @@ object Github {
 
   private[this] val baseURL = "https://api.github.com/"
 
-  type Requests[A] = Z.FreeC[GhRequest, A]
+  type Requests[A] = Z.FreeC[RequestF, A]
 
   def get[A: DecodeJson](url: String, opt: Endo[scalaj.http.Http.Request] = Endo.idEndo): Result[A] =
     httpRequest(opt(ScalajHttp(baseURL + url)))
@@ -68,7 +20,7 @@ object Github {
     httpRequest(opt(ScalajHttp.post(baseURL + url)))
 
   private def httpRequest[A: DecodeJson](req: scalaj.http.Http.Request): Result[A] =
-    EitherT[Requests, Error, A](Z.freeC(GhRequest(
+    EitherT[Requests, Error, A](Z.freeC(RequestF(
       req,
       _.flatMap{x =>
         Parse.decodeWith[Error \/ A, A](
@@ -80,9 +32,9 @@ object Github {
       }
     )))
 
-  def execute(conf: Config): GhRequest ~> Id.Id =
-    new (GhRequest ~> Id.Id){
-      def apply[A](a: GhRequest[A]) = {
+  def execute(conf: Config): RequestF ~> Id.Id =
+    new (RequestF ~> Id.Id){
+      def apply[A](a: RequestF[A]) = {
         import conf.auth
         val x = try {
           \/-(auth.fold(a.req)(x => a.req.auth(x.user, x.pass)).asString)
