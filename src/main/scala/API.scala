@@ -48,6 +48,14 @@ object API {
   def readme(user: String, repo: String): Action[Contents] =
     get(s"repos/$user/$repo/readme")
 
+  /** [[http://developer.github.com/v3/repos/contents]] */
+  def contents(user: String, repo: String, path: String): Action[Contents] =
+    get(s"repos/$user/$repo/contents/$path")
+
+  /** [[http://developer.github.com/v3/repos/contents]] */
+  def contents(user: String, repo: String, path: String, ref: String): Action[Contents] =
+    contents(user, repo, path).mapRequest(ScalajHttp.param("ref", ref))
+
   /** [[http://developer.github.com/v3/orgs]] */
   def org(orgName: String): Action[Organization] =
     get(s"orgs/$orgName")
