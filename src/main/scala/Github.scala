@@ -7,19 +7,19 @@ final case class RequestF[A](req: scalaj.http.Http.Request, f: (Error \/ String)
 
 object Github {
 
-  type Result[A] = EitherT[Requests, Error, A]
+  type Action[A] = EitherT[Requests, Error, A]
 
   private[this] val baseURL = "https://api.github.com/"
 
   type Requests[A] = Z.FreeC[RequestF, A]
 
-  def get[A: DecodeJson](url: String, opt: Endo[scalaj.http.Http.Request] = Endo.idEndo): Result[A] =
+  def get[A: DecodeJson](url: String, opt: Endo[scalaj.http.Http.Request] = Endo.idEndo): Action[A] =
     httpRequest(opt(ScalajHttp(baseURL + url)))
 
-  def post[A: DecodeJson](url: String, opt: Endo[scalaj.http.Http.Request] = Endo.idEndo): Result[A] =
+  def post[A: DecodeJson](url: String, opt: Endo[scalaj.http.Http.Request] = Endo.idEndo): Action[A] =
     httpRequest(opt(ScalajHttp.post(baseURL + url)))
 
-  private def httpRequest[A: DecodeJson](req: scalaj.http.Http.Request): Result[A] =
+  private def httpRequest[A: DecodeJson](req: scalaj.http.Http.Request): Action[A] =
     EitherT[Requests, Error, A](Z.freeC(RequestF(
       req,
       _.flatMap{x =>
@@ -45,8 +45,8 @@ object Github {
       }
     }
 
-  def run[A](requests: Result[A], conf: Config = Config(None)): Error \/ A =
-    Z.interpret(requests.run)(execute(conf))
+  def run[A](actions: Action[A], conf: Config = Config(None)): Error \/ A =
+    Z.interpret(actions.run)(execute(conf))
 
 }
 
