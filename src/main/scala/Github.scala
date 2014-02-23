@@ -16,7 +16,7 @@ object Github {
   def get[A: DecodeJson](url: String, opt: Endo[scalaj.http.Http.Request] = Endo.idEndo): Result[A] =
     httpRequest(opt(ScalajHttp(baseURL + url)))
 
-  def post[A: DecodeJson](url: String, opt: Endo[scalaj.http.Http.Request] = Endo.idEndo): Result[Json] =
+  def post[A: DecodeJson](url: String, opt: Endo[scalaj.http.Http.Request] = Endo.idEndo): Result[A] =
     httpRequest(opt(ScalajHttp.post(baseURL + url)))
 
   private def httpRequest[A: DecodeJson](req: scalaj.http.Http.Request): Result[A] =
