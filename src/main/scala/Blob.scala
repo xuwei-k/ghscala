@@ -15,12 +15,7 @@ final case class Blob(
 
 }
 
-object Blob {
-
-  implicit val blobDecodeJson: DecodeJson[Blob] =
-    DecodeJson.jdecode5L(Blob.apply)(
-      "content", "encoding", "sha", "size", "url"
-    )
-
-}
+object Blob extends DerivingCodecJson5[String, String, String, Long, String, Blob](
+  "content", "encoding", "sha", "size", "url"
+)
 
