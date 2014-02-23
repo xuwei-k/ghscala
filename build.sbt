@@ -1,12 +1,15 @@
 name := "ghscala"
 
-version := "0.2.0-SNAPSHOT"
-
 organization := "com.github.xuwei-k"
 
 description := "scala github api client"
 
 homepage := Some(url("https://github.com/xuwei-k/ghscala"))
+
+scmInfo := Some(ScmInfo(
+  url("https://github.com/xuwei-k/ghscala"),
+  "scm:git:git@github.com/xuwei-k/ghscala.git"
+))
 
 licenses := Seq("MIT License" -> url("http://www.opensource.org/licenses/mit-license.php"))
 
@@ -23,3 +26,33 @@ libraryDependencies ++= Seq(
   "commons-codec" % "commons-codec" % "1.9"
 )
 
+def gitHash: Option[String] = scala.util.Try(
+  sys.process.Process("git show -s --oneline").lines_!.head.split(" ").head
+).toOption
+
+scalacOptions in (Compile, doc) ++= {
+  val tag = if(isSnapshot.value) gitHash.getOrElse("master") else { "v" + version.value }
+  Seq(
+    "-sourcepath", baseDirectory.value.getAbsolutePath,
+    "-doc-source-url", s"https://github.com/xuwei-k/ghscala/tree/${tag}€{FILE_PATH}.scala"
+  )
+}
+
+logBuffered in Test := false
+
+pomExtra := (
+<url>https://github.com/xuwei-k/ghscala</url>
+<developers>
+  <developer>
+    <id>xuwei-k</id>
+    <name>Kenji Yoshida</name>
+    <url>https://github.com/xuwei-k</url>
+  </developer>
+</developers>
+)
+
+val showDoc = TaskKey[Unit]("showDoc")
+
+showDoc in Compile <<= (doc in Compile, target in doc in Compile) map { (_, out) =>
+  java.awt.Desktop.getDesktop.open(out / "index.html")
+}
