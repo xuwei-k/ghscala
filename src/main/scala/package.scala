@@ -1,9 +1,13 @@
 import java.text.SimpleDateFormat
-import scalaz.{EitherT, Endo}
+import scalaz.{EitherT, Endo, \/}
 
 package object ghscala{
 
   type Action[A] = EitherT[Github.Requests, Error, A]
+
+  def Action[A](a: Github.Requests[Error \/ A]): Action[A] = EitherT(a)
+
+  implicit def toActionOps[A](a: Action[A]) = new ActionOps(a)
 
   type Config = Endo[scalaj.http.Http.Request]
 

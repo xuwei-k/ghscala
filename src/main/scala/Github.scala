@@ -3,7 +3,9 @@ package ghscala
 import scalaz._, Free._
 import argonaut._
 
-final case class RequestF[A](req: scalaj.http.Http.Request, f: (Error \/ String) => A)
+final case class RequestF[A](req: scalaj.http.Http.Request, f: (Error \/ String) => A) {
+  def mapRequest(config: Config): RequestF[A] = copy(req = config(req))
+}
 
 object Github {
 
@@ -18,7 +20,7 @@ object Github {
     httpRequest(opt(ScalajHttp.post(baseURL + url)))
 
   private def httpRequest[A: DecodeJson](req: scalaj.http.Http.Request): Action[A] =
-    EitherT[Requests, Error, A](Z.freeC(RequestF(
+    Action[A](Z.freeC(RequestF(
       req,
       _.flatMap{x =>
         Parse.decodeWith[Error \/ A, A](
