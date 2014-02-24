@@ -2,7 +2,12 @@
 
 * http://developer.github.com
 
-### stable release version
+
+- [Maven Central Repository Search](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.github.xuwei-k%22)
+- [Maven Central](http://repo1.maven.org/maven2/com/github/xuwei-k/)
+
+
+### latest stable version
 
 ```scala
 libraryDependencies += "com.github.xuwei-k" %% "ghscala" % "0.2.0"
