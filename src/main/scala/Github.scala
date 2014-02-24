@@ -25,7 +25,7 @@ object Github {
   def issues(user: String, repo: String, state: State = Open): Action[List[Issue]] =
     get(
       s"repos/$user/$repo/issues",
-      ScalajHttp.param("state", state.toString)
+      ScalajHttp.param("state", state.name)
     )
 
   /** [[http://developer.github.com/v3/issues/events/]] */
