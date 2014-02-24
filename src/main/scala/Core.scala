@@ -13,10 +13,10 @@ object Core {
 
   type Requests[A] = Z.FreeC[RequestF, A]
 
-  def get[A: DecodeJson](url: String, opt: Endo[scalaj.http.Http.Request] = Endo.idEndo): Action[A] =
+  def get[A: DecodeJson](url: String, opt: Config = emptyConfig): Action[A] =
     httpRequest(opt(ScalajHttp(baseURL + url)))
 
-  def post[A: DecodeJson](url: String, opt: Endo[scalaj.http.Http.Request] = Endo.idEndo): Action[A] =
+  def post[A: DecodeJson](url: String, opt: Config = emptyConfig): Action[A] =
     httpRequest(opt(ScalajHttp.post(baseURL + url)))
 
   private def httpRequest[A: DecodeJson](req: scalaj.http.Http.Request): Action[A] =
