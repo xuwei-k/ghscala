@@ -2,7 +2,7 @@ package ghscala
 
 import scalaz.Endo
 
-object API {
+object Github {
   import Core._
 
   /** [[http://developer.github.com/v3/git/blobs]] */

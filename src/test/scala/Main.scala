@@ -5,17 +5,17 @@ import Z._
 object Main {
 
   val program = for{
-//    a <- API.trees("scalaz", "scalaz", "master")
-//    b <- API.repo("scalaz", "scalaz")
-//    c <- API.commits("scalaz", "scalaz", "master")
-//    d <- API.issues("scalaz", "scalaz")
-//    e <- API.comments("scalaz", "scalaz")
-//    f <- API.issueEvents("scalaz", "scalaz", 650)
-//    f <- API.issueEvents("scalaz", "scalaz")
-//    g <- API.readme("scalaz", "scalaz")
-//    h <- API.org("scalaz")
-//    i <- API.orgs
-    j <- API.orgs("xuwei-k")
+//    a <- Github.trees("scalaz", "scalaz", "master")
+//    b <- Github.repo("scalaz", "scalaz")
+//    c <- Github.commits("scalaz", "scalaz", "master")
+//    d <- Github.issues("scalaz", "scalaz")
+//    e <- Github.comments("scalaz", "scalaz")
+//    f <- Github.issueEvents("scalaz", "scalaz", 650)
+//    f <- Github.issueEvents("scalaz", "scalaz")
+//    g <- Github.readme("scalaz", "scalaz")
+//    h <- Github.org("scalaz")
+//    i <- Github.orgs
+    j <- Github.orgs("xuwei-k")
   } yield j
 
   def main(args: Array[String]){
