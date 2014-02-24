@@ -10,5 +10,13 @@ final class ActionOps[A](val self: Action[A]) extends AnyVal {
     })
   )
 
+  def interpret: Error \/ A =
+    Core.run(self)
+
+  def interpretWith(conf: Config): Error \/ A =
+    Core.run(self, conf)
+
+  def interpretBy[F[_]: Monad](f: RequestF ~> F): F[Error \/ A] =
+    Z.interpret(self.run)(f)
 }
 
