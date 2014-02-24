@@ -42,7 +42,7 @@ final case class Repo(
   fork          :Boolean,
   id            :Int,
   language      :Option[String],
-  homepage      :String, // TODO possibly optional ?
+  homepage      :Option[String],
   created_at    :DateTime,
   html_url      :String,
   updated_at    :DateTime,
