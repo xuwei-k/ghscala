@@ -3,7 +3,7 @@ package ghscala
 import scalaz.Endo
 
 object API {
-  import Github._
+  import Core._
 
   /** [[http://developer.github.com/v3/git/blobs]] */
   def blob(user: String, repo: String, sha: String): Action[Blob] =

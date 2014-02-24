@@ -21,9 +21,9 @@ object Main {
   def main(args: Array[String]){
     val result = args match {
       case Array(user, pass) =>
-        Github.run(program, ScalajHttp.auth(user, pass))
+        Core.run(program, ScalajHttp.auth(user, pass))
       case Array() =>
-        Github.run(program)
+        Core.run(program)
     }
     println(result)
   }

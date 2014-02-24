@@ -3,9 +3,9 @@ import scalaz.{EitherT, Endo, \/}
 
 package object ghscala{
 
-  type Action[A] = EitherT[Github.Requests, Error, A]
+  type Action[A] = EitherT[Core.Requests, Error, A]
 
-  def Action[A](a: Github.Requests[Error \/ A]): Action[A] = EitherT(a)
+  def Action[A](a: Core.Requests[Error \/ A]): Action[A] = EitherT(a)
 
   implicit def toActionOps[A](a: Action[A]) = new ActionOps(a)
 

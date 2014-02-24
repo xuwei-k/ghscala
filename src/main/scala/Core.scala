@@ -7,7 +7,7 @@ final case class RequestF[A](req: scalaj.http.Http.Request, f: (Error \/ String)
   def mapRequest(config: Config): RequestF[A] = copy(req = config(req))
 }
 
-object Github {
+object Core {
 
   private[this] val baseURL = "https://api.github.com/"
 
