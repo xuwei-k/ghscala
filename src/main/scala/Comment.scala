@@ -12,12 +12,12 @@ final case class Comment(
   url        :String,
   position   :Option[Long],
   line       :Option[Long]
-)
+) extends JsonToString[Comment]
 
 object Comment {
 
-  implicit val commentDecodeJson: DecodeJson[Comment] =
-    DecodeJson.jdecode11L(Comment.apply)(
+  implicit val commentCodecJson: CodecJson[Comment] =
+    CodecJson.casecodec11(apply, unapply)(
       "updated_at",
       "id",
       "created_at",

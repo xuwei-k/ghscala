@@ -1,7 +1,6 @@
 package ghscala
 
-import argonaut._
-
+// TODO unused ?
 case class SearchRepo(
   has_downloads :Option[Boolean],
   name          :String,
@@ -55,14 +54,14 @@ final case class Repo(
 //  svn_url       :String,
 //  clone_url     :String,
 //  ssh_url       :String
-){
+) extends JsonToString[Repo] {
   def master:String = master_branch.getOrElse("master")
 }
 
 object Repo {
 
-  implicit val repoDecodeJson: DecodeJson[Repo] =
-    DecodeJson.jdecode22L(Repo.apply)(
+  implicit val repoCodecJson: CodecJson[Repo] =
+    CodecJson.casecodec22(apply, unapply)(
       "has_downloads",
       "name",
       "has_issues",

@@ -1,5 +1,6 @@
 import java.text.SimpleDateFormat
 import scalaz._
+import argonaut.{DecodeJson, EncodeJson}
 
 package object ghscala{
 
@@ -35,14 +36,17 @@ package object ghscala{
 
   type DateTime = org.joda.time.DateTime
 
-  type DecodeJson[A] = argonaut.DecodeJson[A]
-  val DecodeJson = argonaut.DecodeJson
+  type CodecJson[A] = argonaut.CodecJson[A]
+  val CodecJson = argonaut.CodecJson
 
-  implicit val datetimeDecodeJson: DecodeJson[DateTime] =
-    DecodeJson.optionDecoder({
-      _.string.map{ str =>
-        new DateTime((new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")).parse(str))
-      }
-    },"DateTime")
+  implicit val datetimeCodecJson: CodecJson[DateTime] =
+    CodecJson.derived(
+      EncodeJson.jencode1(_.toString()),
+      DecodeJson.optionDecoder({
+        _.string.map{ str =>
+          new DateTime((new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")).parse(str))
+        }
+      },"DateTime")
+    )
 }
 

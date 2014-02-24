@@ -19,7 +19,7 @@ final case class Pull(
   patch_url  :String,
   number     :Long,
   closed_at  :Option[DateTime]
-)
+) extends JsonToString[Pull]
 
 final case class PullLinks(
   self            :PullLinks.Link,
@@ -29,18 +29,18 @@ final case class PullLinks(
   comments        :PullLinks.Link,
   commits         :PullLinks.Link,
   statuses        :PullLinks.Link
-)
+) extends JsonToString[PullLinks]
 
 object PullLinks{
   object Link {
-    implicit val linkDecodeJson: DecodeJson[Link] =
-      DecodeJson.jdecode1L(apply)("href")
+    implicit val linkCodecJson: CodecJson[Link] =
+      CodecJson.casecodec1(apply, unapply)("href")
   }
 
   final case class Link(href :String)
 
-  implicit val pullLinksDecodeJson: DecodeJson[PullLinks] =
-    DecodeJson.jdecode7L(PullLinks.apply)(
+  implicit val pullLinksCodecJson: CodecJson[PullLinks] =
+    CodecJson.casecodec7(apply, unapply)(
       "self", "review_comments", "issue", "html",
       "comments", "commits", "statuses"
     )
@@ -53,17 +53,17 @@ object Pull{
     sha   :String,
     repo  :Option[Repo],
     ref   :String
-  )
+  ) extends JsonToString[Ref]
 
   object Ref {
-    implicit val pullRefDecodeJson: DecodeJson[Ref] =
-      DecodeJson.jdecode5L(Ref.apply)(
+    implicit val pullRefCodecJson: CodecJson[Ref] =
+      CodecJson.casecodec5(apply, unapply)(
         "user", "label", "sha", "repo", "ref"
       )
   }
 
-  implicit val pullDecodeJson: DecodeJson[Pull] =
-    DecodeJson.jdecode18L(Pull.apply)(
+  implicit val pullCodecJson: CodecJson[Pull] =
+    CodecJson.casecodec18(apply, unapply)(
       "updated_at", "head", "title", "id", "created_at", "_links",
       "merged_at", "base", "diff_url", "body", "state", "html_url",
       "issue_url", "user", "url", "patch_url", "number", "closed_at"

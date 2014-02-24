@@ -1,11 +1,11 @@
 package ghscala
 
-import argonaut._
-
 object Tree {
 
-  implicit val treeDecodeJson: DecodeJson[Tree] =
-    DecodeJson.jdecode6L(Tree.apply)("url", "sha", "type", "mode", "size", "path")
+  implicit val treeCodecJson: CodecJson[Tree] =
+    CodecJson.casecodec6(apply, unapply)(
+      "url", "sha", "type", "mode", "size", "path"
+    )
 
 }
 

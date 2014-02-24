@@ -1,13 +1,15 @@
 package ghscala
 
-import argonaut._
-
 object Trees {
 
-  implicit val treesDecodeJson: DecodeJson[Trees] =
-    DecodeJson.jdecode3L(Trees.apply)("sha", "url", "tree")
+  implicit val treesCodecJson: CodecJson[Trees] =
+    CodecJson.casecodec3(apply, unapply)(
+      "sha", "url", "tree"
+    )
 
 }
 
-final case class Trees(sha: String, url: String, tree: List[Tree])
+final case class Trees(
+  sha: String, url: String, tree: List[Tree]
+) extends JsonToString[Trees]
 

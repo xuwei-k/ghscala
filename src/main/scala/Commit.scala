@@ -17,12 +17,12 @@ final case class CommitResponse(
   committer :User,
   files     :List[File],
   parents   :List[Commit.Tree]
-)
+) extends JsonToString[CommitResponse]
 
 object CommitResponse {
 
-  implicit val commitResponseDecodeJson: DecodeJson[CommitResponse] =
-    DecodeJson.jdecode8L(CommitResponse.apply)(
+  implicit val commitResponseCodecJson: CodecJson[CommitResponse] =
+    CodecJson.casecodec8(apply, unapply)(
       "stats", "commit", "url", "sha", "author",
       "committer", "files", "parents"
     )
@@ -43,8 +43,8 @@ final case class File(
 
 object File {
 
-  implicit val fileDecodeJson: DecodeJson[File] =
-    DecodeJson.jdecode9L(File.apply)(
+  implicit val fileCodecJson: CodecJson[File] =
+    CodecJson.casecodec9(apply, unapply)(
       "deletions", "changes", "additions", "status", "raw_url",
       "filename", "blob_url", "patch", "sha"
     )
@@ -56,27 +56,27 @@ object Commit{
   final case class Tree(
     sha :String,
     url :String
-  )
+  ) extends JsonToString[Tree]
 
   object Tree {
-    implicit val treeDecodeJson: DecodeJson[Tree] =
-      DecodeJson.jdecode2L(Tree.apply)("sha", "url")
+    implicit val treeCodecJson: CodecJson[Tree] =
+      CodecJson.casecodec2(apply, unapply)("sha", "url")
   }
 
   final case class User(
     email :String,
     date  :String,
     name  :String
-  )
+  ) extends JsonToString[User]
 
   object User {
-    implicit val userDecodeJson: DecodeJson[User] =
-      DecodeJson.jdecode3L(User.apply)("email", "date", "name")
+    implicit val userCodecJson: CodecJson[User] =
+      CodecJson.casecodec3(apply, unapply)("email", "date", "name")
   }
 
 
-  implicit val commitDecodeJson: DecodeJson[Commit] =
-    DecodeJson.jdecode5L(Commit.apply)(
+  implicit val commitCodecJson: CodecJson[Commit] =
+    CodecJson.casecodec5(apply, unapply)(
       "tree", "message", "url", "author", "committer"
     )
 
@@ -86,12 +86,12 @@ final case class Stats(
   total     :Long,
   deletions :Long,
   additions :Long
-)
+) extends JsonToString[Stats]
 
 object Stats {
 
-  implicit val statsDecodeJson: DecodeJson[Stats] =
-    DecodeJson.jdecode3L(Stats.apply)(
+  implicit val statsCodecJson: CodecJson[Stats] =
+    CodecJson.casecodec3(apply, unapply)(
       "total", "deletions", "additions"
     )
 

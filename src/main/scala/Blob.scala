@@ -8,7 +8,7 @@ final case class Blob(
   sha      :String,
   size     :Long,
   url      :String
-){
+) extends JsonToString[Blob] {
 
   lazy val decoded:String =
     new String(Base64.decodeBase64(content))
@@ -17,8 +17,8 @@ final case class Blob(
 
 object Blob {
 
-  implicit val blobDecodeJson: DecodeJson[Blob] =
-    DecodeJson.jdecode5L(Blob.apply)(
+  implicit val blobCodecJson: CodecJson[Blob] =
+    CodecJson.casecodec5(apply, unapply)(
       "content", "encoding", "sha", "size", "url"
     )
 

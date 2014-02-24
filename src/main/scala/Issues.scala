@@ -14,12 +14,14 @@ final case class PullRequest(
   patch_url   :Option[String],
   diff_url    :Option[String],
   html_url    :Option[String]
-)
+) extends JsonToString[PullRequest]
 
 object PullRequest {
 
-  implicit val pullRequestDecodeJson: DecodeJson[PullRequest] =
-    DecodeJson.jdecode3L(PullRequest.apply)("patch_url", "diff_url", "html_url")
+  implicit val pullRequestCodecJson: CodecJson[PullRequest] =
+    CodecJson.casecodec3(apply, unapply)(
+      "patch_url", "diff_url", "html_url"
+    )
 
 }
 
@@ -27,12 +29,12 @@ final case class Label(
   color        :String,
   url          :String,
   name         :String
-)
+) extends JsonToString[Label]
 
 object Label {
 
-  implicit val labelDecodeJson: DecodeJson[Label] =
-    DecodeJson.jdecode3L(Label.apply)("color", "url", "name")
+  implicit val labelCodecJson: CodecJson[Label] =
+    CodecJson.casecodec3(apply, unapply)("color", "url", "name")
 
 }
 
@@ -48,14 +50,14 @@ final case class Milestone(
   id            :Long,
   open_issues   :Long,
   url           :String
-){
+) extends JsonToString[Milestone] {
   lazy val getState:State = State(state)
 }
 
 object Milestone {
 
-  implicit val issueDecodejson: DecodeJson[Milestone] =
-    DecodeJson.jdecode11L(Milestone.apply)(
+  implicit val issueCodecJson: CodecJson[Milestone] =
+    CodecJson.casecodec11(apply, unapply)(
       "title",
       "closed_issues",
       "due_on",
@@ -86,7 +88,7 @@ final case class Issue(
   title        :String,
   updated_at   :DateTime,
   created_at   :DateTime
-){
+) extends JsonToString[Issue] {
 
   override def toString = title
   lazy val getState: State = State(state)
@@ -94,8 +96,8 @@ final case class Issue(
 
 object Issue {
 
-  implicit val issueDecodejson: DecodeJson[Issue] =
-    DecodeJson.jdecode15L(Issue.apply)(
+  implicit val issueCodecJson: CodecJson[Issue] =
+    CodecJson.casecodec15(apply, unapply)(
       "comments",
       "user",
       "labels",
@@ -122,14 +124,14 @@ final case class IssueEvent(
   created_at :DateTime,
   commit_id  :Option[String],
   url        :String
-){
+) extends JsonToString[IssueEvent] {
   val eventType:EventType = EventType(event)
 }
 
 object IssueEvent {
 
-  implicit val issueEventDecodeJson: DecodeJson[IssueEvent] =
-    DecodeJson.jdecode6L(IssueEvent.apply)(
+  implicit val issueEventCodecJson: CodecJson[IssueEvent] =
+    CodecJson.casecodec6(apply, unapply)(
       "event", "actor", "id", "created_at", "commit_id", "url"
     )
 }
@@ -142,14 +144,14 @@ final case class IssueEvent2(
   commit_id  :Option[String],
   created_at :DateTime,
   url        :String
-){
+) extends JsonToString[IssueEvent2] {
   val eventType:EventType = EventType(event)
 }
 
 object IssueEvent2 {
 
-  implicit val issueEvent2DecodeJson: DecodeJson[IssueEvent2] =
-    DecodeJson.jdecode7L(IssueEvent2.apply)(
+  implicit val issueEvent2CodecJson: CodecJson[IssueEvent2] =
+    CodecJson.casecodec7(apply, unapply)(
       "event", "actor", "issue", "id", "commit_id", "created_at", "url"
     )
 }
