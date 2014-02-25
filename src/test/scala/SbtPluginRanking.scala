@@ -14,16 +14,20 @@ object SbtPluginRanking {
       run(Endo.idEndo)
   }
 
-  def run(config: Config): Unit = {
+  final case class SbtPlugin(user: String, name: String)
+
+  def sbtPlugins: List[SbtPlugin] = {
     val html = io.Source.fromURL(url).mkString
 
-    val repoList = repo.findAllIn(html).map{
-      case repo(user, name) => user -> name
+    repo.findAllIn(html).map{
+      case repo(user, name) => SbtPlugin(user, name)
     }.toList.distinct
+  }
 
+  def run(config: Config): Unit = {
     val (lefts, rights) = MonadPlus[List].separate(
-      repoList.map{ case (u, r) =>
-        Github.repo(u, r).interpret
+      sbtPlugins.map{ p =>
+        Github.repo(p.user, p.name).interpret
       }
     )
 
@@ -32,6 +36,15 @@ object SbtPluginRanking {
     }
 
     lefts.foreach(println)
+  }
+
+  def run2(config: Config): Unit = {
+    import Z._
+    val x = Traverse[List].sequence(
+      sbtPlugins.map{ p => Github.repo(p.user, p.name) }
+    )
+    val y = x.interpret
+    println(y)
   }
 
 }
