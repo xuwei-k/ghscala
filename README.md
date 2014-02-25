@@ -4,7 +4,7 @@
 
 
 - [Maven Central Repository Search](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.github.xuwei-k%22%20AND%20a%3A%22ghscala_2.10%22)
-- [Maven Central](http://repo1.maven.org/maven2/com/github/xuwei-k/)
+- [Maven Central](http://repo1.maven.org/maven2/com/github/xuwei-k/ghscala_2.10/)
 
 
 ### latest stable version
