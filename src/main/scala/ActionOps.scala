@@ -1,6 +1,7 @@
 package ghscala
 
 import scalaz._
+import Z._
 
 final class ActionOps[A](val self: Action[A]) extends AnyVal {
 
@@ -16,7 +17,9 @@ final class ActionOps[A](val self: Action[A]) extends AnyVal {
   def interpretWith(conf: Config): Error \/ A =
     Core.run(self, conf)
 
-  def interpretBy[F[_]: Monad](f: RequestF ~> F): F[Error \/ A] =
+  def interpretBy[F[_]: Monad](f: InterpreterF[F]): F[Error \/ A] =
     Z.interpret(self.run)(f)
+
+  def kleisli: ActionK[A] = ActionK(Z.interpret(self.leftMap(NonEmptyList(_)).run))
 }
 

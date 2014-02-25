@@ -32,8 +32,8 @@ object Core {
       }
     )))
 
-  def execute(conf: Config): RequestF ~> Id.Id =
-    new (RequestF ~> Id.Id){
+  def execute(conf: Config): Interpreter =
+    new Interpreter {
       def apply[A](a: RequestF[A]) = {
         a.f(try {
           \/-(conf(a.req).asString)
@@ -43,7 +43,7 @@ object Core {
       }
     }
 
-  private[this] val emptyConfig: Config = Endo.idEndo
+  private[ghscala] val emptyConfig: Config = Endo.idEndo
 
   def run[A](actions: Action[A]): Error \/ A =
     run(actions, emptyConfig)

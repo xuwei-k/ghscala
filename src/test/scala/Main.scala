@@ -29,3 +29,18 @@ object Main {
   }
 
 }
+
+object ActionKExample {
+
+  def runExample() = {
+    val a = Github.repo("invalid user", "invalid repo").kleisli
+    val b = ActionKZipApply.tuple3(a, a, a)
+    b.interpret
+  }
+
+  def main(args: Array[String]){
+    val x = runExample
+    x.leftMap(errors => println(errors.size))
+    println(x)
+  }
+}
