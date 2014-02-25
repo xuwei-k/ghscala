@@ -17,7 +17,7 @@ object Z {
     liftF(MA(value))(MA.TC)
 
   def freeC[S[_], A](value: S[A]): FreeC[S, A] =
-    liftFU(Coyoneda(value): Coyoneda[S, A])
+    liftFU(Coyoneda(value))
 
   final def interpret[M[_], N[_], A](free: FreeC[N, A])(f: N ~> M)(implicit M: Monad[M]): M[A] = {
     def go(a: FreeC[N, A]): M[A] = a.resume match {
