@@ -21,6 +21,7 @@ scalaVersion := "2.10.3"
 
 libraryDependencies ++= Seq(
   "io.argonaut" %% "argonaut" % "6.1-M2",
+  "org.scalaz" %% "scalaz-concurrent" % "7.1.0-M3",
   "org.scalaj"  %% "scalaj-http" % "0.3.14",
   "joda-time" % "joda-time" % "2.3",
   "org.joda" % "joda-convert" % "1.2",

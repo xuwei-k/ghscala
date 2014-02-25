@@ -7,30 +7,17 @@ package object ghscala{
   type InterpreterF[F[_]] = RequestF ~> F
   type Interpreter = InterpreterF[Id.Id]
 
+  type Requests[A] = Z.FreeC[RequestF, A]
+
   type ErrorNel = NonEmptyList[Error]
 
-  type Action[A] = EitherT[Core.Requests, Error, A]
+  type ActionE[E, A] = EitherT[Requests, E, A]
+  type Action[A] = EitherT[Requests, Error, A]
+  type ActionNel[A] = EitherT[Requests, ErrorNel, A]
 
-  def Action[A](a: Core.Requests[Error \/ A]): Action[A] = EitherT(a)
+  def Action[E, A](a: Requests[E \/ A]): ActionE[E, A] = EitherT(a)
 
-  type ActionK[A] = Kleisli[({type λ[α] = ErrorNel \/ α})#λ, Interpreter, A]
-
-  val ActionKZipApply: Apply[ActionK] =
-    new Apply[ActionK] {
-      override def map[A, B](fa: ActionK[A])(f: A => B) =
-        fa map f
-      override def ap[A, B](fa: => ActionK[A])(f: => ActionK[A => B]) =
-        apply2(f, fa)(_ apply _)
-      override def apply2[A, B, C](a: => ActionK[A], b: => ActionK[B])(f: (A, B) => C) =
-        a.zipWith(b)(f)
-    }
-
-  def ActionK[A](f: Interpreter => (ErrorNel \/ A)): ActionK[A] =
-    Kleisli[({type λ[α] = ErrorNel \/ α})#λ, Interpreter, A](f)
-
-  implicit def toActionOps[A](a: Action[A]): ActionOps[A] = new ActionOps(a)
-
-  implicit def toActionKOps[A](a: ActionK[A]): ActionKOps[A] = new ActionKOps(a)
+  implicit def toActionEOps[E, A](a: ActionE[E, A]): ActionEOps[E, A] = new ActionEOps(a)
 
   type Config = Endo[scalaj.http.Http.Request]
 

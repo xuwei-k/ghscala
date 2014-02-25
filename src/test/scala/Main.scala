@@ -30,11 +30,11 @@ object Main {
 
 }
 
-object ActionKExample {
+object ActionNelExample {
 
   def runExample() = {
-    val a = Github.repo("invalid user", "invalid repo").kleisli
-    val b = ActionKZipApply.tuple3(a, a, a)
+    val a = Github.repo("invalid user", "invalid repo").nel
+    val b = a zip a
     b.interpret
   }
 
