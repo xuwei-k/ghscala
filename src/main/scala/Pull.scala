@@ -37,7 +37,7 @@ object PullLinks{
       CodecJson.casecodec1(apply, unapply)("href")
   }
 
-  final case class Link(href :String)
+  final case class Link(href :String) extends AnyVal
 
   implicit val pullLinksCodecJson: CodecJson[PullLinks] =
     CodecJson.casecodec7(apply, unapply)(

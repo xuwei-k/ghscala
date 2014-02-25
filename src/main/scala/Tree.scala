@@ -24,11 +24,11 @@ final case class Tree(
   }
 }
 
-sealed abstract class TreeType
+sealed abstract trait TreeType extends Any
 object TreeType{
   case object Blob                 extends TreeType
   case object Directory            extends TreeType
-  case class  Unknown(name:String) extends TreeType
+  case class  Unknown(name:String) extends AnyVal with TreeType
 }
 
 case class TreeResponse(
