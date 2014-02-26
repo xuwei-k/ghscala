@@ -29,7 +29,22 @@ object Github {
   def trees(user: String, repo: String, sha: String): Action[Trees] =
     get(s"repos/$user/$repo/git/trees/$sha")
 
-  /** [[http://developer.github.com/v3/repos]] */
+  // TODO parameter
+  /** [[http://developer.github.com/v3/repos/#list-your-repositories]] */
+  val repos: Action[List[Repo]] =
+    get(s"user/repos")
+
+  // TODO parameter
+  /** [[http://developer.github.com/v3/repos/#list-user-repositories]] */
+  def repos(user: String): Action[List[Repo]] =
+    get(s"users/$user/repos")
+
+  // TODO parameter
+  /** [[http://developer.github.com/v3/repos/#list-organization-repositories]] */
+  def orgRepos(org: String): Action[List[Repo]] =
+    get(s"orgs/$org/repos")
+
+  /** [[http://developer.github.com/v3/repos/#list-user-repositories]] */
   def repo(user: String, repo: String): Action[Repo] =
     get(s"repos/$user/$repo")
 
