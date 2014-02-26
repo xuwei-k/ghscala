@@ -5,6 +5,29 @@ import scalaz.Endo
 object Github {
   import Core._
 
+  def main(args: Array[String]): Unit = {
+    val result = PartialFunction.condOpt(args.toList){
+      case "repos" :: user :: Nil =>
+        repos(user)
+      case "repo" :: user :: r :: Nil =>
+        repo(user, r)
+      case "blob" :: user :: repo :: sha :: Nil =>
+        blob(user, repo, sha)
+      case "following" :: user :: Nil =>
+        following(user)
+      case "followers" :: user :: Nil =>
+        followers(user)
+      case "issues" :: user :: repo :: Nil =>
+        issues(user, repo)
+    }
+
+    println(
+      result.map{
+        _.interpret.toString
+      }.getOrElse("invalid argument! " + args.toString)
+    )
+  }
+
   /** [[http://developer.github.com/v3/repos/#list-contributors]] */
   def contributors(owner: String, repo: String): Action[List[User]] =
     get(s"repos/$owner/$repo/contributors")

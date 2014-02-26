@@ -56,3 +56,6 @@ val showDoc = TaskKey[Unit]("showDoc")
 showDoc in Compile <<= (doc in Compile, target in doc in Compile) map { (_, out) =>
   java.awt.Desktop.getDesktop.open(out / "index.html")
 }
+
+Github.setting
+
