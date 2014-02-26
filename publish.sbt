@@ -43,10 +43,6 @@ def releaseStepCross[A](key: TaskKey[A]) = ReleaseStep(
   enableCrossBuild = true
 )
 
-val sonatypeReleaseAllTask = taskKey[Unit]("sonatypeReleaseAllTask")
-
-sonatypeReleaseAllTask := SonatypeKeys.sonatypeReleaseAll.toTask("").value
-
 ReleaseKeys.releaseProcess := Seq[ReleaseStep](
   checkSnapshotDependencies,
   inquireVersions,
@@ -60,7 +56,7 @@ ReleaseKeys.releaseProcess := Seq[ReleaseStep](
   setNextVersion,
   commitNextVersion,
   updateReadmeProcess,
-  releaseStepCross(sonatypeReleaseAllTask),
+  releaseStepCross(SonatypeKeys.sonatypeReleaseAll),
   pushChanges
 )
 
