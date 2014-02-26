@@ -5,6 +5,9 @@ import scalaz.Endo
 object Github {
   import Core._
 
+  def contributors(owner: String, repo: String): Action[List[User]] =
+    get(s"repos/$owner/$repo/contributors")
+
   /** [[http://developer.github.com/v3/users/followers/#list-followers-of-a-user]] */
   val followers: Action[List[User]] =
     get(s"users/followers")
