@@ -5,6 +5,22 @@ import scalaz.Endo
 object Github {
   import Core._
 
+  /** [[http://developer.github.com/v3/users/followers/#list-followers-of-a-user]] */
+  val followers: Action[List[User]] =
+    get(s"users/followers")
+
+  /** [[http://developer.github.com/v3/users/followers/#list-followers-of-a-user]] */
+  def followers(user: String): Action[List[User]] =
+    get(s"users/$user/followers")
+
+  /** [[http://developer.github.com/v3/users/followers/#list-users-followed-by-another-user]] */
+  val following: Action[List[User]] =
+    get(s"users/following")
+
+  /** [[http://developer.github.com/v3/users/followers/#list-users-followed-by-another-user]] */
+  def following(user: String): Action[List[User]] =
+    get(s"users/$user/following")
+
   /** [[http://developer.github.com/v3/git/blobs]] */
   def blob(user: String, repo: String, sha: String): Action[Blob] =
     get(s"repos/$user/$repo/git/blobs/$sha")
