@@ -29,14 +29,15 @@ final class ActionEOps[E, A](val self: ActionE[E, A]) extends AnyVal {
   def interpretBy[F[_]: Monad](f: InterpreterF[F]): F[E \/ A] =
     Z.interpret(self.run)(f)
 
+  def zipWithError[B, C, E1, E2](that: ActionE[E1, B])(f: (E \/ A, E1 \/ B) => E2 \/ C): ActionE[E2, C] =
+    Action(Z.freeC(RequestF.two(self, that)(f)))
+
   def zip[B](that: ActionE[E, B])(implicit E: Semigroup[E]): ActionE[E, (A, B)] =
     zipWith(that)(Tuple2.apply)
 
   import syntax.apply._
 
   def zipWith[B, C](that: ActionE[E, B])(f: (A, B) => C)(implicit E: Semigroup[E]): ActionE[E, C] =
-    Action(Z.freeC(RequestF.two(self, that)((a, b) =>
-      (a.validation |@| b.validation)(f).disjunction
-    )))
+    zipWithError(that)((a, b) => (a.validation |@| b.validation)(f).disjunction)
 
 }
