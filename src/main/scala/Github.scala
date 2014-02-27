@@ -110,5 +110,8 @@ object Github {
     val r = pulls(user, repo).mapRequest(ScalajHttp.params("state" -> state.name))
     Option(baseBranch).fold(r)(branch => r.mapRequest(ScalajHttp.params("base" -> branch)))
   }
+
+  def gists(user: String): Action[List[Gists]] =
+    get(s"users/$user/gists")
 }
 
