@@ -1,7 +1,5 @@
 package ghscala
 
-import scalaz.Endo
-
 object Github {
   import Core._
 
