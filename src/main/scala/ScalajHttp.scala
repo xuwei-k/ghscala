@@ -13,6 +13,8 @@ object ScalajHttp{
 
   def param(key: String, value: String): Config = Endo(_.param(key, value))
 
+  def params(keyValues: (String, String) *): Config = Endo(_.params(keyValues.toList))
+
   def auth(user: String, pass: String): Config = Endo(_.auth(user, pass))
 
   // TODO https://gist.github.com/xuwei-k/5608828
