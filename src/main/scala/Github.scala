@@ -3,6 +3,16 @@ package ghscala
 object Github {
   import Core._
 
+  // TODO create another special case class ?
+  /** [[http://developer.github.com/v3/users/]] */
+  val user: Action[User] =
+    get("user")
+
+  // TODO create another special case class ?
+  /** [[http://developer.github.com/v3/users/]] */
+  def user(user: String): Action[User] =
+    get(s"users/$user")
+
   /** [[http://developer.github.com/v3/repos/#list-contributors]] */
   def contributors(owner: String, repo: String): Action[List[User]] =
     get(s"repos/$owner/$repo/contributors")
