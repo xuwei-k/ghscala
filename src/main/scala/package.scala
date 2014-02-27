@@ -26,6 +26,8 @@ package object ghscala{
   type CodecJson[A] = argonaut.CodecJson[A]
   val CodecJson = argonaut.CodecJson
 
+  private[ghscala] val emptyConfig: Config = Endo.idEndo
+
   implicit val datetimeCodecJson: CodecJson[DateTime] =
     CodecJson.derived(
       EncodeJson.jencode1(_.toString()),
