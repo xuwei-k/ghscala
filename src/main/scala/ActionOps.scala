@@ -1,6 +1,7 @@
 package ghscala
 
 import scalaz._
+import scalaz.concurrent.Future
 import Z._
 
 final class ActionEOps[E, A](val self: ActionE[E, A]) extends AnyVal {
@@ -12,6 +13,12 @@ final class ActionEOps[E, A](val self: ActionE[E, A]) extends AnyVal {
       def apply[A](a: RequestF[A]) = a.mapRequest(f)
     })
   )
+
+  def async: Future[E \/ A] =
+    Core.runAsync(self)
+
+  def async(conf: Config): Future[E \/ A] =
+    Core.runAsync(self, conf)
 
   def interpret: E \/ A =
     Core.run(self)
