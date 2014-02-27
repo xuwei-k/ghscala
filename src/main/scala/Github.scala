@@ -104,7 +104,13 @@ object Github {
     get(s"user/orgs")
 
   /** [[http://developer.github.com/v3/pulls]] */
-  def pulls(user: String, repo: String, state: State = Open): Action[List[Pull]] =
+  def pulls(user: String, repo: String): Action[List[Pull]] =
     get(s"repos/$user/$repo/pulls")
+
+  /** [[http://developer.github.com/v3/pulls]] */
+  def pulls(user: String, repo: String, state: State = Open, baseBranch: String = null): Action[List[Pull]] = {
+    val r = pulls(user, repo).mapRequest(ScalajHttp.params("state" -> state.name))
+    Option(baseBranch).fold(r)(branch => r.mapRequest(ScalajHttp.params("base" -> branch)))
+  }
 }
 
