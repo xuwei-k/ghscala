@@ -35,5 +35,21 @@ package object ghscala{
         }
       },"DateTime")
     )
+
+  def ActionZipAp[E: Semigroup]: Apply[({type λ[α] = ActionE[E, α]})#λ] =
+    new Apply[({type λ[α] = ActionE[E, α]})#λ] {
+      import Z._
+      override def ap[A, B](fa: => ActionE[E, A])(f: => ActionE[E, A => B]) =
+        f.zipWith(fa)(_ apply _)
+
+      override def map[A, B](fa: ActionE[E, A])(f: A => B) =
+        fa map f
+
+      override def apply2[A, B, C](fa: => ActionE[E, A], fb: => ActionE[E, B])(f: (A, B) => C) =
+        fa.zipWith(fb)(f)
+    }
+
+  val ActionNelZipAp: Apply[ActionNel] =
+    ActionZipAp[ErrorNel]
 }
 
