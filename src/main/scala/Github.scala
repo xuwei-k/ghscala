@@ -111,7 +111,22 @@ object Github {
     Option(baseBranch).fold(r)(branch => r.mapRequest(ScalajHttp.params("base" -> branch)))
   }
 
+  /** [[http://developer.github.com/v3/gists/#list-gists]] */
   def gists(user: String): Action[List[Gists]] =
     get(s"users/$user/gists")
+
+  object gists {
+    /** [[http://developer.github.com/v3/gists/#list-gists]] */
+    def me: Action[List[Gists]] =
+      get("gists")
+
+    /** [[http://developer.github.com/v3/gists/#list-gists]] */
+    def public: Action[List[Gists]] =
+      get("gists/public")
+
+    /** [[http://developer.github.com/v3/gists/#list-gists]] */
+    def starred: Action[List[Gists]] =
+      get("gists/starred")
+  }
 }
 
