@@ -2,7 +2,7 @@ name := "ghscala"
 
 organization := "com.github.xuwei-k"
 
-description := "scala github api client"
+description := "purely functional scala github api client"
 
 homepage := Some(url("https://github.com/xuwei-k/ghscala"))
 
