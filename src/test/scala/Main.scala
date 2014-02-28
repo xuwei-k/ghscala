@@ -1,6 +1,7 @@
 package ghscala
 
 import Z._
+import scalaz._
 
 object Main {
 
@@ -36,21 +37,47 @@ object Main {
 
   val program = program1 zip program2
 
+  def printResult[A, E](a: ErrorNel \/ A): Unit = {
+    a.leftMap(errors => println(errors.size))
+    println(a)
+  }
+
+  def runProgram[F[_]: Monad, A](
+    p: ActionNel[A], interpreter: InterpreterF[F]
+  )(f1: F[ErrorNel \/ A] => (ErrorNel \/ A), f2: F[ErrorNel \/ A] => Unit): Unit = {
+    val r = Z.interpret(p.run)(interpreter)
+    val value = f1(r)
+    printResult(value)
+    f2(r)
+    assert(value.isRight)
+  }
+
   def main(args: Array[String]){
-    val result = args match {
+    import scalaz.syntax.equal._, std.anyVal._
+
+    val conf = args match {
       case Array(user, pass) =>
-        Core.run(program, ScalajHttp.auth(user, pass))
+        ScalajHttp.auth(user, pass)
       case Array() =>
         (sys.env.get("TEST_USER_ID"), sys.env.get("TEST_USER_PASSWORD")) match {
           case (Some(user), Some(pass)) =>
-            Core.run(program, ScalajHttp.auth(user, pass))
+            ScalajHttp.auth(user, pass)
           case _ =>
-            Core.run(program)
+            emptyConfig
         }
     }
-    result.leftMap(errors => println(errors.size))
-    println(result)
-    assert(result.isRight)
+
+    runProgram(
+      program1, Interpreters.async(conf)
+    )(_.run, identity)
+
+    runProgram(
+      program2, Interpreters.times(conf)
+    )(_.value, x => {
+      val log = x.written
+      log foreach println
+      log.size assert_=== x.value.map(_.productArity).getOrElse(-1)
+    })
   }
 
 }
