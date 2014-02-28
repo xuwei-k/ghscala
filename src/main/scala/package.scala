@@ -28,6 +28,18 @@ package object ghscala{
 
   private[ghscala] val emptyConfig: Config = Endo.idEndo
 
+  implicit val RequestsMonad: Monad[Requests] =
+    Z.freeCMonad[RequestF]
+
+  def actionEMonad[E]: Monad[({type λ[α] = ActionE[E, α]})#λ] =
+    EitherT.eitherTMonad[Requests, E]
+
+  implicit val ActionMonad: Monad[Action] =
+    actionEMonad[Error]
+
+  implicit val ActionNelMonad: Monad[ActionNel] =
+    actionEMonad[ErrorNel]
+
   implicit val datetimeCodecJson: CodecJson[DateTime] =
     CodecJson.derived(
       EncodeJson.jencode1(_.toString()),
