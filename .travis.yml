@@ -6,10 +6,12 @@ scala:
 jdk:
   - oraclejdk7
 
-script: sbt ++${TRAVIS_SCALA_VERSION} test $(if [[ "${TRAVIS_PULL_REQUEST}" == "false" && ${JAVA_HOME} == $(jdk_switcher home oraclejdk7) && "${TRAVIS_BRANCH}" == "master" ]]; then echo "publish"; fi)
+script: sbt ++${TRAVIS_SCALA_VERSION} "test:runMain ghscala.Main" $(if [[ "${TRAVIS_PULL_REQUEST}" == "false" && ${JAVA_HOME} == $(jdk_switcher home oraclejdk7) && "${TRAVIS_BRANCH}" == "master" ]]; then echo "publish"; fi)
 
 env:
   global:
     - secure: "aqaeqSrRTUj4TIGPRx7p4Uh7t0NWKEzjIeoNuhhERSCC5dCRFlg5iMh5vF/PDNMoDKJM2OooqPpitTRSwNpGdX5qTWfK+aDcFZYp4K5W3avI/msBZnBSr2LfoaI9G0pdP+LobSHACAjG+ZgdMzNoGbsLfr5fnQVo4SBIX8FTrCc="
     - secure: "Lt4lSRAiuYeFRv/xTWb37rAJQdFpRExn4rg370rlNFhmECFJOl/ev4+ybascst1Hug6UN7j/Y50KDCcZkqB5mI6TPaYDgToK5+5P4C/TLIMtMVB1yTjFvDpK0S1j2MHP4mwNmCOADCyQYU7TL4MvKUWkcaY8zcbGTF/GND+fMkE="
+    - secure: "Cvg79+dEHBTnpjUF46hRd4yXMkmdBjQgBvs0ucC71iL+UYo32GbVJymtG3+UIsqeIVN5Rx0Jqpnji7+uKIldzZM52orLDaGocMG2cirpArnBNyugb4jf2HTTf/j0W138zRRjQqnYSXD2ocELrVAdzq6IkFsYqgBbjBm+wot1QaE="
+    - secure: "rQ+fPXOE6/rM7d102DCCSBQfLbqsBoEsCmCIthF53OSOQ2a/J6D8AubKS5HyAw9K4Bw39rBUHSN8k1B9VzRm20pLT7UyLJhn9d3afBu5Wx2oq3Yg5SzI+DkvknkRfwH23wCaVsY30ThmL8/CCqa39wHaU4/OeN2SEBqrUz7Ni+k="
 
