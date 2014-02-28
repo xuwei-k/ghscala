@@ -19,7 +19,7 @@ object Github {
 
   /** [[http://developer.github.com/v3/users/followers/#list-followers-of-a-user]] */
   val followers: Action[List[User]] =
-    get(s"users/followers")
+    get(s"user/followers")
 
   /** [[http://developer.github.com/v3/users/followers/#list-followers-of-a-user]] */
   def followers(user: String): Action[List[User]] =
@@ -27,7 +27,7 @@ object Github {
 
   /** [[http://developer.github.com/v3/users/followers/#list-users-followed-by-another-user]] */
   val following: Action[List[User]] =
-    get(s"users/following")
+    get(s"user/following")
 
   /** [[http://developer.github.com/v3/users/followers/#list-users-followed-by-another-user]] */
   def following(user: String): Action[List[User]] =
