@@ -28,16 +28,16 @@ object Core {
     )))
 
   def run[E, A](actions: ActionE[E, A]): E \/ A =
-    Z.interpret(actions.run)(Interpreter.sequential.empty)
+    Z.interpret(actions.run)(Interpreters.sequential.empty)
 
   def run[E, A](actions: ActionE[E, A], conf: Config): E \/ A =
-    Z.interpret(actions.run)(Interpreter.sequential(conf))
+    Z.interpret(actions.run)(Interpreters.sequential(conf))
 
   def runAsync[E, A](actions: ActionE[E, A]): Future[E \/ A] =
-    Z.interpret(actions.run)(Interpreter.async.empty)
+    Z.interpret(actions.run)(Interpreters.async.empty)
 
   def runAsync[E, A](actions: ActionE[E, A], conf: Config): Future[E \/ A] =
-    Z.interpret(actions.run)(Interpreter.async(conf))
+    Z.interpret(actions.run)(Interpreters.async(conf))
 
 }
 

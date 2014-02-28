@@ -5,7 +5,7 @@ import scalaz.concurrent.Future
 import RequestF._
 import Core._
 
-object Interpreter {
+object Interpreters {
 
   object async {
 
