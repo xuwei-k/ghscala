@@ -149,6 +149,10 @@ object Github {
       val r = get[SearchRepo]("search/repositories", ScalajHttp.param("q", query))
       sort.name.fold(r)(n => r.mapRequest(ScalajHttp.param("sort", n)))
     }
+
+    /** [[http://developer.github.com/v3/search/#search-code]] */
+    def code(query: String): Action[SearchCode] =
+      get("search/code", ScalajHttp.param("q", query))
   }
 }
 
