@@ -23,7 +23,7 @@ object Core {
           x,
           \/.right,
           Error.parse andThen \/.left,
-          (msg, history) => -\/(Error.decode(msg, history))
+          (msg, history) => -\/(Error.decode(req, msg, history, x))
         )
     )))
 
