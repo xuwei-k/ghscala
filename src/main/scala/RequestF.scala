@@ -13,18 +13,19 @@ sealed abstract class RequestF[A] extends Product with Serializable {
 object RequestF {
   import Core._
 
-  abstract case class One[A]() extends RequestF[A] {
+  sealed abstract case class One[A]() extends RequestF[A] {
     def req: ScalajReq
     def error: Error => A
-    def success: String => A
+    def success: (ScalajReq, String) => A
     private[ghscala] def run(conf: Config): A = try {
-      success(conf(req).asString)
+      val r = conf(req)
+      success(r, r.asString)
     } catch {
       case e: scalaj.http.HttpException => error(Error.http(e))
     }
   }
 
-  abstract case class Two[A]() extends RequestF[A] {
+  sealed abstract case class Two[A]() extends RequestF[A] {
     type X
     type Y
     type E1
@@ -34,7 +35,7 @@ object RequestF {
     def f: (E1 \/ X, E2 \/ Y) => A
   }
 
-  def one[A](req0: ScalajReq, error0: Error => A, f: String => A): RequestF[A] =
+  def one[A](req0: ScalajReq, error0: Error => A, f: (ScalajReq, String) => A): RequestF[A] =
     new One[A]{
       def req = req0
       def error = error0

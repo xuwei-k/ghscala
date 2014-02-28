@@ -18,10 +18,10 @@ object Core {
     Action(Z.freeC(RequestF.one[Error \/ A](
       req,
       \/.left,
-      x => Parse.parse(x) match {
+      (request, result) => Parse.parse(result) match {
         case \/-(json) => A.decodeJson(json).result match {
           case r @ \/-(_) => r
-          case -\/((msg, history)) => -\/(Error.decode(req, msg, history, json))
+          case -\/((msg, history)) => -\/(Error.decode(request, msg, history, json))
         }
         case -\/(e) => -\/(Error.parse(e))
       }
