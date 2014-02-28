@@ -125,6 +125,10 @@ object Github {
   def gists(user: String): Action[List[Gists]] =
     get(s"users/$user/gists")
 
+  /** [[http://developer.github.com/v3/gists/#get-a-single-gist]] */
+  def gist(id: String): Action[Gist] =
+    get(s"gists/$id")
+
   object gists {
     /** [[http://developer.github.com/v3/gists/#list-gists]] */
     def me: Action[List[Gists]] =
