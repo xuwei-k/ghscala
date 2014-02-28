@@ -14,17 +14,17 @@ object Core {
   def post[A: DecodeJson](url: String, opt: Config = emptyConfig): Action[A] =
     httpRequest(opt(ScalajHttp.post(baseURL + url)))
 
-  private def httpRequest[A: DecodeJson](req: scalaj.http.Http.Request): Action[A] =
+  private def httpRequest[A](req: scalaj.http.Http.Request)(implicit A: DecodeJson[A]): Action[A] =
     Action(Z.freeC(RequestF.one[Error \/ A](
       req,
       \/.left,
-      x =>
-        Parse.decodeWith[Error \/ A, A](
-          x,
-          \/.right,
-          Error.parse andThen \/.left,
-          (msg, history) => -\/(Error.decode(req, msg, history, x))
-        )
+      x => Parse.parse(x) match {
+        case \/-(json) => A.decodeJson(json).result match {
+          case r @ \/-(_) => r
+          case -\/((msg, history)) => -\/(Error.decode(req, msg, history, json))
+        }
+        case -\/(e) => -\/(Error.parse(e))
+      }
     )))
 
   def run[E, A](actions: ActionE[E, A]): E \/ A =
