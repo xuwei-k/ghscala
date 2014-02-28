@@ -14,7 +14,7 @@ object RequestF {
   import Core._
 
   abstract case class One[A]() extends RequestF[A] {
-    def req: scalaj.http.Http.Request
+    def req: ScalajReq
     def error: Error => A
     def success: String => A
     private[ghscala] def run(conf: Config): A = try {
@@ -34,7 +34,7 @@ object RequestF {
     def f: (E1 \/ X, E2 \/ Y) => A
   }
 
-  def one[A](req0: scalaj.http.Http.Request, error0: Error => A, f: String => A): RequestF[A] =
+  def one[A](req0: ScalajReq, error0: Error => A, f: String => A): RequestF[A] =
     new One[A]{
       def req = req0
       def error = error0

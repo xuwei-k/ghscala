@@ -19,9 +19,11 @@ package object ghscala{
 
   implicit def toActionEOps[E, A](a: ActionE[E, A]): ActionEOps[E, A] = new ActionEOps(a)
 
-  type Config = Endo[scalaj.http.Http.Request]
+  type Config = Endo[ScalajReq]
 
   type DateTime = org.joda.time.DateTime
+
+  private[ghscala] type ScalajReq = scalaj.http.Http.Request
 
   type CodecJson[A] = argonaut.CodecJson[A]
   val CodecJson = argonaut.CodecJson

@@ -14,7 +14,7 @@ object Core {
   def post[A: DecodeJson](url: String, opt: Config = emptyConfig): Action[A] =
     httpRequest(opt(ScalajHttp.post(baseURL + url)))
 
-  private def httpRequest[A](req: scalaj.http.Http.Request)(implicit A: DecodeJson[A]): Action[A] =
+  private def httpRequest[A](req: ScalajReq)(implicit A: DecodeJson[A]): Action[A] =
     Action(Z.freeC(RequestF.one[Error \/ A](
       req,
       \/.left,

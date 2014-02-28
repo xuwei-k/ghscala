@@ -17,7 +17,7 @@ sealed trait Error extends Any with Product with Serializable {
       case _ => z
     }
 
-  def decodeOr[A](z: => A, f: (scalaj.http.Http.Request, String, CursorHistory, Json) => A): A =
+  def decodeOr[A](z: => A, f: (ScalajReq, String, CursorHistory, Json) => A): A =
     this match {
       case Decode(r, m, h, s) => f(r, m, h, s)
       case _ => z
@@ -26,7 +26,7 @@ sealed trait Error extends Any with Product with Serializable {
   final def fold[A](
     http: scalaj.http.HttpException => A,
     parse: String => A,
-    decode: (scalaj.http.Http.Request, String, CursorHistory, Json) => A
+    decode: (ScalajReq, String, CursorHistory, Json) => A
   ): A =
     this match {
       case Http(e) =>
@@ -49,7 +49,7 @@ object Error {
   }
   final case class Parse private[Error] (err: String) extends AnyVal with Error
   final case class Decode private[Error] (
-    req: scalaj.http.Http.Request, message: String, history: CursorHistory, sourceJson: Json
+    req: ScalajReq, message: String, history: CursorHistory, sourceJson: Json
   ) extends Error {
     override def toString = Seq(
       "request" -> s"${req.method} ${req.getUrl}",
@@ -61,6 +61,6 @@ object Error {
 
   val http: scalaj.http.HttpException => Error = Http
   val parse: String => Error = Parse
-  val decode: (scalaj.http.Http.Request, String, CursorHistory, Json) => Error = Decode
+  val decode: (ScalajReq, String, CursorHistory, Json) => Error = Decode
 }
 
