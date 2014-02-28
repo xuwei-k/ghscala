@@ -1,29 +1,16 @@
 package ghscala
 
-// TODO unused ?
-case class SearchRepo(
-  has_downloads :Option[Boolean],
-  name          :String,
-  has_issues    :Boolean,
-  forks         :Int,
-  `private`     :Boolean,
-  size          :Int,
-  open_issues   :Int,
-  url           :String,
-  description   :Option[String],
-  pushed_at     :DateTime,
-  has_wiki      :Boolean,
-  fork          :Boolean,
-  language      :String,
-  homepage      :Option[String],
-  created_at    :DateTime,
-  updated_at    :DateTime,
-  watchers      :Int,
-  master_branch :Option[String],
-  owner         :String
-//  username      :String
-//  organization  :Option[String]
-)
+final case class SearchRepo(
+  total_count :Long,
+  items       :List[Repo]
+) extends JsonToString[SearchRepo]
+
+object SearchRepo {
+  implicit val searchRepoCodecJson: CodecJson[SearchRepo] =
+    CodecJson.casecodec2(apply, unapply)(
+      "total_count", "items"
+    )
+}
 
 final case class Repo(
   has_downloads :Option[Boolean],
@@ -34,8 +21,8 @@ final case class Repo(
   size          :Int,
   open_issues   :Int,
   url           :String,
-  description   :String, // TODO possibly optional ?
-  pushed_at     :DateTime,
+  description   :Option[String],
+  pushed_at     :Option[DateTime],
   git_url       :String,
   has_wiki      :Boolean,
   fork          :Boolean,

@@ -142,5 +142,13 @@ object Github {
     def starred: Action[List[Gists]] =
       get("gists/starred")
   }
+
+  object search {
+    /** [[http://developer.github.com/v3/search/#search-repositories]] */
+    def repositories(query: String, sort: SearchRepoSort = SearchRepoSort.Default): Action[SearchRepo] = {
+      val r = get[SearchRepo]("search/repositories", ScalajHttp.param("q", query))
+      sort.name.fold(r)(n => r.mapRequest(ScalajHttp.param("sort", n)))
+    }
+  }
 }
 
