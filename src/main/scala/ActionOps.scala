@@ -40,4 +40,9 @@ final class ActionEOps[E, A](val self: ActionE[E, A]) extends AnyVal {
   def zipWith[B, C](that: ActionE[E, B])(f: (A, B) => C)(implicit E: Semigroup[E]): ActionE[E, C] =
     zipWithError(that)((a, b) => (a.validation |@| b.validation)(f).disjunction)
 
+  def toJsonTree: argonaut.Json =
+    RequestTree(self).json
+
+  def shows: String =
+    RequestTree(self).jsonString
 }
