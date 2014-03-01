@@ -1,7 +1,7 @@
 package ghscala
 
 import scalaz._
-import scalaz.concurrent.Future
+import scalaz.concurrent.{Future, Task}
 import argonaut._
 
 object Core {
@@ -38,6 +38,9 @@ object Core {
 
   def runAsync[E, A](actions: ActionE[E, A], conf: Config): Future[E \/ A] =
     Z.interpret(actions.run)(Interpreters.async(conf))
+
+  def runTask[E, A](actions: ActionE[E, A], conf: Config): Task[E \/ A] =
+    Z.interpret(actions.run)(Interpreters.async.task(conf))
 
 }
 

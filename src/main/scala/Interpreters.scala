@@ -1,7 +1,7 @@
 package ghscala
 
 import scalaz.Nondeterminism
-import scalaz.concurrent.Future
+import scalaz.concurrent.{Future, Task}
 import RequestF._
 import Core._
 
@@ -16,6 +16,16 @@ object Interpreters {
             Future(o.run(conf))
           case t @ Two() =>
             Nondeterminism[Future].mapBoth(runAsync(t.x, conf), runAsync(t.y, conf))(t.f)
+        }
+      }
+
+    def task(conf: Config): InterpreterF[Task] =
+      new InterpreterF[Task] {
+        def apply[A](a: RequestF[A]) = a match {
+          case o @ One() =>
+            Task(o.run(conf))
+          case t @ Two() =>
+            Nondeterminism[Task].mapBoth(runTask(t.x, conf), runTask(t.y, conf))(t.f)
         }
       }
 
