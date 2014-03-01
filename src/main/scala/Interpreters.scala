@@ -62,5 +62,38 @@ object Interpreters {
         }
       }
   }
+
+  object times {
+    def apply(conf: Config): InterpreterF[Times] =
+      new InterpreterF[Times] {
+        def apply[A](a: RequestF[A]) = a match {
+          case o @ One() =>
+            val r = conf(o.req)
+            val start = System.nanoTime
+            try {
+              val str = r.asString
+              val httpFinished = System.nanoTime
+              val parseResult = o.parse(r, str)
+              val parseFinished = System.nanoTime
+              val decodeResult = o.decode(r, parseResult)
+              val decodeFinished = System.nanoTime - parseFinished
+              Times(
+                decodeResult,
+                Time.Success(
+                  r, str, httpFinished - start, parseFinished - httpFinished, decodeFinished
+                )
+              )
+            } catch {
+              case e: scalaj.http.HttpException =>
+                Times(o.error(Error.http(e)), Time.Failure(r, e, System.nanoTime - start))
+            }
+          case t @ Two() =>
+            timesMonad.apply2(
+              runWithTime(t.x, conf),
+              runWithTime(t.y, conf)
+            )(t.f)
+        }
+      }
+  }
 }
 

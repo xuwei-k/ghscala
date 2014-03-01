@@ -20,6 +20,9 @@ final class ActionEOps[E, A](val self: ActionE[E, A]) extends AnyVal {
   def async(conf: Config): Future[E \/ A] =
     Core.runAsync(self, conf)
 
+  def withTime(conf: Config = emptyConfig): Times[E \/ A] =
+    Core.runWithTime(self, conf)
+
   def interpret: E \/ A =
     Core.run(self)
 

@@ -28,6 +28,13 @@ package object ghscala{
   type CodecJson[A] = argonaut.CodecJson[A]
   val CodecJson = argonaut.CodecJson
 
+  type Times[A] = Writer[List[Time], A]
+  private[ghscala] def Times[A](result: A, time: Time): Times[A] =
+    Writer(List(time), result)
+
+  private[ghscala] implicit val timesMonad: Monad[Times] =
+    scalaz.WriterT.writerMonad[List[Time]](scalaz.std.list.listMonoid)
+
   private[ghscala] val emptyConfig: Config = Endo.idEndo
 
   implicit val RequestsMonad: Monad[Requests] =

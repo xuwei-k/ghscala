@@ -15,15 +15,15 @@ object Core {
     httpRequest(opt(ScalajHttp.post(baseURL + url)))
 
   private def httpRequest[A](req: ScalajReq)(implicit A: DecodeJson[A]): Action[A] =
-    Action(Z.freeC(RequestF.one[Error \/ A](
+    Action(Z.freeC(RequestF.one[Error \/ A, Error \/ Json](
       req,
       \/.left,
-      (request, result) => Parse.parse(result) match {
-        case \/-(json) => A.decodeJson(json).result match {
-          case r @ \/-(_) => r
-          case -\/((msg, history)) => -\/(Error.decode(request, msg, history, json))
+      (request, result) => Parse.parse(result).leftMap(Error.parse),
+      (request, either) => either.flatMap{ json =>
+        A.decodeJson(json).result match {
+           case r @ \/-(_) => r
+           case -\/((msg, history)) => -\/(Error.decode(request, msg, history, json))
         }
-        case -\/(e) => -\/(Error.parse(e))
       }
     )))
 
@@ -32,6 +32,9 @@ object Core {
 
   def run[E, A](actions: ActionE[E, A], conf: Config): E \/ A =
     Z.interpret(actions.run)(Interpreters.sequential(conf))
+
+  def runWithTime[E, A](actions: ActionE[E, A], conf: Config): Times[E \/ A] =
+    Z.interpret(actions.run)(Interpreters.times(conf))
 
   def runAsync[E, A](actions: ActionE[E, A]): Future[E \/ A] =
     Z.interpret(actions.run)(Interpreters.async.empty)
