@@ -17,6 +17,7 @@ object RequestF {
     def req: ScalajReq
     def error: Error => A
     def success: (ScalajReq, String) => A
+    override final def toString = s"RequestF.One(${req.method} ${req.getUrl})"
     private[ghscala] def run(conf: Config): A = try {
       val r = conf(req)
       success(r, r.asString)
