@@ -68,11 +68,11 @@ object Main {
     }
 
     runProgram(
-      program1, Interpreters.async(conf)
+      program1, Interpreter.future(conf).interpreter
     )(_.run, identity)
 
     runProgram(
-      program2, Interpreters.times(conf)
+      program2, Interpreter.times(conf).interpreter
     )(_.value, x => {
       val log = x.written
       log foreach println

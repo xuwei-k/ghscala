@@ -5,7 +5,6 @@ import argonaut.{DecodeJson, EncodeJson}
 package object ghscala{
 
   type InterpreterF[F[_]] = RequestF ~> F
-  type Interpreter = InterpreterF[Id.Id]
 
   type Requests[A] = Z.FreeC[RequestF, A]
 

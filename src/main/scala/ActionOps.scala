@@ -1,7 +1,7 @@
 package ghscala
 
 import scalaz._
-import scalaz.concurrent.Future
+import scalaz.concurrent.{Future, Task}
 import Z._
 
 final class ActionEOps[E, A](val self: ActionE[E, A]) extends AnyVal {
@@ -14,20 +14,29 @@ final class ActionEOps[E, A](val self: ActionE[E, A]) extends AnyVal {
     })
   )
 
+  def task: Task[E \/ A] =
+    Interpreter.task.empty.run(self)
+
+  def task(conf: Config): Task[E \/ A] =
+    Interpreter.task.apply(conf).run(self)
+
   def async: Future[E \/ A] =
-    Core.runAsync(self)
+    Interpreter.future.empty.run(self)
 
   def async(conf: Config): Future[E \/ A] =
-    Core.runAsync(self, conf)
+    Interpreter.future.apply(conf).run(self)
 
-  def withTime(conf: Config = emptyConfig): Times[E \/ A] =
-    Core.runWithTime(self, conf)
+  def withTime: Times[E \/ A] =
+    Interpreter.times.empty.run(self)
+
+  def withTime(conf: Config): Times[E \/ A] =
+    Interpreter.times.apply(conf).run(self)
 
   def interpret: E \/ A =
-    Core.run(self)
+    Interpreter.sequential.empty.run(self)
 
   def interpretWith(conf: Config): E \/ A =
-    Core.run(self, conf)
+    Interpreter.sequential.apply(conf).run(self)
 
   def interpretBy[F[_]: Monad](f: InterpreterF[F]): F[E \/ A] =
     Z.interpret(self.run)(f)
