@@ -1,6 +1,6 @@
 package ghscala
 
-import scalaz._
+import scalaz.{One => _, Two => _, _}
 import scalaz.concurrent.{Future, Task}
 import Z._
 
@@ -31,6 +31,12 @@ final class ActionEOps[E, A](val self: ActionE[E, A]) extends AnyVal {
 
   def withTime(conf: Config): Times[E \/ A] =
     Interpreter.times.apply(conf).run(self)
+
+  def futureWithTime: Future[(List[Time], E \/ A)] =
+    Interpreter.times.future.empty.run(self).run
+
+  def futureWithTime(conf: Config): Future[(List[Time], E \/ A)] =
+    Interpreter.times.future(conf).run(self).run
 
   def interpret: E \/ A =
     Interpreter.sequential.empty.run(self)

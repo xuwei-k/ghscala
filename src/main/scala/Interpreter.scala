@@ -1,6 +1,6 @@
 package ghscala
 
-import scalaz.{Nondeterminism, \/, Monad}
+import scalaz.{One => _, Two => _, _}
 import scalaz.Id.Id
 import scalaz.concurrent.{Future, Task}
 import RequestF._
@@ -72,13 +72,13 @@ object Interpreter {
       new Interpreter[Times] {
         def go[A](a: RequestF[A]) = a match {
           case o @ One() =>
-            go1(o, conf)
+            Times(go1(o, conf))
           case t @ Two() =>
             timesMonad.apply2(run(t.x), run(t.y))(t.f)
         }
       }
 
-    private def go1[A](o: One[A], conf: Config): Times[A] = {
+    private def go1[A](o: One[A], conf: Config): (List[Time], A) = {
       val r = conf(o.req)
       val start = System.nanoTime
       try {
@@ -88,18 +88,40 @@ object Interpreter {
         val parseFinished = System.nanoTime
         val decodeResult = o.decode(r, parseResult)
         val decodeFinished = System.nanoTime - parseFinished
-        Times(
-          decodeResult,
-          Time.Success(
-            r, str, httpFinished - start, parseFinished - httpFinished, decodeFinished
-          )
+        val time = Time.Success(
+          r, str, httpFinished - start, parseFinished - httpFinished, decodeFinished
         )
+        (time :: Nil) -> decodeResult
       } catch {
         case e: scalaj.http.HttpException =>
-          Times(o.error(Error.http(e)), Time.Failure(r, e, System.nanoTime - start))
+          (Time.Failure(r, e, System.nanoTime - start) :: Nil) -> o.error(Error.http(e))
       }
     }
 
+    object future {
+      private[this] val FutureApParallel = new Applicative[Future] {
+        override def point[A](a: => A) = Future(a)
+        override def ap[A,B](a: => Future[A])(f: => Future[A => B]): Future[B] = apply2(f,a)(_(_))
+        override def apply2[A, B, C](a: => Future[A], b: => Future[B])(f: (A, B) => C) =
+          Nondeterminism[Future].mapBoth(a, b)(f)
+      }
+      import std.list._
+
+      private[this] val G = WriterT.writerTApplicative(Monoid[List[Time]], FutureApParallel)
+
+      val empty: Interpreter[FutureTimes] =
+        apply(emptyConfig)
+
+      def apply(conf: Config): Interpreter[FutureTimes] =
+        new Interpreter[FutureTimes] {
+          def go[A](a: RequestF[A]) = a match {
+            case o @ One() =>
+              WriterT(Future(go1(o, conf)))
+            case t @ Two() =>
+              G.apply2(run(t.x), run(t.y))(t.f)
+          }
+        }
+    }
   }
 }
 
