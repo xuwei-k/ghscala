@@ -7,7 +7,7 @@ import com.typesafe.sbt.pgp.PgpKeys
 object build extends Build {
 
   def gitHash: Option[String] = scala.util.Try(
-    sys.process.Process("git show -s --oneline").lines_!.head.split(" ").head
+    sys.process.Process("git rev-parse HEAD").lines_!.head
   ).toOption
 
   val showDoc = TaskKey[Unit]("showDoc")
@@ -19,15 +19,17 @@ object build extends Build {
     val scalaV = extracted get scalaBinaryVersion
     val v = extracted get version
     val org =  extracted get organization
-    val n = "ghscala-core"
+    val modules = ("scalaj" :: "apache" :: "dispatch" :: Nil).map("ghscala-" + _)
     val snapshotOrRelease = if(extracted get isSnapshot) "snapshots" else "releases"
     val readme = "README.md"
     val readmeFile = file(readme)
     val newReadme = Predef.augmentString(IO.read(readmeFile)).lines.map{ line =>
       val matchReleaseOrSnapshot = line.contains("SNAPSHOT") == v.contains("SNAPSHOT")
       if(line.startsWith("libraryDependencies") && matchReleaseOrSnapshot){
-        s"""libraryDependencies += "${org}" %% "${n}" % "$v""""
+        val i = modules.indexWhere(line.contains)
+        s"""libraryDependencies += "${org}" %% "${modules(i)}" % "$v""""
       }else if(line.contains(sonatypeURL) && matchReleaseOrSnapshot){
+        val n = "ghscala-core"
         s"- [API Documentation](${sonatypeURL}${snapshotOrRelease}/archive/${org.replace('.','/')}/${n}_${scalaV}/${v}/${n}_${scalaV}-${v}-javadoc.jar/!/index.html)"
       }else line
     }.mkString("", "\n", "\n")
@@ -113,7 +115,8 @@ object build extends Build {
       "io.argonaut" %% "argonaut" % "6.1-M2",
       "joda-time" % "joda-time" % "2.3",
       "org.joda" % "joda-convert" % "1.2",
-      "commons-codec" % "commons-codec" % "1.9"
+      "commons-codec" % "commons-codec" % "1.6"
+      // latest commons-codec is 1.9 but "httpclient" % "4.3.3" still depends on 1.6
     )
   )
 
@@ -144,13 +147,30 @@ object build extends Build {
     )
   ).dependsOn(core)
 
-  lazy val root = Project("root", file(".")).settings(
-    baseSettings ++ Seq(
-      publishArtifact := false,
-      publish := {},
-      publishLocal := {}
-    ): _*
-  ).aggregate(core, scalaj, dispatch, apache)
+
+  lazy val root = {
+    import sbtunidoc.Plugin._
+    val customPackageKeys = Seq(packageDoc in Compile)
+
+    Project("root", file(".")).settings(
+      baseSettings ++ unidocSettings ++ Seq(
+        name := "ghscala",
+        sources := (sources in UnidocKeys.unidoc in ScalaUnidoc).value,
+        resolvers += Classpaths.typesafeReleases,
+        packageDoc in Compile := {
+          val dir = (UnidocKeys.unidoc in Compile).value
+          val files = (dir ** (-DirectoryFilter)).get.map{f =>
+            f -> IO.relativize((crossTarget in UnidocKeys.unidoc).value / "unidoc", f).get
+          }
+          val out = crossTarget.value / s"ghscala-${scalaBinaryVersion.value}-${version.value}-javadoc.jar"
+          IO.zip(files, out)
+          out
+        },
+        artifacts <<= sbt.Classpaths.artifactDefs(customPackageKeys),
+        packagedArtifacts <<= sbt.Classpaths.packaged(customPackageKeys)
+      ): _*
+    ).aggregate(core, scalaj, dispatch, apache)
+  }
 
 
 }

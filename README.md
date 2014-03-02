@@ -10,7 +10,19 @@
 ### latest stable version
 
 ```scala
-libraryDependencies += "com.github.xuwei-k" %% "ghscala" % "0.2.4"
+libraryDependencies += "com.github.xuwei-k" %% "ghscala-scalaj" % "0.2.4"
+```
+
+or
+
+```scala
+libraryDependencies += "com.github.xuwei-k" %% "ghscala-dispatch" % "0.2.4"
+```
+
+or
+
+```scala
+libraryDependencies += "com.github.xuwei-k" %% "ghscala-apache" % "0.2.4"
 ```
 
 - [API Documentation](https://oss.sonatype.org/service/local/repositories/releases/archive/com/github/xuwei-k/ghscala_2.10/0.2.4/ghscala_2.10-0.2.4-javadoc.jar/!/index.html)
@@ -21,7 +33,23 @@ libraryDependencies += "com.github.xuwei-k" %% "ghscala" % "0.2.4"
 ```scala
 resolvers += Opts.resolver.sonatypeSnapshots
 
-libraryDependencies += "com.github.xuwei-k" %% "ghscala" % "0.2.5-SNAPSHOT"
+libraryDependencies += "com.github.xuwei-k" %% "ghscala-scalaj" % "0.2.5-SNAPSHOT"
+```
+
+or
+
+```scala
+resolvers += Opts.resolver.sonatypeSnapshots
+
+libraryDependencies += "com.github.xuwei-k" %% "ghscala-dispatch" % "0.2.5-SNAPSHOT"
+```
+
+or
+
+```scala
+resolvers += Opts.resolver.sonatypeSnapshots
+
+libraryDependencies += "com.github.xuwei-k" %% "ghscala-apache" % "0.2.5-SNAPSHOT"
 ```
 
 - [API Documentation](https://oss.sonatype.org/service/local/repositories/snapshots/archive/com/github/xuwei-k/ghscala_2.10/0.2.5-SNAPSHOT/ghscala_2.10-0.2.5-SNAPSHOT-javadoc.jar/!/index.html)

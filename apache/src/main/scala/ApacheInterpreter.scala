@@ -1,7 +1,6 @@
 package ghscala
 package apachehttp
 
-import java.nio.charset.StandardCharsets
 import java.io.Closeable
 import java.net.URI
 
@@ -46,7 +45,7 @@ object ApacheInterpreter extends InterpretersTemplate {
     using(executeRequest(req)){ res =>
       val code = res.getStatusLine().getStatusCode()
       val entity = res.getEntity()
-      val body = EntityUtils.toString(entity, StandardCharsets.UTF_8)
+      val body = EntityUtils.toString(entity, "UTF-8")
       if (code == HttpStatus.SC_OK) {
         body
       } else {
