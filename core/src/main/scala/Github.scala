@@ -76,7 +76,7 @@ object Github {
   def issues(user: String, repo: String, state: State = Open): Action[List[Issue]] =
     get(
       s"repos/$user/$repo/issues",
-      ScalajHttp.param("state", state.name)
+      Request.param("state", state.name)
     )
 
   /** [[http://developer.github.com/v3/issues/events/]] */
@@ -93,7 +93,7 @@ object Github {
 
   /** [[http://developer.github.com/v3/repos/contents]] */
   def readme(user: String, repo: String, ref: String): Action[Contents] =
-    get(s"repos/$user/$repo/readme", ScalajHttp.param("ref", ref))
+    get(s"repos/$user/$repo/readme", Request.param("ref", ref))
 
   /** [[http://developer.github.com/v3/repos/contents]] */
   def readme(user: String, repo: String): Action[Contents] =
@@ -105,7 +105,7 @@ object Github {
 
   /** [[http://developer.github.com/v3/repos/contents]] */
   def contents(user: String, repo: String, path: String, ref: String): Action[Contents] =
-    contents(user, repo, path).mapRequest(ScalajHttp.param("ref", ref))
+    contents(user, repo, path).mapRequest(Request.param("ref", ref))
 
   /** [[http://developer.github.com/v3/orgs]] */
   def org(orgName: String): Action[Organization] =
@@ -125,8 +125,8 @@ object Github {
 
   /** [[http://developer.github.com/v3/pulls]] */
   def pulls(user: String, repo: String, state: State = Open, baseBranch: String = null): Action[List[Pull]] = {
-    val r = pulls(user, repo).mapRequest(ScalajHttp.params("state" -> state.name))
-    Option(baseBranch).fold(r)(branch => r.mapRequest(ScalajHttp.params("base" -> branch)))
+    val r = pulls(user, repo).mapRequest(Request.params("state" -> state.name))
+    Option(baseBranch).fold(r)(branch => r.mapRequest(Request.params("base" -> branch)))
   }
 
   /** [[http://developer.github.com/v3/gists/#list-gists]] */
@@ -154,13 +154,13 @@ object Github {
   object search {
     /** [[http://developer.github.com/v3/search/#search-repositories]] */
     def repositories(query: String, sort: SearchRepoSort = SearchRepoSort.Default): Action[SearchRepo] = {
-      val r = get[SearchRepo]("search/repositories", ScalajHttp.param("q", query))
-      sort.name.fold(r)(n => r.mapRequest(ScalajHttp.param("sort", n)))
+      val r = get[SearchRepo]("search/repositories", Request.param("q", query))
+      sort.name.fold(r)(n => r.mapRequest(Request.param("sort", n)))
     }
 
     /** [[http://developer.github.com/v3/search/#search-code]] */
     def code(query: String): Action[SearchCode] =
-      get("search/code", ScalajHttp.param("q", query))
+      get("search/code", Request.param("q", query))
   }
 }
 

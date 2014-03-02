@@ -1,4 +1,5 @@
 package ghscala
+package scalajhttp
 
 import Z._
 import scalaz._
@@ -57,22 +58,22 @@ object Main {
 
     val conf = args match {
       case Array(user, pass) =>
-        ScalajHttp.auth(user, pass)
+        Request.auth(user, pass)
       case Array() =>
         (sys.env.get("TEST_USER_ID"), sys.env.get("TEST_USER_PASSWORD")) match {
           case (Some(user), Some(pass)) =>
-            ScalajHttp.auth(user, pass)
+            Request.auth(user, pass)
           case _ =>
             emptyConfig
         }
     }
 
     runProgram(
-      program1, Interpreter.future(conf).interpreter
+      program1, ScalajInterpreter.future(conf).interpreter
     )(_.run, identity)
 
     runProgram(
-      program2, Interpreter.times(conf).interpreter
+      program2, ScalajInterpreter.times(conf).interpreter
     )(_.value, x => {
       val log = x.written
       log foreach println

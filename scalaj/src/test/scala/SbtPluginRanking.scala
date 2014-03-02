@@ -1,4 +1,5 @@
 package ghscala
+package scalajhttp
 
 import scalaz._, std.list._
 
@@ -9,7 +10,7 @@ object SbtPluginRanking {
 
   def main(args: Array[String]): Unit = args match {
     case Array(user, pass) =>
-      run(ScalajHttp.auth(user, pass))
+      run(Request.auth(user, pass))
     case Array() =>
       run(Endo.idEndo)
   }

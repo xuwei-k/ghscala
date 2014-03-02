@@ -1,7 +1,6 @@
 package ghscala
 
 import scalaz._
-import scalaz.concurrent.{Future, Task}
 import argonaut._
 
 object Core {
@@ -9,12 +8,12 @@ object Core {
   private[this] val baseURL = "https://api.github.com/"
 
   def get[A: DecodeJson](url: String, opt: Config = emptyConfig): Action[A] =
-    httpRequest(opt(ScalajHttp(baseURL + url)))
+    httpRequest(opt(Request(baseURL + url)))
 
   def post[A: DecodeJson](url: String, opt: Config = emptyConfig): Action[A] =
-    httpRequest(opt(ScalajHttp.post(baseURL + url)))
+    httpRequest(opt(Request(url = baseURL + url, method = "POST")))
 
-  private def httpRequest[A](req: ScalajReq)(implicit A: DecodeJson[A]): Action[A] =
+  private def httpRequest[A](req: Request)(implicit A: DecodeJson[A]): Action[A] =
     Action(Z.freeC(RequestF.one[Error \/ A, Error \/ Json](
       req,
       \/.left,

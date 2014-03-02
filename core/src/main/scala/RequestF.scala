@@ -15,20 +15,14 @@ object RequestF {
 
   sealed abstract case class One[A]() extends RequestF[A] {
     type B
-    def req: ScalajReq
+    def req: Request
     def error: Error => A
-    def parse: (ScalajReq, String) => B
-    def decode: (ScalajReq, B) => A
-    override final def toString = s"RequestF.One(${req.method} ${req.getUrl})"
+    def parse: (Request, String) => B
+    def decode: (Request, B) => A
+    override final def toString = s"RequestF.One(${req.method} ${req.url})"
     def cp(
-      req: ScalajReq = req, error: Error => A = error, parse: (ScalajReq, String) => B = parse, decode: (ScalajReq, B) => A = decode
+      req: Request = req, error: Error => A = error, parse: (Request, String) => B = parse, decode: (Request, B) => A = decode
     ): RequestF[A] = one(req, error, parse, decode)
-    private[ghscala] def run(conf: Config): A = try {
-      val r = conf(req)
-      decode(r, parse(r, r.asString))
-    } catch {
-      case e: scalaj.http.HttpException => error(Error.http(e))
-    }
   }
 
   sealed abstract case class Two[A]() extends RequestF[A] {
@@ -41,7 +35,7 @@ object RequestF {
     def f: (E1 \/ X, E2 \/ Y) => A
   }
 
-  def one[A, B0](req0: ScalajReq, error0: Error => A, parse0: (ScalajReq, String) => B0, decode0: (ScalajReq, B0) => A): RequestF[A] =
+  def one[A, B0](req0: Request, error0: Error => A, parse0: (Request, String) => B0, decode0: (Request, B0) => A): RequestF[A] =
     new One[A]{
       type B = B0
       def req = req0
