@@ -135,13 +135,22 @@ object build extends Build {
     )
   ).dependsOn(core)
 
+  lazy val apache = Project("apache", file("apache")).settings(
+    baseSettings : _*
+  ).settings(
+    name := "ghscala-apache",
+    libraryDependencies ++= Seq(
+      "org.apache.httpcomponents" % "httpclient" % "4.3.3"
+    )
+  ).dependsOn(core)
+
   lazy val root = Project("root", file(".")).settings(
     baseSettings ++ Seq(
       publishArtifact := false,
       publish := {},
       publishLocal := {}
     ): _*
-  ).aggregate(core, scalaj, dispatch)
+  ).aggregate(core, scalaj, dispatch, apache)
 
 
 }
