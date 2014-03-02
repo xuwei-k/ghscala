@@ -3,6 +3,10 @@ package ghscala
 object Github {
   import Core._
 
+  /** [[http://developer.github.com/v3/repos/#list-tags]] */
+  def tags(owner: String, repo: String): Action[List[Tag]] =
+    get(s"repos/$owner/$repo/tags")
+
   /** [[http://developer.github.com/v3/repos/#list-branches]] */
   def branches(owner: String, repo: String): Action[List[Branch]] =
     get(s"repos/$owner/$repo/branches")
