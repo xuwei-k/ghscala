@@ -1,15 +1,12 @@
 package ghscala
 package dispatchclassic
 
-import scalaz.\/
+import scalaz.{One => _, Two => _, _}
 
-final class DispatchActionEOps[E, A](val self: ActionE[E, A]) extends AnyVal {
+final class DispatchActionEOps[E, A](
+  val self: ActionE[E, A]
+) extends AnyVal with ActionOpsTemplate[E, A] {
 
-  def interpret(conf: Config): E \/ A =
-    DispatchInterpreter.sequential(conf).run(self)
-
-  def interpret: E \/ A =
-    DispatchInterpreter.sequential.empty.run(self)
+  override def interpreter = DispatchInterpreter
 
 }
-

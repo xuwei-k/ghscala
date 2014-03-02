@@ -109,6 +109,7 @@ object build extends Build {
   ).settings(
     name := "ghscala-core",
     libraryDependencies ++= Seq(
+      "org.scalaz" %% "scalaz-concurrent" % "7.1.0-M3",
       "io.argonaut" %% "argonaut" % "6.1-M2",
       "joda-time" % "joda-time" % "2.3",
       "org.joda" % "joda-convert" % "1.2",
@@ -121,7 +122,6 @@ object build extends Build {
   ).settings(
     name := "ghscala-scalaj",
     libraryDependencies ++= Seq(
-      "org.scalaz" %% "scalaz-concurrent" % "7.1.0-M3",
       "org.scalaj"  %% "scalaj-http" % "0.3.14"
     )
   ).dependsOn(core)

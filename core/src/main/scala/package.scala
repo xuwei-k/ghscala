@@ -1,6 +1,7 @@
 import java.text.SimpleDateFormat
 import scalaz.{One => _, Two => _, _}
 import argonaut.{DecodeJson, EncodeJson}
+import scalaz.concurrent.Future
 
 package object ghscala{
 
@@ -28,6 +29,8 @@ package object ghscala{
   type Times[A] = Writer[List[Time], A]
   private[ghscala] def Times[A](a: (List[Time], A)): Times[A] =
     Writer(a._1, a._2)
+
+  private[ghscala] type FutureTimes[A] = WriterT[Future, List[Time], A]
 
   private[ghscala] implicit val timesMonad: Monad[Times] =
     scalaz.WriterT.writerMonad[List[Time]](scalaz.std.list.listMonoid)

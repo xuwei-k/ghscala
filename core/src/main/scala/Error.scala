@@ -2,7 +2,7 @@ package ghscala
 
 import argonaut._
 
-sealed trait Error extends Any with Product with Serializable {
+sealed trait Error extends RuntimeException with Product with Serializable {
   import Error._
 
   def httpOr[A](z: => A, f: Throwable => A): A =
@@ -39,10 +39,10 @@ sealed trait Error extends Any with Product with Serializable {
 }
 
 object Error {
-  final case class Http private[Error] (err: Throwable) extends AnyVal with Error {
+  final case class Http private[Error] (err: Throwable) extends Error {
     override def toString = "HttpError(" + err + ")"
   }
-  final case class Parse private[Error] (err: String) extends AnyVal with Error
+  final case class Parse private[Error] (err: String) extends Error
   final case class Decode private[Error] (
     req: Request, message: String, history: CursorHistory, sourceJson: Json
   ) extends Error {
