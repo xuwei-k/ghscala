@@ -3,6 +3,10 @@ package ghscala
 object Github {
   import Core._
 
+  /** [[http://developer.github.com/v3/repos/#list-branches]] */
+  def branches(owner: String, repo: String): Action[List[Branch]] =
+    get(s"repos/$owner/$repo/branches")
+
   // TODO create another special case class ?
   /** [[http://developer.github.com/v3/users/]] */
   val user: Action[User] =
