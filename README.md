@@ -10,22 +10,22 @@
 ### latest stable version
 
 ```scala
-libraryDependencies += "com.github.xuwei-k" %% "ghscala-scalaj" % "0.2.4"
+libraryDependencies += "com.github.xuwei-k" %% "ghscala-scalaj" % "0.2.5"
 ```
 
 or
 
 ```scala
-libraryDependencies += "com.github.xuwei-k" %% "ghscala-dispatch" % "0.2.4"
+libraryDependencies += "com.github.xuwei-k" %% "ghscala-dispatch" % "0.2.5"
 ```
 
 or
 
 ```scala
-libraryDependencies += "com.github.xuwei-k" %% "ghscala-apache" % "0.2.4"
+libraryDependencies += "com.github.xuwei-k" %% "ghscala-apache" % "0.2.5"
 ```
 
-- [API Documentation](https://oss.sonatype.org/service/local/repositories/releases/archive/com/github/xuwei-k/ghscala_2.10/0.2.4/ghscala_2.10-0.2.4-javadoc.jar/!/index.html)
+- [API Documentation](https://oss.sonatype.org/service/local/repositories/releases/archive/com/github/xuwei-k/ghscala-core_2.10/0.2.5/ghscala-core_2.10-0.2.5-javadoc.jar/!/index.html)
 
 
 ### snapshot version
