@@ -161,6 +161,11 @@ object Github {
     /** [[http://developer.github.com/v3/search/#search-code]] */
     def code(query: String): Action[SearchCode] =
       get("search/code", Request.param("q", query))
+
+    // TODO sort, order
+    /** [[http://developer.github.com/v3/search/#search-issues]] */
+    def issues(query: String): Action[SearchIssues] =
+      get("search/issues", Request.param("q", query))
   }
 }
 
