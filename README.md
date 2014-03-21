@@ -39,9 +39,9 @@ libraryDependencies += "com.github.xuwei-k" %% "ghscala-core" % "0.2.6"
 ```scala
 resolvers += Opts.resolver.sonatypeSnapshots
 
-libraryDependencies += "com.github.xuwei-k" %% "httpz-scalaj" % "0.2.6-SNAPSHOT"
+libraryDependencies += "com.github.xuwei-k" %% "httpz-scalaj" % "0.2.7-SNAPSHOT"
 
-libraryDependencies += "com.github.xuwei-k" %% "ghscala-core" % "0.2.6-SNAPSHOT"
+libraryDependencies += "com.github.xuwei-k" %% "ghscala-core" % "0.2.7-SNAPSHOT"
 ```
 
 or
@@ -49,9 +49,9 @@ or
 ```scala
 resolvers += Opts.resolver.sonatypeSnapshots
 
-libraryDependencies += "com.github.xuwei-k" %% "httpz-dispatch" % "0.2.6-SNAPSHOT"
+libraryDependencies += "com.github.xuwei-k" %% "httpz-dispatch" % "0.2.7-SNAPSHOT"
 
-libraryDependencies += "com.github.xuwei-k" %% "ghscala-core" % "0.2.6-SNAPSHOT"
+libraryDependencies += "com.github.xuwei-k" %% "ghscala-core" % "0.2.7-SNAPSHOT"
 ```
 
 or
@@ -59,11 +59,11 @@ or
 ```scala
 resolvers += Opts.resolver.sonatypeSnapshots
 
-libraryDependencies += "com.github.xuwei-k" %% "httpz-apache" % "0.2.6-SNAPSHOT"
+libraryDependencies += "com.github.xuwei-k" %% "httpz-apache" % "0.2.7-SNAPSHOT"
 
-libraryDependencies += "com.github.xuwei-k" %% "ghscala-core" % "0.2.6-SNAPSHOT"
+libraryDependencies += "com.github.xuwei-k" %% "ghscala-core" % "0.2.7-SNAPSHOT"
 ```
 
-- [API Documentation](https://oss.sonatype.org/service/local/repositories/snapshots/archive/com/github/xuwei-k/ghscala_2.10/0.2.6-SNAPSHOT/ghscala_2.10-0.2.6-SNAPSHOT-javadoc.jar/!/index.html)
+- [API Documentation](https://oss.sonatype.org/service/local/repositories/snapshots/archive/com/github/xuwei-k/ghscala_2.10/0.2.7-SNAPSHOT/ghscala_2.10-0.2.7-SNAPSHOT-javadoc.jar/!/index.html)
 
 
