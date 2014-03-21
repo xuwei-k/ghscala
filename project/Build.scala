@@ -29,7 +29,7 @@ object build extends Build {
         val i = modules.indexWhere(line.contains)
         s"""libraryDependencies += "${org}" %% "${modules(i)}" % "$v""""
       }else if(line.contains(sonatypeURL) && matchReleaseOrSnapshot){
-        val n = "ghscala-core"
+        val n = "ghscala"
         s"- [API Documentation](${sonatypeURL}${snapshotOrRelease}/archive/${org.replace('.','/')}/${n}_${scalaV}/${v}/${n}_${scalaV}-${v}-javadoc.jar/!/index.html)"
       }else line
     }.mkString("", "\n", "\n")
