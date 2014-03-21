@@ -1,4 +1,4 @@
-package ghscala
+package httpz
 package apachehttp
 
 final class ApacheActionEOps[E, A](

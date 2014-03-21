@@ -1,4 +1,4 @@
-package ghscala
+package httpz
 
 import scalaz.{One => _, Two => _, _}
 import scalaz.Id.Id

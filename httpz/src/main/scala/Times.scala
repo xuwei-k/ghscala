@@ -1,4 +1,4 @@
-package ghscala
+package httpz
 
 sealed abstract class Time{
   type A

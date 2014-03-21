@@ -1,4 +1,4 @@
-package ghscala
+package httpz
 package scalajhttp
 
 import scalaj.http._
@@ -8,7 +8,7 @@ object ScalajHttp{
 
   val OPTIONS = List( HttpOptions.connTimeout(30000) , HttpOptions.readTimeout(30000) )
 
-  def apply(req: ghscala.Request): Http.Request = {
+  def apply(req: httpz.Request): Http.Request = {
     val r0 = req.method match {
       case "GET"      => get(req.url)
       case "POST"     => post(req.url)

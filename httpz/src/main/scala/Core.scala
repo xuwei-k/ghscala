@@ -1,19 +1,11 @@
-package ghscala
+package httpz
 
 import scalaz._
 import argonaut._
 
 object Core {
 
-  private[this] val baseURL = "https://api.github.com/"
-
-  def get[A: DecodeJson](url: String, opt: Config = emptyConfig): Action[A] =
-    httpRequest(opt(Request(baseURL + url)))
-
-  def post[A: DecodeJson](url: String, opt: Config = emptyConfig): Action[A] =
-    httpRequest(opt(Request(url = baseURL + url, method = "POST")))
-
-  private def httpRequest[A](req: Request)(implicit A: DecodeJson[A]): Action[A] =
+  def httpRequest[A](req: Request)(implicit A: DecodeJson[A]): Action[A] =
     Action(Z.freeC(RequestF.one[Error \/ A, Error \/ Json](
       req,
       \/.left,

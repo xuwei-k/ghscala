@@ -1,4 +1,4 @@
-package ghscala
+package httpz
 package apachehttp
 
 import java.io.Closeable
@@ -30,7 +30,7 @@ object ApacheInterpreter extends InterpretersTemplate {
     resource.close
   }
 
-  private def executeRequest(req: ghscala.Request) = {
+  private def executeRequest(req: httpz.Request) = {
     val httpGet = new HttpGet(buildURI(req))
     val c = HttpClients.createDefault()
     req.basicAuth.foreach{ case (user, pass) =>
@@ -41,7 +41,7 @@ object ApacheInterpreter extends InterpretersTemplate {
     c.execute(httpGet)
   }
 
-  override protected def request2string(req: ghscala.Request) = {
+  override protected def request2string(req: httpz.Request) = {
     using(executeRequest(req)){ res =>
       val code = res.getStatusLine().getStatusCode()
       val entity = res.getEntity()
@@ -54,7 +54,7 @@ object ApacheInterpreter extends InterpretersTemplate {
     }
   }
 
-  private def buildURI(req: ghscala.Request): URI = {
+  private def buildURI(req: httpz.Request): URI = {
     val uriBuilder = new org.apache.http.client.utils.URIBuilder(req.url)
     req.params.foreach{ case (key, value) =>
       uriBuilder.addParameter(key, value)

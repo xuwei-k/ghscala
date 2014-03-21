@@ -1,8 +1,9 @@
-package ghscala
+package httpz
 package scalajhttp
 
 import Z._
 import scalaz._
+import ghscala._
 
 object Main {
 

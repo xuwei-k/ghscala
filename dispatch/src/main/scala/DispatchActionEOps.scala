@@ -1,4 +1,4 @@
-package ghscala
+package httpz
 package dispatchclassic
 
 import scalaz.{One => _, Two => _, _}

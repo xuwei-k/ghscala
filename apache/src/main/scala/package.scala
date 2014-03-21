@@ -1,4 +1,4 @@
-package ghscala
+package httpz
 
 package object apachehttp {
 

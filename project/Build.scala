@@ -19,7 +19,7 @@ object build extends Build {
     val scalaV = extracted get scalaBinaryVersion
     val v = extracted get version
     val org =  extracted get organization
-    val modules = ("scalaj" :: "apache" :: "dispatch" :: Nil).map("ghscala-" + _)
+    val modules = "ghscala-core" :: ("scalaj" :: "apache" :: "dispatch" :: Nil).map("httpz-" + _)
     val snapshotOrRelease = if(extracted get isSnapshot) "snapshots" else "releases"
     val readme = "README.md"
     val readmeFile = file(readme)
@@ -75,7 +75,6 @@ object build extends Build {
         Credentials("Sonatype Nexus Repository Manager", "oss.sonatype.org", user, pass)
     }.toList,
     organization := "com.github.xuwei-k",
-    description := "purely functional scala github api client",
     homepage := Some(url("https://github.com/xuwei-k/ghscala")),
     scmInfo := Some(ScmInfo(
       url("https://github.com/xuwei-k/ghscala"),
@@ -106,46 +105,62 @@ object build extends Build {
     }
   )
 
+
+  val descriptionHttpz = description := "purely functional http client"
+
+  lazy val httpz = Project("httpz", file("httpz")).settings(
+    baseSettings : _*
+  ).settings(
+    name := "httpz",
+    descriptionHttpz,
+    libraryDependencies ++= Seq(
+      "org.scalaz" %% "scalaz-concurrent" % "7.1.0-M3",
+      "io.argonaut" %% "argonaut" % "6.1-M2"
+    )
+  )
+
   lazy val core = Project("core", file("core")).settings(
     baseSettings : _*
   ).settings(
     name := "ghscala-core",
+    description := "purely functional scala github api client",
     libraryDependencies ++= Seq(
-      "org.scalaz" %% "scalaz-concurrent" % "7.1.0-M3",
-      "io.argonaut" %% "argonaut" % "6.1-M2",
       "joda-time" % "joda-time" % "2.3",
       "org.joda" % "joda-convert" % "1.2",
       "commons-codec" % "commons-codec" % "1.6"
       // latest commons-codec is 1.9 but "httpclient" % "4.3.3" still depends on 1.6
     )
-  )
+  ).dependsOn(httpz)
 
   lazy val scalaj = Project("scalaj", file("scalaj")).settings(
     baseSettings : _*
   ).settings(
-    name := "ghscala-scalaj",
+    name := "httpz-scalaj",
+    descriptionHttpz,
     libraryDependencies ++= Seq(
       "org.scalaj"  %% "scalaj-http" % "0.3.14"
     )
-  ).dependsOn(core)
+  ).dependsOn(httpz, core % "test->test")
 
   lazy val dispatch = Project("dispatch", file("dispatch")).settings(
     baseSettings : _*
   ).settings(
-    name := "ghscala-dispatch",
+    name := "httpz-dispatch",
+    descriptionHttpz,
     libraryDependencies ++= Seq(
       "net.databinder" %% "dispatch-http" % "0.8.10"
     )
-  ).dependsOn(core)
+  ).dependsOn(httpz)
 
   lazy val apache = Project("apache", file("apache")).settings(
     baseSettings : _*
   ).settings(
-    name := "ghscala-apache",
+    name := "httpz-apache",
+    descriptionHttpz,
     libraryDependencies ++= Seq(
       "org.apache.httpcomponents" % "httpclient" % "4.3.3"
     )
-  ).dependsOn(core)
+  ).dependsOn(httpz)
 
 
   lazy val root = {
@@ -169,7 +184,7 @@ object build extends Build {
         artifacts <<= sbt.Classpaths.artifactDefs(customPackageKeys),
         packagedArtifacts <<= sbt.Classpaths.packaged(customPackageKeys)
       ): _*
-    ).aggregate(core, scalaj, dispatch, apache)
+    ).aggregate(httpz, core, scalaj, dispatch, apache)
   }
 
 

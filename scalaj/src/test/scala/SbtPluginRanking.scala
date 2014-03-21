@@ -1,7 +1,8 @@
-package ghscala
+package httpz
 package scalajhttp
 
 import scalaz._, std.list._
+import ghscala._
 
 object SbtPluginRanking {
 

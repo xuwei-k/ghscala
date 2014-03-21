@@ -1,7 +1,17 @@
 package ghscala
 
+import argonaut.DecodeJson
+import httpz._
+
 object Github {
-  import Core._
+
+  private[this] val baseURL = "https://api.github.com/"
+
+  def get[A: DecodeJson](url: String, opt: Config = emptyConfig): Action[A] =
+    Core.httpRequest(opt(Request(baseURL + url)))
+
+  def post[A: DecodeJson](url: String, opt: Config = emptyConfig): Action[A] =
+    Core.httpRequest(opt(Request(url = baseURL + url, method = "POST")))
 
   /** [[http://developer.github.com/v3/repos/#list-tags]] */
   def tags(owner: String, repo: String): Action[List[Tag]] =

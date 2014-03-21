@@ -1,4 +1,4 @@
-package ghscala
+package httpz
 
 import argonaut._
 

@@ -10,19 +10,25 @@
 ### latest stable version
 
 ```scala
-libraryDependencies += "com.github.xuwei-k" %% "ghscala-scalaj" % "0.2.5"
+libraryDependencies += "com.github.xuwei-k" %% "httpz-scalaj" % "0.2.5"
+
+libraryDependencies += "com.github.xuwei-k" %% "ghscala-core" % "0.2.5"
 ```
 
 or
 
 ```scala
-libraryDependencies += "com.github.xuwei-k" %% "ghscala-dispatch" % "0.2.5"
+libraryDependencies += "com.github.xuwei-k" %% "httpz-dispatch" % "0.2.5"
+
+libraryDependencies += "com.github.xuwei-k" %% "ghscala-core" % "0.2.5"
 ```
 
 or
 
 ```scala
-libraryDependencies += "com.github.xuwei-k" %% "ghscala-apache" % "0.2.5"
+libraryDependencies += "com.github.xuwei-k" %% "httpz-apache" % "0.2.5"
+
+libraryDependencies += "com.github.xuwei-k" %% "ghscala-core" % "0.2.5"
 ```
 
 - [API Documentation](https://oss.sonatype.org/service/local/repositories/releases/archive/com/github/xuwei-k/ghscala_2.10/0.2.5/ghscala_2.10-0.2.5-javadoc.jar/!/index.html)
@@ -33,7 +39,9 @@ libraryDependencies += "com.github.xuwei-k" %% "ghscala-apache" % "0.2.5"
 ```scala
 resolvers += Opts.resolver.sonatypeSnapshots
 
-libraryDependencies += "com.github.xuwei-k" %% "ghscala-scalaj" % "0.2.6-SNAPSHOT"
+libraryDependencies += "com.github.xuwei-k" %% "httpz-scalaj" % "0.2.6-SNAPSHOT"
+
+libraryDependencies += "com.github.xuwei-k" %% "ghscala-core" % "0.2.6-SNAPSHOT"
 ```
 
 or
@@ -41,7 +49,9 @@ or
 ```scala
 resolvers += Opts.resolver.sonatypeSnapshots
 
-libraryDependencies += "com.github.xuwei-k" %% "ghscala-dispatch" % "0.2.6-SNAPSHOT"
+libraryDependencies += "com.github.xuwei-k" %% "httpz-dispatch" % "0.2.6-SNAPSHOT"
+
+libraryDependencies += "com.github.xuwei-k" %% "ghscala-core" % "0.2.6-SNAPSHOT"
 ```
 
 or
@@ -49,7 +59,9 @@ or
 ```scala
 resolvers += Opts.resolver.sonatypeSnapshots
 
-libraryDependencies += "com.github.xuwei-k" %% "ghscala-apache" % "0.2.6-SNAPSHOT"
+libraryDependencies += "com.github.xuwei-k" %% "httpz-apache" % "0.2.6-SNAPSHOT"
+
+libraryDependencies += "com.github.xuwei-k" %% "ghscala-core" % "0.2.6-SNAPSHOT"
 ```
 
 - [API Documentation](https://oss.sonatype.org/service/local/repositories/snapshots/archive/com/github/xuwei-k/ghscala_2.10/0.2.6-SNAPSHOT/ghscala_2.10-0.2.6-SNAPSHOT-javadoc.jar/!/index.html)

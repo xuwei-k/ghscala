@@ -1,4 +1,4 @@
-package ghscala
+package httpz
 
 import scalaz.\/
 import RequestF._
@@ -11,7 +11,6 @@ sealed abstract class RequestF[A] extends Product with Serializable {
 }
 
 object RequestF {
-  import Core._
 
   sealed abstract case class One[A]() extends RequestF[A] {
     type B
