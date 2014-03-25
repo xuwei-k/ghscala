@@ -8,7 +8,7 @@ object Github {
   private[this] val baseURL = "https://api.github.com/"
 
   def get[A: DecodeJson](url: String, opt: Config = emptyConfig): Action[A] =
-    Core.httpRequest(opt(Request(baseURL + url)))
+    Core.httpRequest(opt(Request(url = baseURL + url, params = Map("per_page" -> "100"))))
 
   def post[A: DecodeJson](url: String, opt: Config = emptyConfig): Action[A] =
     Core.httpRequest(opt(Request(url = baseURL + url, method = "POST")))
