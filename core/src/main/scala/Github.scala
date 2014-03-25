@@ -13,6 +13,10 @@ object Github {
   def post[A: DecodeJson](url: String, opt: Config = emptyConfig): Action[A] =
     Core.httpRequest(opt(Request(url = baseURL + url, method = "POST")))
 
+  /** [[https://developer.github.com/v3/emojis/]] */
+  val emojis: Action[Map[String, String]] =
+    get(s"emojis")
+
   /** [[http://developer.github.com/v3/repos/#list-tags]] */
   def tags(owner: String, repo: String): Action[List[Tag]] =
     get(s"repos/$owner/$repo/tags")
