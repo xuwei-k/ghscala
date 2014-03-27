@@ -21,9 +21,9 @@ libraryDependencies += "com.github.xuwei-k" %% "ghscala" % "0.2.7"
 ```scala
 resolvers += Opts.resolver.sonatypeSnapshots
 
-libraryDependencies += "com.github.xuwei-k" %% "ghscala" % "0.2.7-SNAPSHOT"
+libraryDependencies += "com.github.xuwei-k" %% "ghscala" % "0.2.8-SNAPSHOT"
 ```
 
-- [API Documentation](https://oss.sonatype.org/service/local/repositories/snapshots/archive/com/github/xuwei-k/ghscala_2.10/0.2.7-SNAPSHOT/ghscala_2.10-0.2.7-SNAPSHOT-javadoc.jar/!/index.html)
+- [API Documentation](https://oss.sonatype.org/service/local/repositories/snapshots/archive/com/github/xuwei-k/ghscala_2.10/0.2.8-SNAPSHOT/ghscala_2.10-0.2.8-SNAPSHOT-javadoc.jar/!/index.html)
 
 
