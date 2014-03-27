@@ -1,5 +1,6 @@
-package httpz
-package scalajhttp
+package ghscala
+
+import httpz._, scalajhttp._
 
 import Z._
 import scalaz._
@@ -57,6 +58,9 @@ object Main {
   def main(args: Array[String]){
     import scalaz.syntax.equal._, std.anyVal._
 
+    implicit val timesMonad: Monad[Times] =
+      scalaz.WriterT.writerMonad[List[Time]](scalaz.std.list.listMonoid)
+
     val conf = args match {
       case Array(user, pass) =>
         Request.auth(user, pass)
@@ -84,17 +88,3 @@ object Main {
 
 }
 
-object ActionNelExample {
-
-  def runExample() = {
-    val a = Github.repo("invalid user", "invalid repo").nel
-    val b = a zip a
-    b.interpret
-  }
-
-  def main(args: Array[String]){
-    val x = runExample
-    x.leftMap(errors => println(errors.size))
-    println(x)
-  }
-}

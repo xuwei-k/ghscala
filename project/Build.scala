@@ -19,7 +19,7 @@ object build extends Build {
     val scalaV = extracted get scalaBinaryVersion
     val v = extracted get version
     val org =  extracted get organization
-    val modules = "ghscala-core" :: ("scalaj" :: "apache" :: "dispatch" :: Nil).map("httpz-" + _)
+    val modules = "ghscala" :: Nil
     val snapshotOrRelease = if(extracted get isSnapshot) "snapshots" else "releases"
     val readme = "README.md"
     val readmeFile = file(readme)
@@ -55,18 +55,12 @@ object build extends Build {
       updateReadmeProcess,
       tagRelease,
       ReleaseStep(
-        action = { state =>
-          val extracted = Project extract state
-          extracted.runAggregated(PgpKeys.publishSigned in Global in extracted.get(thisProjectRef), state)
-        },
+        action = state => Project.extract(state).runTask(PgpKeys.publishSigned, state)._1,
         enableCrossBuild = true
       ),
       setNextVersion,
       commitNextVersion,
-      ReleaseStep{ state =>
-        val extracted = Project extract state
-        extracted.runAggregated(SonatypeKeys.sonatypeReleaseAll in Global in extracted.get(thisProjectRef), state)
-      },
+      ReleaseStep(state => Project.extract(state).runTask(SonatypeKeys.sonatypeReleaseAll, state)._1),
       updateReadmeProcess,
       pushChanges
     ),
@@ -105,88 +99,22 @@ object build extends Build {
     }
   )
 
+  val httpzVersion = "0.2.7"
 
-  val descriptionHttpz = description := "purely functional http client"
-
-  lazy val httpz = Project("httpz", file("httpz")).settings(
+  lazy val ghscala = Project("ghscala", file(".")).settings(
     baseSettings : _*
   ).settings(
-    name := "httpz",
-    descriptionHttpz,
-    libraryDependencies ++= Seq(
-      "org.scalaz" %% "scalaz-concurrent" % "7.1.0-M3",
-      "io.argonaut" %% "argonaut" % "6.1-M2"
-    )
-  )
-
-  lazy val core = Project("core", file("core")).settings(
-    baseSettings : _*
-  ).settings(
-    name := "ghscala-core",
+    name := "ghscala",
     description := "purely functional scala github api client",
     libraryDependencies ++= Seq(
+      "com.github.xuwei-k" %% "httpz" % httpzVersion,
+      "com.github.xuwei-k" %% "httpz-scalaj" % httpzVersion % "test",
       "joda-time" % "joda-time" % "2.3",
       "org.joda" % "joda-convert" % "1.2",
       "commons-codec" % "commons-codec" % "1.6"
       // latest commons-codec is 1.9 but "httpclient" % "4.3.3" still depends on 1.6
     )
-  ).dependsOn(httpz)
-
-  lazy val scalaj = Project("scalaj", file("scalaj")).settings(
-    baseSettings : _*
-  ).settings(
-    name := "httpz-scalaj",
-    descriptionHttpz,
-    libraryDependencies ++= Seq(
-      "org.scalaj"  %% "scalaj-http" % "0.3.14"
-    )
-  ).dependsOn(httpz, core % "test->test")
-
-  lazy val dispatch = Project("dispatch", file("dispatch")).settings(
-    baseSettings : _*
-  ).settings(
-    name := "httpz-dispatch",
-    descriptionHttpz,
-    libraryDependencies ++= Seq(
-      "net.databinder" %% "dispatch-http" % "0.8.10"
-    )
-  ).dependsOn(httpz)
-
-  lazy val apache = Project("apache", file("apache")).settings(
-    baseSettings : _*
-  ).settings(
-    name := "httpz-apache",
-    descriptionHttpz,
-    libraryDependencies ++= Seq(
-      "org.apache.httpcomponents" % "httpclient" % "4.3.3"
-    )
-  ).dependsOn(httpz)
-
-
-  lazy val root = {
-    import sbtunidoc.Plugin._
-    val customPackageKeys = Seq(packageDoc in Compile)
-
-    Project("root", file(".")).settings(
-      baseSettings ++ unidocSettings ++ Seq(
-        name := "ghscala",
-        sources := (sources in UnidocKeys.unidoc in ScalaUnidoc).value,
-        resolvers += Classpaths.typesafeReleases,
-        packageDoc in Compile := {
-          val dir = (UnidocKeys.unidoc in Compile).value
-          val files = (dir ** (-DirectoryFilter)).get.map{f =>
-            f -> IO.relativize((crossTarget in UnidocKeys.unidoc).value / "unidoc", f).get
-          }
-          val out = crossTarget.value / s"ghscala-${scalaBinaryVersion.value}-${version.value}-javadoc.jar"
-          IO.zip(files, out)
-          out
-        },
-        artifacts <<= sbt.Classpaths.artifactDefs(customPackageKeys),
-        packagedArtifacts <<= sbt.Classpaths.packaged(customPackageKeys)
-      ): _*
-    ).aggregate(httpz, core, scalaj, dispatch, apache)
-  }
-
+  )
 
 }
 
