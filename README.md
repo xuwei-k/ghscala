@@ -10,10 +10,10 @@
 ### latest stable version
 
 ```scala
-libraryDependencies += "com.github.xuwei-k" %% "ghscala" % "0.2.6"
+libraryDependencies += "com.github.xuwei-k" %% "ghscala" % "0.2.7"
 ```
 
-- [API Documentation](https://oss.sonatype.org/service/local/repositories/releases/archive/com/github/xuwei-k/ghscala_2.10/0.2.6/ghscala_2.10-0.2.6-javadoc.jar/!/index.html)
+- [API Documentation](https://oss.sonatype.org/service/local/repositories/releases/archive/com/github/xuwei-k/ghscala_2.10/0.2.7/ghscala_2.10-0.2.7-javadoc.jar/!/index.html)
 
 
 ### snapshot version
