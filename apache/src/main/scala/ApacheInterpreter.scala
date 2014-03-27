@@ -59,6 +59,7 @@ object ApacheInterpreter extends InterpretersTemplate {
     req.params.foreach{ case (key, value) =>
       uriBuilder.addParameter(key, value)
     }
+    // TODO set headers
     uriBuilder.build
   }
 

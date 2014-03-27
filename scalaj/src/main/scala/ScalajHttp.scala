@@ -13,7 +13,7 @@ object ScalajHttp{
       case "GET"      => get(req.url)
       case "POST"     => post(req.url)
     }
-    val r1 = r0.params(req.params)
+    val r1 = r0.params(req.params).headers(req.headers)
     req.basicAuth.fold(r1){case (user, pass) => r1.auth(user, pass)}
   }
 
