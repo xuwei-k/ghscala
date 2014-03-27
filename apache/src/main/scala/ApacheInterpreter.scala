@@ -38,6 +38,7 @@ object ApacheInterpreter extends InterpretersTemplate {
       val context = HttpClientContext.create()
       httpGet.addHeader(new BasicScheme().authenticate(creds, httpGet, context))
     }
+    req.headers.foreach{ case (k, v) => httpGet.addHeader(k, v) }
     c.execute(httpGet)
   }
 
@@ -59,7 +60,6 @@ object ApacheInterpreter extends InterpretersTemplate {
     req.params.foreach{ case (key, value) =>
       uriBuilder.addParameter(key, value)
     }
-    // TODO set headers
     uriBuilder.build
   }
 
