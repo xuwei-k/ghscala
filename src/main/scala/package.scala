@@ -4,6 +4,8 @@ import java.text.SimpleDateFormat
 package object ghscala{
 
   type DateTime = org.joda.time.DateTime
+  private[ghscala] type JsonToString[A <: httpz.JsonToString[A]] =
+    httpz.JsonToString[A]
 
   type CodecJson[A] = argonaut.CodecJson[A]
   val CodecJson = argonaut.CodecJson

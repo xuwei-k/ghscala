@@ -90,7 +90,6 @@ final case class Issue(
   created_at   :DateTime
 ) extends JsonToString[Issue] {
 
-  override def toString = title
   lazy val getState: State = State(state)
 }
 
