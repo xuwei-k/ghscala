@@ -151,17 +151,25 @@ object Github {
   def gist(id: String): Action[Gist] =
     get(s"gists/$id")
 
+  object gitignore {
+    val templates: Action[List[String]] =
+      get("gitignore/templates")
+
+    def apply(language: String): Action[Gitignore] =
+      get(s"gitignore/templates/$language")
+  }
+
   object gists {
     /** [[http://developer.github.com/v3/gists/#list-gists]] */
-    def me: Action[List[Gists]] =
+    val me: Action[List[Gists]] =
       get("gists")
 
     /** [[http://developer.github.com/v3/gists/#list-gists]] */
-    def public: Action[List[Gists]] =
+    val public: Action[List[Gists]] =
       get("gists/public")
 
     /** [[http://developer.github.com/v3/gists/#list-gists]] */
-    def starred: Action[List[Gists]] =
+    val starred: Action[List[Gists]] =
       get("gists/starred")
   }
 
