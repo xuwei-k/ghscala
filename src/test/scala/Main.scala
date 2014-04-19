@@ -40,19 +40,14 @@ object Main {
 
   val program = program1 zip program2
 
-  def printResult[A, E](a: ErrorNel \/ A): Unit = {
-    a.leftMap(errors => println(errors.size))
-    println(a)
-  }
-
   def runProgram[F[_]: Monad, A](
     p: ActionNel[A], interpreter: InterpreterF[F]
   )(f1: F[ErrorNel \/ A] => (ErrorNel \/ A), f2: F[ErrorNel \/ A] => Unit): Unit = {
     val r = Z.interpret(p.run)(interpreter)
     val value = f1(r)
-    printResult(value)
+    value.swap.foreach{ errors => throw errors.head }
     f2(r)
-    assert(value.isRight)
+    value.foreach(println)
   }
 
   def main(args: Array[String]){
@@ -82,7 +77,7 @@ object Main {
     )(_.value, x => {
       val log = x.written
       log foreach println
-      log.size assert_=== x.value.map(_.productArity).getOrElse(-1)
+      log.size assert_=== x.value.fold(errors => throw errors.head, _.productArity)
     })
   }
 
