@@ -7,7 +7,7 @@ final case class Gists(
   comments     :Long,
   created_at   :String,
   id           :String,
-  user         :User,
+  owner        :Option[User],
   commits_url  :String,
   git_pull_url :String,
   public       :Boolean,
@@ -38,7 +38,7 @@ object Gists {
   implicit val gistsCodecJson: CodecJson[Gists] =
     CodecJson.casecodec15(apply, unapply)(
       "files", "html_url", "forks_url", "comments", "created_at", "id",
-      "user", "commits_url", "git_pull_url", "public", "updated_at",
+      "owner", "commits_url", "git_pull_url", "public", "updated_at",
       "comments_url", "url", "description", "git_push_url"
     )
 
