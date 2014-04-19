@@ -151,6 +151,17 @@ object Github {
   def gist(id: String): Action[Gist] =
     get(s"gists/$id")
 
+  def markdown(text: String): ActionE[Throwable, String] = {
+    import argonaut.Json
+    Core.string(Request(
+      url = baseURL + "markdown",
+      method = "POST",
+      body = Some(
+        Json.obj("text" -> Json.jString(text)).toString.getBytes
+      )
+    ))
+  }
+
   object gitignore {
     val templates: Action[List[String]] =
       get("gitignore/templates")
