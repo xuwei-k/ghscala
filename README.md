@@ -7,6 +7,10 @@
 - [Maven Central](http://repo1.maven.org/maven2/com/github/xuwei-k/)
 
 
+### for scalaz 7.0.x
+- <https://github.com/xuwei-k/ghscala/tree/scalaz70>
+
+
 ### latest stable version
 
 ```scala
