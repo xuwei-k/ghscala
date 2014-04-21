@@ -109,7 +109,7 @@ object build extends Build {
     }
   )
 
-  val httpzVersion = "0.2.9"
+  val httpzVersion = "0.2.10-RC1-scalaz70"
 
   lazy val ghscala = Project("ghscala", file(".")).settings(
     baseSettings : _*
@@ -118,7 +118,7 @@ object build extends Build {
     description := "purely functional scala github api client",
     libraryDependencies ++= Seq(
       "com.github.xuwei-k" %% "httpz" % httpzVersion,
-      "com.github.xuwei-k" %% "httpz-scalaj" % httpzVersion % "test",
+      "com.github.xuwei-k" %% "httpz-apache" % httpzVersion % "test",
       "joda-time" % "joda-time" % "2.3",
       "org.joda" % "joda-convert" % "1.2",
       "commons-codec" % "commons-codec" % "1.6"

@@ -10,20 +10,8 @@
 ### latest stable version
 
 ```scala
-libraryDependencies += "com.github.xuwei-k" %% "ghscala" % "0.2.9"
+libraryDependencies += "com.github.xuwei-k" %% "ghscala" % "0.2.9-scalaz70"
 ```
 
-- [API Documentation](https://oss.sonatype.org/service/local/repositories/releases/archive/com/github/xuwei-k/ghscala_2.10/0.2.9/ghscala_2.10-0.2.9-javadoc.jar/!/index.html)
-
-
-### snapshot version
-
-```scala
-resolvers += Opts.resolver.sonatypeSnapshots
-
-libraryDependencies += "com.github.xuwei-k" %% "ghscala" % "0.2.10-SNAPSHOT"
-```
-
-- [API Documentation](https://oss.sonatype.org/service/local/repositories/snapshots/archive/com/github/xuwei-k/ghscala_2.10/0.2.10-SNAPSHOT/ghscala_2.10-0.2.10-SNAPSHOT-javadoc.jar/!/index.html)
-
+- [API Documentation](https://oss.sonatype.org/service/local/repositories/releases/archive/com/github/xuwei-k/ghscala_2.10/0.2.9-scalaz70/ghscala_2.10-0.2.9-scalaz70-javadoc.jar/!/index.html)
 
