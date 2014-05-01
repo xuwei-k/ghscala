@@ -93,6 +93,10 @@ object Github {
       Request.param("state", state.name)
     )
 
+  /** [[https://developer.github.com/v3/activity/events/#list-repository-events]] */
+  def repoEvents(owner: String, repo: String): Action[List[RepoEvent]] =
+    get(s"repos/$owner/$repo/events")
+
   /** [[http://developer.github.com/v3/issues/events/]] */
   def issueEvents(user: String, repo: String, number: Long): Action[List[IssueEvent]] =
     get(s"repos/$user/$repo/issues/$number/events")
