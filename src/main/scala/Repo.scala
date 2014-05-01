@@ -33,7 +33,7 @@ final case class Repo(
   html_url      :String,
   updated_at    :DateTime,
   watchers      :Int,
-  master_branch :Option[String],
+  default_branch:Option[String],
   owner         :User // TODO User or Org
 
 //  full_name     :String,
@@ -42,7 +42,7 @@ final case class Repo(
 //  clone_url     :String,
 //  ssh_url       :String
 ) extends JsonToString[Repo] {
-  def master:String = master_branch.getOrElse("master")
+  def master: String = default_branch.getOrElse("master")
 }
 
 object Repo {
@@ -69,7 +69,7 @@ object Repo {
       "html_url",
       "updated_at",
       "watchers",
-      "master_branch",
+      "default_branch",
       "owner"
     )
 }
