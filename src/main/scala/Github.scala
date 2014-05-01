@@ -166,6 +166,10 @@ object Github {
     ))
   }
 
+  /** [[https://developer.github.com/v3/activity/watching/#list-watchers]] */
+  def subscribers(owner: String, repo: String): Action[List[User]] =
+    get(s"repos/$owner/$repo/subscribers")
+
   object gitignore {
     val templates: Action[List[String]] =
       get("gitignore/templates")
