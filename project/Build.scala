@@ -70,10 +70,6 @@ object build extends Build {
     }.toList,
     organization := "com.github.xuwei-k",
     homepage := Some(url("https://github.com/xuwei-k/ghscala")),
-    scmInfo := Some(ScmInfo(
-      url("https://github.com/xuwei-k/ghscala"),
-      "scm:git:git@github.com/xuwei-k/ghscala.git"
-    )),
     licenses := Seq("MIT License" -> url("http://www.opensource.org/licenses/mit-license.php")),
     scalacOptions := Seq("-deprecation", "-unchecked", "-Xlint", "-language:_"),
     scalaVersion := "2.10.4",
@@ -93,6 +89,11 @@ object build extends Build {
           <url>https://github.com/xuwei-k</url>
         </developer>
       </developers>
+      <scm>
+        <url>git@github.com:xuwei-k/ghscala.git</url>
+        <connection>scm:git:git@github.com:xuwei-k/ghscala.git</connection>
+        <tag>{if(isSnapshot.value) gitHash.getOrElse("master") else { "v" + version.value }}</tag>
+      </scm>
     ),
     pomPostProcess := { node =>
       import scala.xml._
