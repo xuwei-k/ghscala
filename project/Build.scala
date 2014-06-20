@@ -3,6 +3,7 @@ import sbtrelease._
 import xerial.sbt.Sonatype._
 import ReleaseStateTransformations._
 import com.typesafe.sbt.pgp.PgpKeys
+import sbtbuildinfo.Plugin._
 
 object build extends Build {
 
@@ -43,7 +44,7 @@ object build extends Build {
 
   val updateReadmeProcess: ReleaseStep = updateReadme
 
-  val baseSettings = ReleasePlugin.releaseSettings ++ sonatypeSettings ++ Seq(
+  val baseSettings = ReleasePlugin.releaseSettings ++ sonatypeSettings ++ buildInfoSettings ++ Seq(
     commands += Command.command("updateReadme")(updateReadme),
     ReleasePlugin.ReleaseKeys.releaseProcess := Seq[ReleaseStep](
       checkSnapshotDependencies,
@@ -64,6 +65,18 @@ object build extends Build {
       updateReadmeProcess,
       pushChanges
     ),
+    sourceGenerators in Compile <+= buildInfo,
+    buildInfoKeys := Seq[BuildInfoKey](
+      organization,
+      name,
+      version,
+      scalaVersion,
+      sbtVersion,
+      scalacOptions,
+      licenses
+    ),
+    buildInfoPackage := "ghscala",
+    buildInfoObject := "BuildInfoGhScala",
     credentials ++= PartialFunction.condOpt(sys.env.get("SONATYPE_USER") -> sys.env.get("SONATYPE_PASS")){
       case (Some(user), Some(pass)) =>
         Credentials("Sonatype Nexus Repository Manager", "oss.sonatype.org", user, pass)
