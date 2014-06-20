@@ -86,6 +86,7 @@ object build extends Build {
     licenses := Seq("MIT License" -> url("http://www.opensource.org/licenses/mit-license.php")),
     scalacOptions := Seq("-deprecation", "-unchecked", "-Xlint", "-language:_"),
     scalaVersion := "2.10.4",
+    crossScalaVersions := scalaVersion.value :: "2.11.1" :: Nil,
     scalacOptions in (Compile, doc) ++= {
       val tag = if(isSnapshot.value) gitHash.getOrElse("master") else { "v" + version.value }
       Seq(
@@ -123,7 +124,7 @@ object build extends Build {
     }
   )
 
-  val httpzVersion = "0.2.10"
+  val httpzVersion = "0.2.11"
 
   lazy val ghscala = Project("ghscala", file(".")).settings(
     baseSettings : _*
