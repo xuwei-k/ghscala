@@ -2,9 +2,7 @@ package ghscala
 
 import httpz._, scalajhttp._
 
-import Z._
 import scalaz._
-import ghscala._
 
 object Main {
 
