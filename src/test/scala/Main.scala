@@ -8,9 +8,9 @@ object Main {
 
   val program1 = ActionNelZipAp.apply12(
     Github.user.nel,
-    Github.trees("scalaz", "scalaz", "series/7.1.x").nel,
+    Github.trees("scalaz", "scalaz", "afe19bcc3fe842b6eb15ee06f143d9cfca0b718b").nel,
     Github.repo("scalaz", "scalaz").nel,
-    Github.commits("scalaz", "scalaz", "master").nel,
+    Github.commits("scalaz", "scalaz", "afe19bcc3fe842b6eb15ee06f143d9cfca0b718b").nel,
     Github.issues("scalaz", "scalaz").nel,
     Github.comments("scalaz", "scalaz").nel,
     Github.issueEvents("scalaz", "scalaz", 650).nel,
