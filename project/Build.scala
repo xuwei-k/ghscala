@@ -149,7 +149,7 @@ object build extends Build {
       "com.github.xuwei-k" %% "httpz" % httpzVersion,
       "com.github.xuwei-k" %% "httpz-scalaj" % httpzVersion % "test",
       "joda-time" % "joda-time" % "2.4",
-      "org.joda" % "joda-convert" % "1.2",
+      "org.joda" % "joda-convert" % "1.6",
       "commons-codec" % "commons-codec" % "1.6"
       // latest commons-codec is 1.9 but "httpclient" % "4.3.3" still depends on 1.6
     )
