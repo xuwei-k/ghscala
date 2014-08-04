@@ -6,6 +6,11 @@ import scalaz._
 
 object Main {
 
+  val program0 = ActionNelZipAp.apply2(
+    Github.keys("xuwei-k").nel,
+    Github.emails.nel
+  )(Tuple2.apply)
+
   val program1 = ActionNelZipAp.apply12(
     Github.user.nel,
     Github.trees("scalaz", "scalaz", "afe19bcc3fe842b6eb15ee06f143d9cfca0b718b").nel,
@@ -36,8 +41,6 @@ object Main {
     Github.gists.starred.nel
   )(Tuple12.apply)
 
-  val program = program1 zip program2
-
   def runProgram[F[_]: Monad, A](
     p: ActionNel[A], interpreter: InterpreterF[F]
   )(f1: F[ErrorNel \/ A] => (ErrorNel \/ A), f2: F[ErrorNel \/ A] => Unit): Unit = {
@@ -65,6 +68,10 @@ object Main {
             emptyConfig
         }
     }
+
+    runProgram(
+      program0, ScalajInterpreter.sequential(conf).interpreter
+    )(identity, identity)
 
     runProgram(
       program1, ScalajInterpreter.future(conf).interpreter

@@ -170,6 +170,14 @@ object Github {
   def subscribers(owner: String, repo: String): Action[List[User]] =
     get(s"repos/$owner/$repo/subscribers")
 
+  /** [[https://developer.github.com/v3/users/keys/#list-public-keys-for-a-user]] */
+  def keys(user: String): Action[List[PublicKey]] =
+    get(s"users/$user/keys")
+
+  /** [[https://developer.github.com/v3/users/emails/#list-email-addresses-for-a-user]] */
+  val emails: Action[List[Email]] =
+    get("user/emails")
+
   object gitignore {
     val templates: Action[List[String]] =
       get("gitignore/templates")
