@@ -138,7 +138,7 @@ object build extends Build {
     }
   )
 
-  val httpzVersion = "0.2.12"
+  val httpzVersion = "0.2.13"
 
   lazy val ghscala = Project("ghscala", file(".")).settings(
     baseSettings : _*

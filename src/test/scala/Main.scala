@@ -41,7 +41,7 @@ object Main {
   def runProgram[F[_]: Monad, A](
     p: ActionNel[A], interpreter: InterpreterF[F]
   )(f1: F[ErrorNel \/ A] => (ErrorNel \/ A), f2: F[ErrorNel \/ A] => Unit): Unit = {
-    val r = Z.interpret(p.run)(interpreter)
+    val r = Free.runFC(p.run)(interpreter)
     val value = f1(r)
     value.swap.foreach{ errors => throw errors.head }
     f2(r)
