@@ -75,6 +75,9 @@ object build extends Build {
       scalacOptions,
       licenses
     ),
+    buildInfoKeys ++= Seq[BuildInfoKey](
+      "httpzVersion" -> httpzVersion
+    ),
     buildInfoPackage := "ghscala",
     buildInfoObject := "BuildInfoGhScala",
     credentials ++= PartialFunction.condOpt(sys.env.get("SONATYPE_USER") -> sys.env.get("SONATYPE_PASS")){
@@ -138,7 +141,7 @@ object build extends Build {
     }
   )
 
-  val httpzVersion = "0.2.13"
+  private final val httpzVersion = "0.2.13"
 
   lazy val ghscala = Project("ghscala", file(".")).settings(
     baseSettings : _*
