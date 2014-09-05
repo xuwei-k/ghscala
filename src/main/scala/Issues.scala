@@ -10,21 +10,6 @@ object State{
   }
 }
 
-final case class PullRequest(
-  patch_url   :Option[String],
-  diff_url    :Option[String],
-  html_url    :Option[String]
-) extends JsonToString[PullRequest]
-
-object PullRequest {
-
-  implicit val pullRequestCodecJson: CodecJson[PullRequest] =
-    CodecJson.casecodec3(apply, unapply)(
-      "patch_url", "diff_url", "html_url"
-    )
-
-}
-
 final case class Label(
   color        :String,
   url          :String,
@@ -78,7 +63,7 @@ final case class Issue(
   labels       :List[Label],
   state        :String,
   number       :Long,
-  pull_request :Option[PullRequest],
+  pull_request :Option[Issue.PullRequest],
   milestone    :Option[Milestone],
   assignee     :Option[User],
   html_url     :String,
@@ -113,6 +98,21 @@ object Issue {
       "updated_at",
       "created_at"
     )
+
+  final case class PullRequest(
+    patch_url   :Option[String],
+    diff_url    :Option[String],
+    html_url    :Option[String]
+  ) extends JsonToString[PullRequest]
+
+  object PullRequest {
+
+    implicit val pullRequestCodecJson: CodecJson[PullRequest] =
+      CodecJson.casecodec3(apply, unapply)(
+        "patch_url", "diff_url", "html_url"
+      )
+
+  }
 
 }
 

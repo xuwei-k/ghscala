@@ -147,6 +147,9 @@ object Github {
     Option(baseBranch).fold(r)(branch => r.mapRequest(Request.params("base" -> branch)))
   }
 
+  def pull(owner: String, repo: String, number: Long): Action[PullRequest] =
+    get(s"repos/$owner/$repo/pulls/$number")
+
   /** [[http://developer.github.com/v3/gists/#list-gists]] */
   def gists(user: String): Action[List[Gists]] =
     get(s"users/$user/gists")
