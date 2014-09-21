@@ -102,8 +102,7 @@ object build extends Build {
       else
         Nil
     },
-    scalaVersion := "2.10.4",
-    crossScalaVersions := scalaVersion.value :: "2.11.2" :: Nil,
+    scalaVersion := "2.11.2",
     scalacOptions in (Compile, doc) ++= {
       val tag = if(isSnapshot.value) gitHash.getOrElse("master") else { "v" + version.value }
       Seq(
@@ -153,6 +152,8 @@ object build extends Build {
       "com.github.xuwei-k" %% "httpz-scalaj" % httpzVersion % "test",
       "joda-time" % "joda-time" % "2.4",
       "org.joda" % "joda-convert" % "1.6",
+      "com.chuusai" %% "shapeless" % "2.0.0",
+      "org.typelevel" %% "shapeless-scalaz" % "0.3",
       "commons-codec" % "commons-codec" % "1.6"
       // latest commons-codec is 1.9 but "httpclient" % "4.3.3" still depends on 1.6
     )
