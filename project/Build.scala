@@ -103,7 +103,7 @@ object build extends Build {
         Nil
     },
     scalaVersion := "2.10.4",
-    crossScalaVersions := scalaVersion.value :: "2.11.2" :: Nil,
+    crossScalaVersions := scalaVersion.value :: "2.11.3" :: Nil,
     scalacOptions in (Compile, doc) ++= {
       val tag = if(isSnapshot.value) gitHash.getOrElse("master") else { "v" + version.value }
       Seq(
