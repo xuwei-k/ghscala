@@ -1,164 +1,173 @@
 package ghscala
 
-import argonaut.DecodeJson
 import httpz._
+import scalaz.Free.FreeC
+import scalaz.{Inject, Free}
 
-object Github {
+object GhScala extends Github[Command, ({type l[a] = FreeC[Command, a]})#l] {
+  override protected[this] def f[A](c: Command[A]) = lift(c)
+}
 
-  private[this] val baseURL = "https://api.github.com/"
+object Github extends Github[Command, Action]{
+  implicit def instance[F[_]](implicit I: Inject[Command, F]): Github[F, ({type l[a] = FreeC[F, a]})#l] =
+    new Github[F, ({type l[a] = FreeC[F, a]})#l] {
+      def f[A](c: Command[A]) = lift(c)
+    }
 
-  def get[A: DecodeJson](url: String, opt: Config = emptyConfig): Action[A] =
-    Core.json(opt(Request(url = baseURL + url, params = Map("per_page" -> "100"))))
+  def commands2Action[A](a: FreeC[Command, A]): Action[A] =
+    Free.runFC[Command, Action, A](a)(Interpreter)(httpz.ActionMonad)
 
-  def post[A: DecodeJson](url: String, opt: Config = emptyConfig): Action[A] =
-    Core.json(opt(Request(url = baseURL + url, method = "POST")))
+  protected[this] override def f[A](c: Command[A]) =
+    commands2Action(lift(c))
+
+  private final val baseURL = "https://api.github.com/"
+}
+
+sealed abstract class Github[F[_], G[_]](implicit I: Inject[Command, F]) {
+
+  final type FreeCF[A] = FreeC[F, A]
+
+  final def lift[A](f: Command[A]): FreeCF[A] =
+    Free.liftFC(I.inj(f))
+
+  protected[this] def f[A](c: Command[A]): G[A]
 
   /** [[https://developer.github.com/v3/emojis/]] */
-  val emojis: Action[Map[String, String]] =
-    get(s"emojis")
+  final val emojis: G[Map[String, String]] =
+    f(Command.Emojis)
 
   /** [[http://developer.github.com/v3/repos/#list-tags]] */
-  def tags(owner: String, repo: String): Action[List[Tag]] =
-    get(s"repos/$owner/$repo/tags")
+  def tags(owner: String, repo: String): G[List[Tag]] =
+    f(Command.Tags(owner, repo))
 
   /** [[http://developer.github.com/v3/repos/#list-branches]] */
-  def branches(owner: String, repo: String): Action[List[Branch]] =
-    get(s"repos/$owner/$repo/branches")
+  def branches(owner: String, repo: String): G[List[Branch]] =
+    f(Command.Branches(owner, repo))
 
-  // TODO create another special case class ?
   /** [[http://developer.github.com/v3/users/]] */
-  val user: Action[User] =
-    get("user")
+  final val user: G[User] =
+    f(SelfCommand.User)
 
-  // TODO create another special case class ?
   /** [[http://developer.github.com/v3/users/]] */
-  def user(user: String): Action[User] =
-    get(s"users/$user")
+  def user(user: String): G[User] =
+    f(Command.User(user))
 
   /** [[http://developer.github.com/v3/repos/#list-contributors]] */
-  def contributors(owner: String, repo: String): Action[List[User]] =
-    get(s"repos/$owner/$repo/contributors")
+  def contributors(owner: String, repo: String): G[List[User]] =
+    f(Command.Contributors(owner, repo))
 
   /** [[http://developer.github.com/v3/users/followers/#list-followers-of-a-user]] */
-  val followers: Action[List[User]] =
-    get(s"user/followers")
+  final val followers: G[List[User]] =
+    f(SelfCommand.Followers)
 
   /** [[http://developer.github.com/v3/users/followers/#list-followers-of-a-user]] */
-  def followers(user: String): Action[List[User]] =
-    get(s"users/$user/followers")
+  def followers(user: String): G[List[User]] =
+    f(Command.Followers(user))
 
   /** [[http://developer.github.com/v3/users/followers/#list-users-followed-by-another-user]] */
-  val following: Action[List[User]] =
-    get(s"user/following")
+  final val following: G[List[User]] =
+    f(SelfCommand.Following)
 
   /** [[http://developer.github.com/v3/users/followers/#list-users-followed-by-another-user]] */
-  def following(user: String): Action[List[User]] =
-    get(s"users/$user/following")
+  def following(user: String): G[List[User]] =
+    f(Command.Following(user))
 
   /** [[http://developer.github.com/v3/git/blobs]] */
-  def blob(user: String, repo: String, sha: String): Action[Blob] =
-    get(s"repos/$user/$repo/git/blobs/$sha")
+  def blob(user: String, repo: String, sha: String): G[Blob] =
+    f(Command.Blob(user, repo, sha))
 
   /** [[http://developer.github.com/v3/git/trees]] */
-  def trees(user: String, repo: String, sha: String): Action[Trees] =
-    get(s"repos/$user/$repo/git/trees/$sha")
+  def trees(user: String, repo: String, sha: String): G[Trees] =
+    f(Command.Trees(user, repo, sha))
 
-  // TODO parameter
   /** [[http://developer.github.com/v3/repos/#list-your-repositories]] */
-  val repos: Action[List[Repo]] =
-    get(s"user/repos")
+  final val repos: G[List[Repo]] =
+    f(SelfCommand.Repos)
 
-  // TODO parameter
   /** [[http://developer.github.com/v3/repos/#list-user-repositories]] */
-  def repos(user: String): Action[List[Repo]] =
-    get(s"users/$user/repos")
+  def repos(user: String): G[List[Repo]] =
+    f(Command.Repos(user))
 
-  // TODO parameter
   /** [[http://developer.github.com/v3/repos/#list-organization-repositories]] */
-  def orgRepos(org: String): Action[List[Repo]] =
-    get(s"orgs/$org/repos")
+  def orgRepos(org: String): G[List[Repo]] =
+    f(Command.OrgRepos(org))
 
   /** [[http://developer.github.com/v3/repos/#list-user-repositories]] */
-  def repo(user: String, repo: String): Action[Repo] =
-    get(s"repos/$user/$repo")
+  def repo(user: String, repo: String): G[Repo] =
+    f(Command.Repo(user, repo))
 
   /** [[http://developer.github.com/v3/git/commits]] */
-  def commits(user: String, repo: String, sha: String): Action[CommitResponse] =
-    get(s"repos/$user/$repo/commits/$sha")
+  def commits(user: String, repo: String, sha: String): G[CommitResponse] =
+    f(Command.Commits(user, repo, sha))
 
   /** [[http://developer.github.com/v3/issues]] */
-  def issues(user: String, repo: String, state: State = Open): Action[List[Issue]] =
-    get(
-      s"repos/$user/$repo/issues",
-      Request.param("state", state.name)
-    )
+  def issues(user: String, repo: String, state: State = Open): G[List[Issue]] =
+    f(Command.Issues(user, repo, state))
 
   /** [[https://developer.github.com/v3/activity/events/#list-repository-events]] */
-  def repoEvents(owner: String, repo: String): Action[List[RepoEvent]] =
-    get(s"repos/$owner/$repo/events")
+  def repoEvents(owner: String, repo: String): G[List[RepoEvent]] =
+    f(Command.RepoEvents(owner, repo))
 
   /** [[http://developer.github.com/v3/issues/events/]] */
-  def issueEvents(user: String, repo: String, number: Long): Action[List[IssueEvent]] =
-    get(s"repos/$user/$repo/issues/$number/events")
+  def issueEvents(user: String, repo: String, number: Long): G[List[IssueEvent]] =
+    f(Command.IssueEvent(user, repo, number))
 
   /** [[http://developer.github.com/v3/issues/events/]] */
-  def issueEvents(user: String, repo: String): Action[List[IssueEvent2]] =
-    get(s"repos/$user/$repo/issues/events")
+  def issueEvents(user: String, repo: String): G[List[IssueEvent2]] =
+    f(Command.IssueEvents(user, repo))
 
   /** [[http://developer.github.com/v3/repos/comments]] */
-  def comments(user: String, repo: String): Action[List[Comment]] =
-    get(s"repos/$user/$repo/comments")
+  def comments(user: String, repo: String): G[List[Comment]] =
+    f(Command.Comments(user, repo))
 
   /** [[http://developer.github.com/v3/repos/contents]] */
-  def readme(user: String, repo: String, ref: String): Action[Contents] =
-    get(s"repos/$user/$repo/readme", Request.param("ref", ref))
+  def readme(user: String, repo: String, ref: String): G[Contents] =
+    f(Command.Readme(user, repo, Option(ref)))
 
   /** [[http://developer.github.com/v3/repos/contents]] */
-  def readme(user: String, repo: String): Action[Contents] =
-    get(s"repos/$user/$repo/readme")
+  def readme(user: String, repo: String): G[Contents] =
+    f(Command.Readme(user, repo, None))
 
   /** [[http://developer.github.com/v3/repos/contents]] */
-  def contents(user: String, repo: String, path: String): Action[Contents] =
-    get(s"repos/$user/$repo/contents/$path")
+  def contents(user: String, repo: String, path: String): G[Contents] =
+    f(Command.Contents(user, repo, path, None))
 
   /** [[http://developer.github.com/v3/repos/contents]] */
-  def contents(user: String, repo: String, path: String, ref: String): Action[Contents] =
-    contents(user, repo, path).mapRequest(Request.param("ref", ref))
+  def contents(user: String, repo: String, path: String, ref: String): G[Contents] =
+    f(Command.Contents(user, repo, path, Option(ref)))
 
   /** [[http://developer.github.com/v3/orgs]] */
-  def org(orgName: String): Action[Organization] =
-    get(s"orgs/$orgName")
+  def org(orgName: String): G[Organization] =
+    f(Command.Org(orgName))
 
   /** [[http://developer.github.com/v3/orgs]] */
-  def orgs(user: String): Action[List[Org]] =
-    get(s"users/$user/orgs")
+  def orgs(user: String): G[List[Org]] =
+    f(Command.Orgs(user))
 
   /** [[http://developer.github.com/v3/orgs]] */
-  def orgs: Action[List[Org]] =
-    get(s"user/orgs")
+  final val orgs: G[List[Org]] =
+    f(SelfCommand.Orgs)
 
   /** [[http://developer.github.com/v3/pulls]] */
-  def pulls(user: String, repo: String): Action[List[Pull]] =
-    get(s"repos/$user/$repo/pulls")
+  def pulls(user: String, repo: String): G[List[Pull]] =
+    f(Command.Pulls(user, repo, None, None))
 
   /** [[http://developer.github.com/v3/pulls]] */
-  def pulls(user: String, repo: String, state: State = Open, baseBranch: String = null): Action[List[Pull]] = {
-    val r = pulls(user, repo).mapRequest(Request.params("state" -> state.name))
-    Option(baseBranch).fold(r)(branch => r.mapRequest(Request.params("base" -> branch)))
-  }
+  def pulls(user: String, repo: String, state: State = Open, baseBranch: String = null): G[List[Pull]] =
+    f(Command.Pulls(user, repo, Option(state), Option(baseBranch)))
 
   /** [[http://developer.github.com/v3/gists/#list-gists]] */
-  def gists(user: String): Action[List[Gists]] =
-    get(s"users/$user/gists")
+  def gists(user: String): G[List[Gists]] =
+    f(Command.Gists(user))
 
   /** [[http://developer.github.com/v3/gists/#get-a-single-gist]] */
-  def gist(id: String): Action[Gist] =
-    get(s"gists/$id")
+  def gist(id: String): G[Gist] =
+    f(Command.Gist(id))
 
   def markdown(text: String): ActionE[Throwable, String] = {
     import argonaut.Json
     Core.string(Request(
-      url = baseURL + "markdown",
+      url = Github.baseURL + "markdown",
       method = "POST",
       body = Some(
         Json.obj("text" -> Json.jString(text)).toString.getBytes
@@ -167,54 +176,52 @@ object Github {
   }
 
   /** [[https://developer.github.com/v3/activity/watching/#list-watchers]] */
-  def subscribers(owner: String, repo: String): Action[List[User]] =
-    get(s"repos/$owner/$repo/subscribers")
+  def subscribers(owner: String, repo: String): G[List[User]] =
+    f(Command.Subscribers(owner, repo))
 
   /** [[https://developer.github.com/v3/users/keys/#list-public-keys-for-a-user]] */
-  def keys(user: String): Action[List[PublicKey]] =
-    get(s"users/$user/keys")
+  def keys(user: String): G[List[PublicKey]] =
+    f(Command.Keys(user))
 
   /** [[https://developer.github.com/v3/users/emails/#list-email-addresses-for-a-user]] */
-  val emails: Action[List[Email]] =
-    get("user/emails")
+  final val emails: G[List[Email]] =
+    f(Command.Emails)
 
   object gitignore {
-    val templates: Action[List[String]] =
-      get("gitignore/templates")
+    final val templates: G[List[String]] =
+      f(Command.GitignoreTemplates)
 
-    def apply(language: String): Action[Gitignore] =
-      get(s"gitignore/templates/$language")
+    def apply(language: String): G[Gitignore] =
+      f(Command.Gitignore(language))
   }
 
   object gists {
     /** [[http://developer.github.com/v3/gists/#list-gists]] */
-    val me: Action[List[Gists]] =
-      get("gists")
+    final val me: G[List[Gists]] =
+      f(SelfCommand.Gists)
 
     /** [[http://developer.github.com/v3/gists/#list-gists]] */
-    val public: Action[List[Gists]] =
-      get("gists/public")
+    final val public: G[List[Gists]] =
+      f(Command.Public)
 
     /** [[http://developer.github.com/v3/gists/#list-gists]] */
-    val starred: Action[List[Gists]] =
-      get("gists/starred")
+    final val starred: G[List[Gists]] =
+      f(SelfCommand.Starred)
   }
 
   object search {
     /** [[http://developer.github.com/v3/search/#search-repositories]] */
-    def repositories(query: String, sort: SearchRepoSort = SearchRepoSort.Default): Action[SearchRepo] = {
-      val r = get[SearchRepo]("search/repositories", Request.param("q", query))
-      sort.name.fold(r)(n => r.mapRequest(Request.param("sort", n)))
-    }
+    def repositories(query: String, sort: SearchRepoSort = SearchRepoSort.Default): G[SearchRepo] =
+      f(Command.SearchRepositories(query, sort))
 
     /** [[http://developer.github.com/v3/search/#search-code]] */
-    def code(query: String): Action[SearchCode] =
-      get("search/code", Request.param("q", query))
+    def code(query: String): G[SearchCode] =
+      f(Command.SearchCode(query))
 
     // TODO sort, order
     /** [[http://developer.github.com/v3/search/#search-issues]] */
-    def issues(query: String): Action[SearchIssues] =
-      get("search/issues", Request.param("q", query))
+    def issues(query: String): G[SearchIssues] =
+      f(Command.SearchIssues(query))
   }
 }
 
