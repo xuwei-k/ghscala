@@ -1,5 +1,7 @@
 import argonaut.{EncodeJson, DecodeJson}
+import httpz.Action
 import java.text.SimpleDateFormat
+import scalaz.~>
 
 package object ghscala{
 
@@ -20,5 +22,6 @@ package object ghscala{
       },"DateTime")
     )
 
+  val interpreter: Command ~> Action = Interpreter
 }
 
