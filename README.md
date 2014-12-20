@@ -33,5 +33,4 @@ libraryDependencies += "com.github.xuwei-k" %% "ghscala" % "0.2.15-SNAPSHOT"
 ```
 
 - [API Documentation](https://oss.sonatype.org/service/local/repositories/snapshots/archive/com/github/xuwei-k/ghscala_2.10/0.2.15-SNAPSHOT/ghscala_2.10-0.2.15-SNAPSHOT-javadoc.jar/!/index.html)
-
-
+- [sxr](https://oss.sonatype.org/service/local/repositories/snapshots/archive/com/github/xuwei-k/ghscala_2.10/0.2.15-SNAPSHOT/ghscala_2.10-0.2.15-SNAPSHOT-sxr.jar/!/index.html)
