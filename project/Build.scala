@@ -103,7 +103,7 @@ object build extends Build {
       "-language:implicitConversions" ::
       Nil
     ),
-    scalacOptions ++= {
+    scalacOptions in compile ++= {
       if(scalaVersion.value.startsWith("2.11"))
         Seq("-Ywarn-unused", "-Ywarn-unused-import")
       else
