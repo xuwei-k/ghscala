@@ -11,10 +11,6 @@
 - [Maven Central](http://repo1.maven.org/maven2/com/github/xuwei-k/)
 
 
-### for scalaz 7.0.x
-- <https://github.com/xuwei-k/ghscala/tree/scalaz70>
-
-
 ### latest stable version
 
 ```scala
@@ -34,3 +30,7 @@ libraryDependencies += "com.github.xuwei-k" %% "ghscala" % "0.2.16-SNAPSHOT"
 
 - [API Documentation](https://oss.sonatype.org/service/local/repositories/snapshots/archive/com/github/xuwei-k/ghscala_2.10/0.2.16-SNAPSHOT/ghscala_2.10-0.2.16-SNAPSHOT-javadoc.jar/!/index.html)
 - [sxr](https://oss.sonatype.org/service/local/repositories/snapshots/archive/com/github/xuwei-k/ghscala_2.10/0.2.16-SNAPSHOT/ghscala_2.10-0.2.16-SNAPSHOT-sxr.jar/!/index.html)
+
+
+### for scalaz 7.0.x
+- <https://github.com/xuwei-k/ghscala/tree/scalaz70>
