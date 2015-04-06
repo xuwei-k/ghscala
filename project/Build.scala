@@ -148,7 +148,7 @@ object build extends Build {
     }
   ) ++ Sxr.settings(Compile, "classes.sxr")
 
-  private final val httpzVersion = "0.2.17"
+  private final val httpzVersion = "0.2.18"
 
   lazy val ghscala = Project("ghscala", file(".")).settings(
     baseSettings : _*
