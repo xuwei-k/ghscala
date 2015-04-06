@@ -25,11 +25,11 @@ libraryDependencies += "com.github.xuwei-k" %% "ghscala" % "0.2.16"
 ```scala
 resolvers += Opts.resolver.sonatypeSnapshots
 
-libraryDependencies += "com.github.xuwei-k" %% "ghscala" % "0.2.16-SNAPSHOT"
+libraryDependencies += "com.github.xuwei-k" %% "ghscala" % "0.2.17-SNAPSHOT"
 ```
 
-- [API Documentation](https://oss.sonatype.org/service/local/repositories/snapshots/archive/com/github/xuwei-k/ghscala_2.10/0.2.16-SNAPSHOT/ghscala_2.10-0.2.16-SNAPSHOT-javadoc.jar/!/index.html)
-- [sxr](https://oss.sonatype.org/service/local/repositories/snapshots/archive/com/github/xuwei-k/ghscala_2.10/0.2.16-SNAPSHOT/ghscala_2.10-0.2.16-SNAPSHOT-sxr.jar/!/index.html)
+- [API Documentation](https://oss.sonatype.org/service/local/repositories/snapshots/archive/com/github/xuwei-k/ghscala_2.10/0.2.17-SNAPSHOT/ghscala_2.10-0.2.17-SNAPSHOT-javadoc.jar/!/index.html)
+- [sxr](https://oss.sonatype.org/service/local/repositories/snapshots/archive/com/github/xuwei-k/ghscala_2.10/0.2.17-SNAPSHOT/ghscala_2.10-0.2.17-SNAPSHOT-sxr.jar/!/index.html)
 
 
 ### for scalaz 7.0.x
