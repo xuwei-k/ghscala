@@ -53,6 +53,12 @@ object build extends Build {
 
   private[this] final val Scala210 = "2.10.5"
 
+  private[this] val unusedWarnings = (
+    "-Ywarn-unused" ::
+    "-Ywarn-unused-import" ::
+    Nil
+  )
+
   val baseSettings = ReleasePlugin.releaseSettings ++ sonatypeSettings ++ buildInfoSettings ++ Seq(
     commands += Command.command("updateReadme")(updateReadme),
     ReleasePlugin.ReleaseKeys.releaseProcess := Seq[ReleaseStep](
@@ -104,13 +110,9 @@ object build extends Build {
       "-language:higherKinds" ::
       "-language:implicitConversions" ::
       Nil
-    ),
-    scalacOptions in compile ++= {
-      if(scalaVersion.value.startsWith("2.11"))
-        Seq("-Ywarn-unused", "-Ywarn-unused-import")
-      else
-        Nil
-    },
+    ) ++ PartialFunction.condOpt(CrossVersion.partialVersion(scalaVersion.value)){
+      case Some((2, v)) if v >= 11 => unusedWarnings
+    }.toList.flatten,
     scalaVersion := Scala210,
     crossScalaVersions := Scala210 :: "2.11.6" :: Nil,
     scalacOptions in (Compile, doc) ++= {
@@ -148,7 +150,9 @@ object build extends Build {
     showDoc in Compile <<= (doc in Compile, target in doc in Compile) map { (_, out) =>
       java.awt.Desktop.getDesktop.open(out / "index.html")
     }
-  ) ++ Sxr.settings(Compile, "classes.sxr")
+  ) ++ Sxr.settings(Compile, "classes.sxr") ++ Seq(Compile, Test).flatMap(c =>
+    scalacOptions in (c, console) ~= {_.filterNot(unusedWarnings.toSet)}
+  )
 
   private final val httpzVersion = "0.2.18"
 
