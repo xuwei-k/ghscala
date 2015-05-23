@@ -51,6 +51,8 @@ object build extends Build {
 
   val updateReadmeProcess: ReleaseStep = updateReadme
 
+  private[this] final val Scala210 = "2.10.5"
+
   val baseSettings = ReleasePlugin.releaseSettings ++ sonatypeSettings ++ buildInfoSettings ++ Seq(
     commands += Command.command("updateReadme")(updateReadme),
     ReleasePlugin.ReleaseKeys.releaseProcess := Seq[ReleaseStep](
@@ -109,8 +111,8 @@ object build extends Build {
       else
         Nil
     },
-    scalaVersion := "2.10.5",
-    crossScalaVersions := scalaVersion.value :: "2.11.6" :: Nil,
+    scalaVersion := Scala210,
+    crossScalaVersions := Scala210 :: "2.11.6" :: Nil,
     scalacOptions in (Compile, doc) ++= {
       val tag = if(isSnapshot.value) gitHash.getOrElse("master") else { "v" + version.value }
       Seq(
