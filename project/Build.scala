@@ -154,7 +154,7 @@ object build extends Build {
     scalacOptions in (c, console) ~= {_.filterNot(unusedWarnings.toSet)}
   )
 
-  private final val httpzVersion = "0.2.18"
+  private final val httpzVersion = "0.3.0"
 
   lazy val ghscala = Project("ghscala", file(".")).settings(
     baseSettings : _*
@@ -164,10 +164,9 @@ object build extends Build {
     libraryDependencies ++= Seq(
       "com.github.xuwei-k" %% "httpz" % httpzVersion,
       "com.github.xuwei-k" %% "httpz-scalaj" % httpzVersion % "test",
-      "joda-time" % "joda-time" % "2.7",
-      "org.joda" % "joda-convert" % "1.6",
-      "commons-codec" % "commons-codec" % "1.6"
-      // latest commons-codec is 1.9 but "httpclient" % "4.3.3" still depends on 1.6
+      "joda-time" % "joda-time" % "2.8.2",
+      "org.joda" % "joda-convert" % "1.7",
+      "commons-codec" % "commons-codec" % "1.10"
     )
   )
 
