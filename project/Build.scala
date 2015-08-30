@@ -1,7 +1,8 @@
 import sbt._, Keys._
 import sbtrelease._
-import xerial.sbt.Sonatype._
+import sbtrelease.ReleasePlugin.autoImport._
 import ReleaseStateTransformations._
+import xerial.sbt.Sonatype._
 import com.typesafe.sbt.pgp.PgpKeys
 import sbtbuildinfo.Plugin._
 
@@ -59,9 +60,9 @@ object build extends Build {
     Nil
   )
 
-  val baseSettings = ReleasePlugin.releaseSettings ++ sonatypeSettings ++ buildInfoSettings ++ Seq(
+  val baseSettings = sonatypeSettings ++ buildInfoSettings ++ Seq(
     commands += Command.command("updateReadme")(updateReadme),
-    ReleasePlugin.ReleaseKeys.releaseProcess := Seq[ReleaseStep](
+    releaseProcess := Seq[ReleaseStep](
       checkSnapshotDependencies,
       inquireVersions,
       runClean,
