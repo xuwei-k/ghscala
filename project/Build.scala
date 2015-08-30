@@ -4,7 +4,8 @@ import sbtrelease.ReleasePlugin.autoImport._
 import ReleaseStateTransformations._
 import xerial.sbt.Sonatype._
 import com.typesafe.sbt.pgp.PgpKeys
-import sbtbuildinfo.Plugin._
+import sbtbuildinfo.BuildInfoPlugin
+import sbtbuildinfo.BuildInfoPlugin.autoImport._
 
 object build extends Build {
 
@@ -60,7 +61,7 @@ object build extends Build {
     Nil
   )
 
-  val baseSettings = sonatypeSettings ++ buildInfoSettings ++ Seq(
+  val baseSettings = sonatypeSettings ++ Seq(
     commands += Command.command("updateReadme")(updateReadme),
     releaseProcess := Seq[ReleaseStep](
       checkSnapshotDependencies,
@@ -81,7 +82,6 @@ object build extends Build {
       updateReadmeProcess,
       pushChanges
     ),
-    sourceGenerators in Compile <+= buildInfo,
     buildInfoKeys := Seq[BuildInfoKey](
       organization,
       name,
@@ -157,7 +157,7 @@ object build extends Build {
 
   private final val httpzVersion = "0.3.0"
 
-  lazy val ghscala = Project("ghscala", file(".")).settings(
+  lazy val ghscala = Project("ghscala", file(".")).enablePlugins(BuildInfoPlugin).settings(
     baseSettings : _*
   ).settings(
     name := "ghscala",
