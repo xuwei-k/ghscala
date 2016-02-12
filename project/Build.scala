@@ -82,6 +82,7 @@ object build extends Build {
       updateReadmeProcess,
       pushChanges
     ),
+    fullResolvers ~= {_.filterNot(_.name == "jcenter")},
     buildInfoKeys := Seq[BuildInfoKey](
       organization,
       name,
