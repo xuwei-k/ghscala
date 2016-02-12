@@ -53,7 +53,7 @@ object build extends Build {
 
   val updateReadmeProcess: ReleaseStep = updateReadme
 
-  private[this] final val Scala210 = "2.10.5"
+  private[this] final val Scala210 = "2.10.6"
 
   private[this] val unusedWarnings = (
     "-Ywarn-unused" ::
