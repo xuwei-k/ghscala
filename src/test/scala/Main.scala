@@ -44,7 +44,7 @@ object Main {
   def runProgram[F[_]: Monad, A](
     p: ActionNel[A], interpreter: InterpreterF[F]
   )(f1: F[ErrorNel \/ A] => (ErrorNel \/ A), f2: F[ErrorNel \/ A] => Unit): Unit = {
-    val r = Free.runFC(p.run)(interpreter)
+    val r = p.run.foldMap(interpreter)
     val value = f1(r)
     value.swap.foreach{ errors => throw errors.head }
     f2(r)
@@ -75,7 +75,7 @@ object Main {
 
     runProgram(
       program1, ScalajInterpreter.future(conf).interpreter
-    )(_.run, identity)
+    )(_.unsafePerformSync, identity)
 
     runProgram(
       program2, ScalajInterpreter.times(conf).interpreter

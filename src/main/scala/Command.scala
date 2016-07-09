@@ -2,7 +2,6 @@ package ghscala
 
 import argonaut.DecodeJson
 import httpz._
-import scalaz.Free.FreeC
 import scalaz.{Free, Inject, NonEmptyList}
 
 sealed abstract class Command[A](val f: String => Request)(implicit val decoder: DecodeJson[A]){
@@ -18,8 +17,8 @@ sealed abstract class Command[A](val f: String => Request)(implicit val decoder:
   final def action: httpz.Action[A] =
     actionWithURL(Github.baseURL)
 
-  final def lift[F[_]](implicit I: Inject[Command, F]): FreeC[F, A] =
-    Free.liftFC(I.inj(this))
+  final def lift[F[_]](implicit I: Inject[Command, F]): Free[F, A] =
+    Free.liftF(I.inj(this))
 
   final def actionEOps: ActionEOps[httpz.Error, A] =
     new ActionEOps(action)

@@ -156,7 +156,7 @@ object build extends Build {
     scalacOptions in (c, console) ~= {_.filterNot(unusedWarnings.toSet)}
   )
 
-  private final val httpzVersion = "0.3.1"
+  private final val httpzVersion = "0.4.0"
 
   lazy val ghscala = Project("ghscala", file(".")).enablePlugins(BuildInfoPlugin).settings(
     baseSettings : _*

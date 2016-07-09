@@ -1,21 +1,20 @@
 package ghscala
 
 import httpz._
-import scalaz.Free.FreeC
 import scalaz.{Inject, Free}
 
-object GhScala extends Github[Command, ({type l[a] = FreeC[Command, a]})#l] {
+object GhScala extends Github[Command, ({type l[a] = Free[Command, a]})#l] {
   override protected[this] def f[A](c: Command[A]) = lift(c)
 }
 
 object Github extends Github[Command, Action]{
-  implicit def instance[F[_]](implicit I: Inject[Command, F]): Github[F, ({type l[a] = FreeC[F, a]})#l] =
-    new Github[F, ({type l[a] = FreeC[F, a]})#l] {
+  implicit def instance[F[_]](implicit I: Inject[Command, F]): Github[F, ({type l[a] = Free[F, a]})#l] =
+    new Github[F, ({type l[a] = Free[F, a]})#l] {
       def f[A](c: Command[A]) = lift(c)
     }
 
-  def commands2Action[A](a: FreeC[Command, A]): Action[A] =
-    Free.runFC[Command, Action, A](a)(Interpreter)(httpz.ActionMonad)
+  def commands2Action[A](a: Free[Command, A]): Action[A] =
+    a.foldMap(Interpreter)(httpz.ActionMonad)
 
   protected[this] override def f[A](c: Command[A]) =
     commands2Action(lift(c))
@@ -25,10 +24,10 @@ object Github extends Github[Command, Action]{
 
 sealed abstract class Github[F[_], G[_]](implicit I: Inject[Command, F]) {
 
-  final type FreeCF[A] = FreeC[F, A]
+  final type FreeF[A] = Free[F, A]
 
-  final def lift[A](f: Command[A]): FreeCF[A] =
-    Free.liftFC(I.inj(f))
+  final def lift[A](f: Command[A]): FreeF[A] =
+    Free.liftF(I.inj(f))
 
   protected[this] def f[A](c: Command[A]): G[A]
 
