@@ -114,7 +114,7 @@ object build {
       case Some((2, v)) if v >= 11 => unusedWarnings
     }.toList.flatten,
     scalaVersion := Scala210,
-    crossScalaVersions := Scala210 :: "2.11.8" :: Nil,
+    crossScalaVersions := Scala210 :: "2.11.11" :: Nil,
     scalacOptions in (Compile, doc) ++= {
       val tag = if(isSnapshot.value) gitHash.getOrElse("master") else { "v" + version.value }
       Seq(
@@ -151,6 +151,6 @@ object build {
     scalacOptions in (c, console) ~= {_.filterNot(unusedWarnings.toSet)}
   )
 
-  def httpzVersion = "0.4.0"
+  def httpzVersion = "0.5.1"
 }
 
