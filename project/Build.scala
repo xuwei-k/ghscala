@@ -152,7 +152,7 @@ object build extends Build {
     showDoc in Compile <<= (doc in Compile, target in doc in Compile) map { (_, out) =>
       java.awt.Desktop.getDesktop.open(out / "index.html")
     }
-  ) ++ Sxr.settings(Compile, "classes.sxr") ++ Seq(Compile, Test).flatMap(c =>
+  ) ++ Sxr.settings ++ Seq(Compile, Test).flatMap(c =>
     scalacOptions in (c, console) ~= {_.filterNot(unusedWarnings.toSet)}
   )
 
