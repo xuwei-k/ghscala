@@ -7,7 +7,7 @@ import com.typesafe.sbt.pgp.PgpKeys
 import sbtbuildinfo.BuildInfoPlugin
 import sbtbuildinfo.BuildInfoPlugin.autoImport._
 
-object build extends Build {
+object build {
 
   def gitHash: Option[String] = scala.util.Try(
     sys.process.Process("git rev-parse HEAD").lines_!.head
@@ -151,21 +151,6 @@ object build extends Build {
     scalacOptions in (c, console) ~= {_.filterNot(unusedWarnings.toSet)}
   )
 
-  private final val httpzVersion = "0.4.0"
-
-  lazy val ghscala = Project("ghscala", file(".")).enablePlugins(BuildInfoPlugin).settings(
-    baseSettings : _*
-  ).settings(
-    name := "ghscala",
-    description := "purely functional scala github api client",
-    libraryDependencies ++= Seq(
-      "com.github.xuwei-k" %% "httpz" % httpzVersion,
-      "com.github.xuwei-k" %% "httpz-scalaj" % httpzVersion % "test",
-      "joda-time" % "joda-time" % "2.9.4",
-      "org.joda" % "joda-convert" % "1.7",
-      "commons-codec" % "commons-codec" % "1.10"
-    )
-  )
-
+  def httpzVersion = "0.4.0"
 }
 
