@@ -32,5 +32,5 @@ libraryDependencies += "com.github.xuwei-k" %% "ghscala" % "0.5.1-SNAPSHOT"
 - [sxr](https://oss.sonatype.org/service/local/repositories/snapshots/archive/com/github/xuwei-k/ghscala_2.10/0.5.1-SNAPSHOT/ghscala_2.10-0.5.1-SNAPSHOT-sxr.jar/!/index.html)
 
 
-### for scalaz 7.0.x
-- <https://github.com/xuwei-k/ghscala/tree/scalaz70>
+### for scalaz 7.1.x
+- <https://github.com/xuwei-k/ghscala/tree/v0.3.0>
