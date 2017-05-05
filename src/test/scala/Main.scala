@@ -58,12 +58,12 @@ object Main {
       scalaz.WriterT.writerMonad[List[Time]](scalaz.std.list.listMonoid)
 
     val conf = args match {
-      case Array(user, pass) =>
-        Request.auth(user, pass)
-      case Array() =>
-        (sys.env.get("TEST_USER_ID"), sys.env.get("TEST_USER_PASSWORD")) match {
-          case (Some(user), Some(pass)) =>
-            Request.auth(user, pass)
+      case Array(token) =>
+        Request.header("Authorization", "token " + token)
+      case _ =>
+        sys.env.get("TEST_USER_TOKEN") match {
+          case Some(token) =>
+            Request.header("Authorization", "token " + token)
           case _ =>
             emptyConfig
         }
