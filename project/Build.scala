@@ -114,7 +114,7 @@ object build {
       case Some((2, v)) if v >= 11 => unusedWarnings
     }.toList.flatten,
     scalaVersion := Scala210,
-    crossScalaVersions := Scala210 :: "2.11.11" :: Nil,
+    crossScalaVersions := Scala210 :: "2.11.11" :: "2.12.2" :: Nil,
     scalacOptions in (Compile, doc) ++= {
       val tag = if(isSnapshot.value) gitHash.getOrElse("master") else { "v" + version.value }
       Seq(
