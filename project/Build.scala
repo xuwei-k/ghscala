@@ -13,8 +13,6 @@ object build extends Build {
     sys.process.Process("git rev-parse HEAD").lines_!.head
   ).toOption
 
-  val showDoc = TaskKey[Unit]("showDoc")
-
   val sonatypeURL = "https://oss.sonatype.org/service/local/repositories/"
 
   val updateReadme = { state: State =>
@@ -148,9 +146,6 @@ object build extends Build {
       }
       val stripTestScope = stripIf { n => n.label == "dependency" && (n \ "scope").text == "test" }
       new RuleTransformer(stripTestScope).transform(node)(0)
-    },
-    showDoc in Compile <<= (doc in Compile, target in doc in Compile) map { (_, out) =>
-      java.awt.Desktop.getDesktop.open(out / "index.html")
     }
   ) ++ Sxr.settings ++ Seq(Compile, Test).flatMap(c =>
     scalacOptions in (c, console) ~= {_.filterNot(unusedWarnings.toSet)}
