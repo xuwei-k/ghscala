@@ -12,7 +12,7 @@ matrix:
 sudo: false
 
 jdk:
-  - oraclejdk7
+  - openjdk7
 
 script: sbt ++${TRAVIS_SCALA_VERSION} "test:runMain ghscala.Main" $(if [[ "${TRAVIS_PULL_REQUEST}" == "false" && ${JAVA_HOME} == $(jdk_switcher home oraclejdk7) && "${TRAVIS_BRANCH}" == "master" ]]; then echo "publish"; fi)
 
