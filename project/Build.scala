@@ -81,6 +81,12 @@ object build {
       pushChanges
     ),
     fullResolvers ~= {_.filterNot(_.name == "jcenter")},
+    publishTo := Some(
+      if (isSnapshot.value)
+        Opts.resolver.sonatypeSnapshots
+      else
+        Opts.resolver.sonatypeStaging
+    ),
     buildInfoKeys := Seq[BuildInfoKey](
       organization,
       name,
