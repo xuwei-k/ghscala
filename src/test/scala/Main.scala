@@ -51,7 +51,7 @@ object Main {
     value.foreach(println)
   }
 
-  def main(args: Array[String]){
+  def main(args: Array[String]): Unit = {
     import scalaz.syntax.equal._, std.anyVal._
 
     implicit val timesMonad: Monad[Times] =
