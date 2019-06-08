@@ -10,7 +10,7 @@ import sbtbuildinfo.BuildInfoPlugin.autoImport._
 object build {
 
   def gitHash: Option[String] = scala.util.Try(
-    sys.process.Process("git rev-parse HEAD").lines_!.head
+    sys.process.Process("git rev-parse HEAD").lineStream_!.head
   ).toOption
 
   val sonatypeURL = "https://oss.sonatype.org/service/local/repositories/"
@@ -44,14 +44,14 @@ object build {
     IO.write(readmeFile, newReadme)
     val git = new Git(extracted get baseDirectory)
     git.add(readme) ! state.log
-    git.commit(message = "update " + readme, sign = false) ! state.log
-    "git diff HEAD^" ! state.log
+    git.commit(message = "update " + readme, sign = false, signOff = false) ! state.log
+    sys.process.Process("git diff HEAD^") ! state.log
     state
   }
 
   val updateReadmeProcess: ReleaseStep = updateReadme
 
-  private[this] final val Scala210 = "2.10.6"
+  private[this] final val Scala211 = "2.11.12"
 
   private[this] val unusedWarnings = (
     "-Ywarn-unused" ::
@@ -120,8 +120,8 @@ object build {
     ) ++ PartialFunction.condOpt(CrossVersion.partialVersion(scalaVersion.value)){
       case Some((2, v)) if v >= 11 => unusedWarnings
     }.toList.flatten,
-    scalaVersion := Scala210,
-    crossScalaVersions := Scala210 :: "2.11.11" :: "2.12.2" :: Nil,
+    scalaVersion := Scala211,
+    crossScalaVersions := Scala211 :: "2.12.8" :: Nil,
     scalacOptions in (Compile, doc) ++= {
       val tag = if(isSnapshot.value) gitHash.getOrElse("master") else { "v" + version.value }
       Seq(

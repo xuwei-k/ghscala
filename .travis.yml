@@ -1,18 +1,15 @@
 language: scala
 
-scala:
-  - 2.10.6
-  - 2.11.11
+dist: xenial
 
-matrix:
-  include:
-  - scala: 2.12.2
-    jdk: oraclejdk8
+scala:
+- 2.11.11
+- 2.12.8
 
 sudo: false
 
 jdk:
-  - openjdk7
+- openjdk8
 
 script: sbt ++${TRAVIS_SCALA_VERSION} "test:runMain ghscala.Main"
 
