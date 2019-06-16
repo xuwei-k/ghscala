@@ -51,11 +51,10 @@ object build {
 
   val updateReadmeProcess: ReleaseStep = updateReadme
 
-  private[this] final val Scala211 = "2.11.12"
+  private[this] def Scala212 = "2.12.8"
 
   private[this] val unusedWarnings = (
-    "-Ywarn-unused" ::
-    "-Ywarn-unused-import" ::
+    "-Ywarn-unused:imports" ::
     Nil
   )
 
@@ -117,11 +116,14 @@ object build {
       "-language:higherKinds" ::
       "-language:implicitConversions" ::
       Nil
-    ) ++ PartialFunction.condOpt(CrossVersion.partialVersion(scalaVersion.value)){
-      case Some((2, v)) if v >= 11 => unusedWarnings
+    ),
+    scalacOptions ++= unusedWarnings,
+    scalacOptions ++= PartialFunction.condOpt(CrossVersion.partialVersion(scalaVersion.value)){
+      case Some((2, v)) if v <= 12 =>
+        Seq("-Xfuture")
     }.toList.flatten,
-    scalaVersion := Scala211,
-    crossScalaVersions := Scala211 :: "2.12.8" :: Nil,
+    scalaVersion := Scala212,
+    crossScalaVersions := Scala212 :: "2.13.0" :: Nil,
     scalacOptions in (Compile, doc) ++= {
       val tag = if(isSnapshot.value) gitHash.getOrElse("master") else { "v" + version.value }
       Seq(
@@ -158,6 +160,6 @@ object build {
     scalacOptions in (c, console) ~= {_.filterNot(unusedWarnings.toSet)}
   )
 
-  def httpzVersion = "0.5.1"
+  def httpzVersion = "0.6.0"
 }
 
