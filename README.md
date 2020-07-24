@@ -1,6 +1,6 @@
 # scala github api client
 
-[![Build Status](https://secure.travis-ci.org/xuwei-k/ghscala.png)](http://travis-ci.org/xuwei-k/ghscala)
+[![Build Status](https://travis-ci.com/xuwei-k/ghscala.png)](http://travis-ci.com/xuwei-k/ghscala)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.xuwei-k/ghscala_2.11/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.xuwei-k/ghscala_2.11)
 
 
