@@ -3,7 +3,7 @@
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.xuwei-k/ghscala_2.13/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.xuwei-k/ghscala_2.11)
 
 
-* http://developer.github.com
+* https://developer.github.com
 
 
 - [Maven Central Repository Search](https://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.github.xuwei-k%22%20AND%20a%3A%22ghscala_2.13%22)
