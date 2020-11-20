@@ -51,7 +51,7 @@ object build {
 
   val updateReadmeProcess: ReleaseStep = updateReadme
 
-  private[this] def Scala212 = "2.12.8"
+  private[this] def Scala212 = "2.12.12"
 
   private[this] val unusedWarnings = (
     "-Ywarn-unused:imports" ::
@@ -123,7 +123,7 @@ object build {
         Seq("-Xfuture")
     }.toList.flatten,
     scalaVersion := Scala212,
-    crossScalaVersions := Scala212 :: "2.13.0" :: Nil,
+    crossScalaVersions := Scala212 :: "2.13.4" :: Nil,
     scalacOptions in (Compile, doc) ++= {
       val tag = if(isSnapshot.value) gitHash.getOrElse("master") else { "v" + version.value }
       Seq(
