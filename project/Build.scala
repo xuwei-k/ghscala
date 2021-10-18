@@ -31,13 +31,10 @@ object build {
         s"""libraryDependencies += "${org}" %% "${modules(i)}" % "$v""""
       }else if(line.contains(sonatypeURL) && matchReleaseOrSnapshot){
         val n = "ghscala"
-        val sxrIndexHtml = "-sxr.jar/!/index.html"
         val javadocIndexHtml = "-javadoc.jar/!/index.html"
         val baseURL = s"${sonatypeURL}${snapshotOrRelease}/archive/${org.replace('.', '/')}/${n}_${scalaV}/${v}/${n}_${scalaV}-${v}"
         if(line.contains(javadocIndexHtml)){
           s"- [API Documentation](${baseURL}${javadocIndexHtml})"
-        }else if (line.contains(sxrIndexHtml)){
-          s"- [sxr](${baseURL}${sxrIndexHtml})"
         }else line
       }else line
     }.mkString("", "\n", "\n")
@@ -156,7 +153,7 @@ object build {
       val stripTestScope = stripIf { n => n.label == "dependency" && (n \ "scope").text == "test" }
       new RuleTransformer(stripTestScope).transform(node)(0)
     }
-  ) ++ Sxr.settings ++ Seq(Compile, Test).flatMap(c =>
+  ) ++ Seq(Compile, Test).flatMap(c =>
     scalacOptions in (c, console) ~= {_.filterNot(unusedWarnings.toSet)}
   )
 
